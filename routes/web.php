@@ -89,8 +89,8 @@ Route::middleware(['role:Admin|Headbar|Headkitchen|Bar|Kitchen'])->group(functio
 });
 // route laporan bahan keluar
 Route::middleware('role:Admin|Headbar|Headkitchen')->group(function () {
-    Route::get('/laporan/bahankeluar', [BahanKeluarController::class, 'laporanmasuk'])->name('laporan.bahankeluar');
-    Route::get('/laporan/bahankeluar/pdf', [BahanKeluarController::class, 'downloadPdfmasuk'])->name('laporan.bahankeluar.pdf');
+    Route::get('/laporan/bahankeluar', [BahanKeluarController::class, 'laporankeluar'])->name('laporan.bahankeluar');
+    Route::get('/laporan/bahankeluar/pdf', [BahanKeluarController::class, 'downloadPdfkeluar'])->name('laporan.bahankeluar.pdf');
 });
 
 
@@ -104,8 +104,6 @@ Route::middleware('role:Admin|Headbar|Headkitchen')->group(function () {
     Route::get('/laporan/bahanakhir', [BahanAkhirController::class, 'laporan'])->name('laporan.bahanakhir');
     Route::get('/laporan/bahanakhir/pdf', [BahanAkhirController::class, 'downloadPdf'])->name('laporan.bahanakhir.pdf');
 });
-
-// route meja
 
 // route manajemen pengguna
 Route::middleware(['role:Admin'])->group(function () {

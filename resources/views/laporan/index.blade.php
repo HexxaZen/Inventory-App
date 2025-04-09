@@ -9,13 +9,13 @@
                     <div class="row justify-content-center">
                         @php
                             $laporans = [
-                                ['route' => 'laporan.bahan', 'icon' => 'fas fa-solid fa-magnifying-glass-chart', 'title' => 'Pemantauan Bahan Baku', 'count' => '1,294'],
-                                ['route' => 'laporan.bahan', 'icon' => 'fas fa-file-alt', 'title' => 'Laporan Bahan', 'count' => '1,294'],
-                                ['route' => 'laporan.bahanmasuk', 'icon' => 'fas fa-file-import', 'title' => 'Laporan Bahan Masuk', 'count' => '1,303'],
-                                ['route' => 'laporan.bahankeluar', 'icon' => 'fas fa-file-export', 'title' => 'Laporan Bahan Keluar', 'count' => '$ 1,345'],
-                                ['route' => 'laporan.bahanakhir', 'icon' => 'fas fa-poll-h', 'title' => 'Laporan Bahan Akhir', 'count' => '576'],
-                                ['route' => 'laporan.keseluruhanbahanbaku', 'icon' => 'fas fa-utensils', 'title' => 'Ringkasan Bahan Baku', 'count' => '1,294'],
-                                ['route' => 'laporan.bahan', 'icon' => 'fas fa-box-open', 'title' => 'Laporan Inventaris', 'count' => '1,303'],
+                                ['route' => 'laporan.pemantauan', 'icon' => 'fas fa-solid fa-magnifying-glass-chart', 'title' => 'Pemantauan Bahan Baku'],
+                                ['route' => 'laporan.bahan', 'icon' => 'fas fa-file-alt', 'title' => 'Laporan Bahan'],
+                                ['route' => 'laporan.bahanmasuk', 'icon' => 'fas fa-file-import', 'title' => 'Laporan Bahan Masuk'],
+                                ['route' => 'laporan.bahankeluar', 'icon' => 'fas fa-file-export', 'title' => 'Laporan Bahan Keluar'],
+                                ['route' => 'laporan.bahanakhir', 'icon' => 'fas fa-poll-h', 'title' => 'Laporan Bahan Akhir'],
+                                ['route' => 'laporan.keseluruhanbahanbaku', 'icon' => 'fas fa-utensils', 'title' => 'Ringkasan Bahan Baku'],
+                                ['route' => 'laporan.bahan', 'icon' => 'fas fa-box-open', 'title' => 'Laporan Inventaris'],
                             ];
                         @endphp
 
@@ -28,7 +28,6 @@
                                         </div>
                                         <div class="numbers">
                                             <p class="card-category mb-1">{{ $laporan['title'] }}</p>
-                                            <h4 class="card-title">{{ $laporan['count'] }}</h4>
                                         </div>
                                     </div>
                                 </a>

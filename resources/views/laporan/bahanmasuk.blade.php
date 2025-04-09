@@ -2,7 +2,7 @@
 @section('title','Laporan Bahan Masuk')
 @section('laporanbahanmasuk')
 <div class="container mt-5">
-    <div class="card shadow-sm p-3">
+    <div class="card shadow-sm mx-5 my-5">
         <div class="card-header d-flex align-items-center justify-content-between">
             <h4 class="card-title mb-0">Laporan Bahan Baku Masuk</h4>
             <button class="btn btn-primary" onclick="window.location.href='{{ route('laporan.bahanmasuk.pdf') }}'">

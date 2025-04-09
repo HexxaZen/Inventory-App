@@ -19,7 +19,6 @@
                                         <div class="col col-stats ms-3 ms-sm-0">
                                             <div class="numbers">
                                                 <p class="card-category" style="color: black;">Data Bahan Baku</p>
-                                                <h4 class="card-title">1,294</h4>
                                             </div>
                                         </div>
                                     </div>
@@ -40,7 +39,6 @@
                                         <div class="col col-stats ms-3 ms-sm-0">
                                             <div class="numbers">
                                                 <p class="card-category"style="color: black;">Data Bahan Masuk</p>
-                                                <h4 class="card-title">1303</h4>
                                             </div>
                                         </div>
                                     </div>
@@ -61,7 +59,6 @@
                                         <div class="col col-stats ms-3 ms-sm-0">
                                             <div class="numbers">
                                                 <p class="card-category"style="color: black;">Data Bahan Keluar</p>
-                                                <h4 class="card-title">$ 1,345</h4>
                                             </div>
                                         </div>
                                     </div>
@@ -82,7 +79,6 @@
                                         <div class="col col-stats ms-3 ms-sm-0">
                                             <div class="numbers">
                                                 <p class="card-category"style="color: black;">Pendataan Bahan Akhir</p>
-                                                <h4 class="card-title">576</h4>
                                             </div>
                                         </div>
                                     </div>
@@ -102,7 +98,6 @@
                                             <div class="col col-stats ms-3 ms-sm-0">
                                                 <div class="numbers">
                                                     <p class="card-category"style="color: black;">Data Menu</p>
-                                                    <h4 class="card-title">1,294</h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -123,7 +118,6 @@
                                             <div class="col col-stats ms-3 ms-sm-0">
                                                 <div class="numbers">
                                                     <p class="card-category"style="color: black;">Data Menu Terjual</p>
-                                                    <h4 class="card-title">1303</h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -144,7 +138,6 @@
                                             <div class="col col-stats ms-3 ms-sm-0">
                                                 <div class="numbers">
                                                     <p class="card-category"style="color: black;">Data Inventaris</p>
-                                                    <h4 class="card-title">$ 1,345</h4>
                                                 </div>
                                             </div>
                                         </div>
@@ -165,7 +158,6 @@
                                                 <div class="col col-stats ms-3 ms-sm-0">
                                                     <div class="numbers">
                                                         <p class="card-category"style="color: black;">Laporan Bahan Baku</p>
-                                                        <h4 class="card-title">576</h4>
                                                     </div>
                                                 </div>
                                             </div>

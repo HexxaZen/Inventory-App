@@ -7,7 +7,7 @@ use App\Models\Kategori;
 use App\Models\Inventaris;
 use Barryvdh\DomPDF\Facade\Pdf;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
-use Milon\Barcode\DNS2D;class InventarisController extends Controller
+class InventarisController extends Controller
 {
     public function index(Request $request)
 {

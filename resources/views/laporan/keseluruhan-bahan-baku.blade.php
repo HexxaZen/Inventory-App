@@ -1,11 +1,11 @@
 @extends('layouts.master')
 @section('title','Laporan Bahan Baku Keseluruhan')
 @section('laporan-bahan-baku')
-<div class="container-fluid mt-4">
-    <div class="card">
+<div class="container mt-5">
+    <div class="card shadow-sm mx-5 my-5">
         <div class="card-header d-flex align-items-center justify-content-between">
-            <h4 class="card-title mb-0">Laporan Bahan Baku Keseluruhan</h4>
-            <button class="btn btn-primary btn-round" onclick="window.location.href='{{ route('laporan.keseluruhanbb.pdf') }}'">
+            <h4 class="card-title mb-0">Laporan Semua Bahan Baku</h4>
+            <button class="btn btn-primary" onclick="window.location.href='{{ route('laporan.keseluruhanbb.pdf') }}'">
                 <i class="fas fa-arrow-down"></i> DOWNLOAD PDF
             </button>
         </div>

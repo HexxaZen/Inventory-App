@@ -89,6 +89,7 @@
             @yield('laporanbahanmasuk')
             @yield('laporan-bahan-baku')
             @yield('laporanbahanakhir')
+            @yield('laporanbahankeluar')
             @yield('MenuTerjual')
             @yield('indexLaporan')
             @yield('pemantauan')

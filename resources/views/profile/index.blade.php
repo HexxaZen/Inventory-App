@@ -2,7 +2,7 @@
 @section('Profil | Merra Inventory')
 @section('profile')
 <div class="container">
-    <div class="row justify-content-center">
+    <div class="row justify-content-center mx-5 my-5">
         <div class="col-md-8">
             <div class="card" style="align-items: center;">
                 <div class="card-header">Profil Saya</div>

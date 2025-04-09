@@ -1,19 +1,43 @@
-/.phpunit.cache
+# Laravel
+/vendor
 /node_modules
-/public/build
-/public/hot
 /public/storage
 /storage/*.key
-/vendor
 .env
-.env.backup
-.env.production
-.phpunit.result.cache
-Homestead.json
+.env.*.backup
 Homestead.yaml
-auth.json
+Homestead.json
+.env.backup
+.phpunit.result.cache
+storage/debugbar
+
+# OS/macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Editor
+*.sublime-workspace
+*.sublime-project
+.vscode/
+.idea/
+*.code-workspace
+
+# Composer
+composer.phar
+
+# NPM
 npm-debug.log
 yarn-error.log
-/.fleet
-/.idea
-/.vscode
+pnpm-debug.log
+
+# Laravel log & cache
+storage/logs/*.log
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+
+# Misc
+*.sqlite
+*.zip
+*.rar

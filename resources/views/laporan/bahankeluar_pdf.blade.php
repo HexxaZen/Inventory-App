@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <title>Laporan Bahan Masuk</title>
+    <title>Laporan Bahan Keluar</title>
     <style>
         table {
             width: 100%;

@@ -2,15 +2,15 @@
 @section('title','Laporan Bahan Keluar')
 @section('laporanbahankeluar')
 <div class="container mt-5">
-    <div class="card shadow-sm p-3">
-        <div class="card-header bg-primary text-white d-flex align-items-center justify-content-between">
-            <h4 class="card-title mb-0">Laporan Bahan Baku Masuk</h4>
-            <button class="btn btn-light btn-sm" onclick="window.location.href='{{ route('laporan.bahanmasuk.pdf') }}'">
-                <i class="fas fa-download"></i> DOWNLOAD PDF
+    <div class="card shadow-sm mx-5 my-5">
+        <div class="card-header d-flex align-items-center justify-content-between">
+            <h4 class="card-title mb-0">Laporan Bahan Baku Keluar</h4>
+            <button class="btn btn-primary" onclick="window.location.href='{{ route('laporan.bahankeluar.pdf') }}'">
+                <i class="fas fa-arrow-down"></i> DOWNLOAD PDF
             </button>
         </div>
         <div class="card-body">
-            <form method="GET" action="{{ route('laporan.bahanmasuk') }}" class="mb-3">
+            <form method="GET" action="{{ route('laporan.bahankeluar') }}" class="mb-3">
                 <div class="row g-2">
                     <div class="col-md-5">
                         <label for="dari_tanggal" class="form-label">Dari Tanggal:</label>
@@ -27,7 +27,7 @@
             </form>
             
             <div class="table-responsive">
-                @if ($bahanMasuk->isEmpty())
+                @if ($bahanKeluar->isEmpty())
                     <div class="alert alert-warning text-center">Maaf, tidak ada data di tanggal ini</div>
                 @else
                     <table class="table table-bordered table-hover text-center">

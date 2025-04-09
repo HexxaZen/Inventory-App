@@ -81,15 +81,12 @@
                     </a>
                     <div class="collapse {{ Request::routeIs('laporan.*') ? 'show' : '' }}" id="laporan">
                         <ul class="nav nav-collapse">
-                            <li><a href="{{route('laporan.bahan')}}" class="{{ Request::routeIs('laporan.bahanmasuk') ? 'active' : '' }}"><span class="sub-item">Daftar Bahan</span></a></li>
-                            <li><a href="{{route('laporan.bahanmasuk')}}" class="{{ Request::routeIs('laporan.bahan') ? 'active' : '' }}"><span class="sub-item">Bahan Masuk</span></a></li>
+                            <li><a href="{{route('laporan.pemantauan')}}"class="{{ Request::routeIs('laporan.pemantauan') ? 'active' : '' }}"><span class="sub-item">PEMANTAUAN BAHAN BAKU</span></a></li>
+                            <li><a href="{{route('laporan.bahan')}}" class="{{ Request::routeIs('laporan.bahan') ? 'active' : '' }}"><span class="sub-item">Daftar Bahan</span></a></li>
+                            <li><a href="{{route('laporan.bahanmasuk')}}" class="{{ Request::routeIs('laporan.bahanmasuk') ? 'active' : '' }}"><span class="sub-item">Bahan Masuk</span></a></li>
                             <li><a href="{{route('laporan.bahanakhir')}}"><span class="sub-item">Bahan Akhir</span></a></li>
-                            <li><a href="{{route('laporan.bahankeluar')}}"class="{{ Request::routeIs('laporan.bahanmasuk') ? 'active' : '' }}"><span class="sub-item">Bahan Keluar</span></a></li>
+                            <li><a href="{{route('laporan.bahankeluar')}}"class="{{ Request::routeIs('laporan.bahankeluar') ? 'active' : '' }}"><span class="sub-item">Bahan Keluar</span></a></li>
                             <li><a href="{{route('laporan.keseluruhanbahanbaku')}}"class="{{ Request::routeIs('laporan.keseluruhanbahanbaku') ? 'active' : '' }}"><span class="sub-item">Semua Bahan Baku</span></a></li>
-                            <li><a href="{{route('laporan.pemantauan')}}"class="{{ Request::routeIs('laporan.pemantauan') ? 'active' : '' }}"><span class="sub-item">Pemantauan Bahan Baku</span></a></li>
-                            <li><a href="#"><span class="sub-item">Inventaris Bar</span></a></li>
-                            <li><a href="#"><span class="sub-item">Inventaris Kitchen</span></a></li>
-                            <li><a href="#"><span class="sub-item">Inventaris General</span></a></li>
                         </ul>
                     </div>
                 </li>
