@@ -11,9 +11,13 @@ class Bahan extends Model
 
     protected $table = 'bahans';
 
+    const TIPE_PROCESS = 'process';
+    const TIPE_NON_PROCESS = 'non-process';
+
     protected $fillable = [
         'kode_bahan',
         'nama_bahan',
+        'tipe',
         'jenis_bahan',
         'kategori_bahan',
         'sisa_stok',
@@ -21,6 +25,16 @@ class Bahan extends Model
         'satuan',
         'status'
     ];
+
+    public function scopeProcess($query)
+    {
+        return $query->where('tipe', self::TIPE_PROCESS);
+    }
+
+    public function scopeNonProcess($query)
+    {
+        return $query->where('tipe', self::TIPE_NON_PROCESS);
+    }
 
     /**
      * Relasi dengan tabel Menu melalui tabel pivot menu_bahan

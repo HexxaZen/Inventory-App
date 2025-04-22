@@ -21,7 +21,7 @@
                     </a>
                 </li>
 
-                @if(auth()->user()->hasRole(roles: 'Admin',))
+                @if(auth()->user()->hasRole(roles: 'Admin'))
                 <li class="nav-item {{ Request::routeIs('kategori.index') ? 'active' : '' }}">
                     <a href="{{ route('kategori.index') }}">
                         <i class="fas fa-tags"></i>
@@ -38,7 +38,8 @@
                     </a>
                     <div class="collapse {{ Request::routeIs('bahan.*') ? 'show' : '' }}" id="bahan">
                         <ul class="nav nav-collapse">
-                            <li><a href="{{ route('bahan.index')}}" class="{{ Request::routeIs('bahan.index') ? 'active' : '' }}"><span class="sub-item">Daftar Bahan</span></a></li>
+                            <li><a href="{{ route('bahan.index')}}" class="{{ Request::routeIs('bahan.index') ? 'active' : '' }}"><span class="sub-item">Bahan Baku</span></a></li>
+                            <li><a href="{{ route('bahan.process')}}" class="{{ Request::routeIs('bahan.process') ? 'active' : '' }}"><span class="sub-item">Bahan Process</span></a></li>
                             <li><a href="{{ route('bahan.bahanmasuk')}}" class="{{ Request::routeIs('bahan.bahanmasuk') ? 'active' : '' }}"><span class="sub-item">Bahan Masuk</span></a></li>
                             <li><a href="{{ route('bahan.bahanakhir')}}" class="{{ Request::routeIs('bahan.bahanakhir') ? 'active' : '' }}"><span class="sub-item">Bahan Akhir</span></a></li>
                             <li><a href="{{ route('bahan.bahankeluar')}}" class="{{ Request::routeIs('bahan.bahankeluar') ? 'active' : '' }}"><span class="sub-item">Bahan Keluar</span></a></li>
@@ -82,7 +83,7 @@
                     <div class="collapse {{ Request::routeIs('laporan.*') ? 'show' : '' }}" id="laporan">
                         <ul class="nav nav-collapse">
                             <li><a href="{{route('laporan.pemantauan')}}"class="{{ Request::routeIs('laporan.pemantauan') ? 'active' : '' }}"><span class="sub-item">PEMANTAUAN BAHAN BAKU</span></a></li>
-                            <li><a href="{{route('laporan.bahan')}}" class="{{ Request::routeIs('laporan.bahan') ? 'active' : '' }}"><span class="sub-item">Daftar Bahan</span></a></li>
+                            <li><a href="{{route('laporan.bahan')}}" class="{{ Request::routeIs('laporan.bahan') ? 'active' : '' }}"><span class="sub-item">Bahan Baku</span></a></li>
                             <li><a href="{{route('laporan.bahanmasuk')}}" class="{{ Request::routeIs('laporan.bahanmasuk') ? 'active' : '' }}"><span class="sub-item">Bahan Masuk</span></a></li>
                             <li><a href="{{route('laporan.bahanakhir')}}"><span class="sub-item">Bahan Akhir</span></a></li>
                             <li><a href="{{route('laporan.bahankeluar')}}"class="{{ Request::routeIs('laporan.bahankeluar') ? 'active' : '' }}"><span class="sub-item">Bahan Keluar</span></a></li>
@@ -100,13 +101,10 @@
                     </a>
                 </li>
                 @endif
-                <li class="nav-item {{ Request::routeIs('users.index') ? 'active' : '' }}">
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                        @csrf
-                    </form>
-                    <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                <li class="nav-item {{ Request::routeIs('logout') ? 'active' : '' }}">
+                    <a href="{{ route('logout') }}" class="nav-link">
                         <i class="fa-solid fa-right-from-bracket"></i>
-                        Logout
+                        <p>Log Out</p>
                     </a>
                 </li>
             </ul>

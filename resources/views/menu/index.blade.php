@@ -5,7 +5,7 @@
     <div class="container">
         <h1 class="mb-4 mx-5 my-5">Daftar Menu</h1>
 
-        @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Admin'))
+        @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar') || auth()->user()->hasRole('Headkitchen'))
             <button class="btn btn-primary mb-3 float-end me-3" data-bs-toggle="modal" data-bs-target="#addmenuModal">
                 <i class="fa fa-plus"></i> Tambah Menu
             </button>
@@ -23,7 +23,7 @@
                         <th>Nama Menu</th>
                         <th>Komposisi Menu</th>
                         <th>Status</th>
-                        @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Admin'))
+                        @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar') || auth()->user()->hasRole('Headkitchen'))
                             <th>Aksi</th>
                         @endif
                     </tr>
@@ -34,16 +34,22 @@
                             <td>{{ $item->kode_menu }}</td>
                             <td>{{ $item->nama_menu }}</td>
                             <td>
-                                @if ($item->bahans->isEmpty())
+                                @if ($item->bahans->isEmpty() && $item->bahanProcesses->isEmpty())
                                     <span>Tidak ada bahan</span>
                                 @else
                                     <ul>
                                         @foreach ($item->bahans as $bahan)
                                             <li>{{ $bahan->nama_bahan }} - {{ $bahan->pivot->gramasi }} gr</li>
                                         @endforeach
+                                        @foreach ($item->bahanProcesses as $bahanProcess)
+                                            <li>{{ $bahanProcess->nama_bahan }} (Proses) -
+                                                {{ $bahanProcess->pivot->gramasi }} gr</li>
+                                        @endforeach
                                     </ul>
                                 @endif
                             </td>
+
+
 
                             <td>
                                 @php
@@ -66,7 +72,7 @@
                                         onsubmit="return confirm('Apakah Anda yakin ingin menghapus menu ini?')">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                        <button type="submit" class="btn btn-danger btn-sm btn-delete">Hapus</button>
                                     </form>
                                 </td>
                             @endif
@@ -86,24 +92,65 @@
                                         <form action="{{ route('menu.update', $item->id) }}" method="POST">
                                             @csrf
                                             @method('PUT')
+
                                             <div class="mb-3">
                                                 <label class="form-label">Nama Menu</label>
                                                 <input type="text" class="form-control" name="nama_menu"
                                                     value="{{ $item->nama_menu }}" required>
                                             </div>
+
                                             <div class="mb-3">
-                                                <label class="form-label">Komposisi Menu</label>
-                                                <select class="ui search selection dropdown multi-select"
-                                                    name="bahan_menu[]" multiple>
+                                                <label class="form-label">Bahan Biasa</label>
+                                                <select class="form-control multi-select bahan-biasa" name="bahan_biasa[]"
+                                                    multiple>
                                                     @foreach ($bahans as $bahan)
                                                         <option value="{{ $bahan->id }}"
+                                                            data-nama="{{ $bahan->nama_bahan }}"
                                                             {{ in_array($bahan->id, $item->bahans->pluck('id')->toArray()) ? 'selected' : '' }}>
                                                             {{ $bahan->nama_bahan }}
                                                         </option>
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            <button type="submit" class="btn btn-primary">Update Menu</button>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Bahan Process</label>
+                                                <select class="form-control multi-select bahan-process"
+                                                    name="bahan_process[]" multiple>
+                                                    @foreach ($bahanProcesses as $bp)
+                                                        <option value="{{ $bp->id }}"
+                                                            data-nama="{{ $bp->nama_bahan }}"
+                                                            {{ in_array($bp->id, $item->bahanProcesses->pluck('id')->toArray()) ? 'selected' : '' }}>
+                                                            {{ $bp->nama_bahan }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+
+                                            <div class="mb-3 gramasi-container">
+                                                @foreach ($item->bahans as $bahan)
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Gramasi untuk {{ $bahan->nama_bahan }}
+                                                            (Biasa)
+                                                        </label>
+                                                        <input type="number" class="form-control"
+                                                            name="gramasi_biasa[{{ $bahan->id }}]"
+                                                            value="{{ $bahan->pivot->gramasi }}" required>
+                                                    </div>
+                                                @endforeach
+                                                @foreach ($item->bahanProcesses as $bp)
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Gramasi untuk {{ $bp->nama_bahan }}
+                                                            (Process)
+                                                        </label>
+                                                        <input type="number" class="form-control"
+                                                            name="gramasi_process[{{ $bp->id }}]"
+                                                            value="{{ $bp->pivot->gramasi }}" required>
+                                                    </div>
+                                                @endforeach
+                                            </div>
+
+                                            <button type="submit" class="btn btn-primary w-100">Update Menu</button>
                                         </form>
                                     </div>
                                 </div>
@@ -126,68 +173,152 @@
                         <form action="{{ route('menu.store') }}" method="POST">
                             @csrf
                             <div class="mb-3">
-                                <label class="form-label">Kategori</label>
-                                <select class="form-select" name="kategori_id" required>
+                                <label class="form-label" for="kategori_id">Kategori</label>
+                                <select class="form-select" name="kategori_id" id="kategori_id" required>
                                     <option value="" disabled selected>Pilih Kategori</option>
                                     @foreach ($kategoris as $kat)
-                                        <option value="{{ $kat->id }}">{{ $kat->kode_kategori }}</option>
+                                        <option value="{{ $kat->id }}" data-kode="{{ $kat->kode_kategori }}">
+                                            {{ $kat->kode_kategori }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Nama Menu</label>
-                                <input type="text" class="form-control" name="nama_menu" placeholder="Masukkan nama menu"
-                                    required>
+                                <label class="form-label" for="nama_menu">Nama Menu</label>
+                                <input type="text" class="form-control" name="nama_menu" id="nama_menu"
+                                    placeholder="Masukkan nama menu" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Komposisi Menu</label>
-                                <select class="form-control bahan-menu multi-select" name="bahan_menu[]" multiple
-                                    data-placeholder="Pilih komposisi menu" required>
+                                <label class="form-label" for="bahan_biasa">Komposisi Bahan Non-Proses</label>
+                                <select class="form-control bahan-biasa multi-select" name="bahan_biasa[]"
+                                    id="bahan_biasa" multiple disabled>
                                     @foreach ($bahans as $bahan)
-                                        <option value="{{ $bahan->id }}">{{ $bahan->nama_bahan }}</option>
+                                        <option value="{{ $bahan->id }}" data-nama="{{ $bahan->nama_bahan }}"
+                                            data-kode_bahan="{{ $bahan->kode_bahan }}">
+                                            {{ $bahan->nama_bahan }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="mb-3" id="gramasi-container"></div>
+                            <div class="mb-3">
+                                <label class="form-label" for="bahan_process">Komposisi Bahan Process</label>
+                                <select class="form-control bahan-process multi-select" name="bahan_process[]"
+                                    id="bahan_process" multiple disabled>
+                                    @foreach ($bahanProcesses as $bp)
+                                        <option value="{{ $bp->id }}" data-nama="{{ $bp->nama_bahan }}"
+                                            data-kode_bahan="{{ $bp->kode_bahan }}">
+                                            {{ $bp->nama_bahan }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="mb-3 gramasi-container"></div>
                             <button type="submit" class="btn btn-primary w-100">Tambah Menu</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
-        // alert
         document.addEventListener('DOMContentLoaded', function() {
             @if (session('success'))
                 swal("Berhasil!", "{{ session('success') }}", "success");
             @endif
+    
             $(document).ready(function() {
-                // Inisialisasi dropdown multi-select
-                $('.multi-select, .bahan-menu').dropdown();
-
-                // Event listener untuk menambahkan input gramasi saat memilih bahan
-                $('.bahan-menu').on('change', function() {
-                    let selectedOptions = $(this).val() || []; // Ambil nilai terpilih
-                    let gramasiContainer = $('#gramasi-container');
-
-                    gramasiContainer.html(''); // Reset container sebelum menambah input baru
-
-                    selectedOptions.forEach(bahanId => {
-                        let bahanName = $(this).find(`option[value="${bahanId}"]`).text();
-
-                        let inputGroup = `
-                    <div class="mb-3">
-                        <label class="form-label">Gramasi untuk ${bahanName}</label>
-                        <input type="number" class="form-control" name="gramasi[${bahanId}]" required>
-                    </div>
-                `;
-                        gramasiContainer.append(inputGroup);
+                // Initialize dropdown if needed (Ensure dropdown.js is loaded)
+                $('.multi-select').dropdown();
+    
+                // Event listener hanya untuk modal yang aktif
+                $('.bahan-biasa, .bahan-process').on('change', function() {
+                    let $modal = $(this).closest('.modal');
+                    let bahanBiasa = ($modal.find('.bahan-biasa').val() || []).filter(item =>
+                        item !== "");
+                    let bahanProcess = ($modal.find('.bahan-process').val() || []).filter(item =>
+                        item !== "");
+                    let gramasiContainer = $modal.find('.gramasi-container');
+    
+                    gramasiContainer.html(''); // Kosongkan gramasi container sebelum menambah input baru
+    
+                    // Generate gramasi input untuk bahan biasa
+                    bahanBiasa.forEach(bahanId => {
+                        let bahanName = $modal.find('.bahan-biasa option[value="' + bahanId + '"]').data('nama');
+                        gramasiContainer.append(`
+                            <div class="mb-3">
+                                <label class="form-label">Gramasi untuk ${bahanName} (Biasa)</label>
+                                <input type="number" class="form-control" name="gramasi_biasa[${bahanId}]" required>
+                            </div>
+                        `);
                     });
+    
+                    // Generate gramasi input untuk bahan process
+                    bahanProcess.forEach(bahanId => {
+                        let bahanName = $modal.find('.bahan-process option[value="' + bahanId + '"]').data('nama');
+                        gramasiContainer.append(`
+                            <div class="mb-3">
+                                <label class="form-label">Gramasi untuk ${bahanName} (Process)</label>
+                                <input type="number" class="form-control" name="gramasi_process[${bahanId}]" required>
+                            </div>
+                        `);
+                    });
+                });
+    
+                // Filtering berdasarkan kode kategori saat pilih kategori menu
+                $('select[name="kategori_id"]').on('change', function() {
+                    const selectedKode = $(this).find(':selected').data('kode'); // Ambil kode_kategori (ex: BBAR/BBKTC)
+    
+                    // Jika tidak ada kategori yang dipilih, nonaktifkan bahan dan sembunyikan komposisi
+                    if (!selectedKode) {
+                        $('#bahan_biasa, #bahan_process').prop('disabled', true); // Nonaktifkan dropdown bahan
+                        $('#bahan_biasa option, #bahan_process option').hide(); // Sembunyikan semua opsi bahan
+                        $('.gramasi-container').html(''); // Kosongkan komposisi gramasi
+                    } else {
+                        // Reset dan sembunyikan semua opsi bahan terlebih dahulu
+                        $('#bahan_biasa option, #bahan_process option').show();
+    
+                        // Filter bahan biasa berdasarkan kategori
+                        $('.bahan-biasa option').each(function() {
+                            const kodeBahan = $(this).data('kode_bahan');
+                            if (!kodeBahan || !kodeBahan.startsWith(selectedKode)) {
+                                $(this).hide();
+                            }
+                        });
+    
+                        // Filter bahan proses berdasarkan kategori
+                        $('.bahan-process option').each(function() {
+                            const kodeBahan = $(this).data('kode_bahan');
+                            if (!kodeBahan || !kodeBahan.startsWith(selectedKode)) {
+                                $(this).hide();
+                            }
+                        });
+    
+                        // Aktifkan dropdown bahan setelah kategori dipilih
+                        $('#bahan_biasa, #bahan_process').prop('disabled', false);
+                    }
+    
+                    // Kosongkan nilai yang mungkin masih terisi setelah kategori dipilih
+                    $('.bahan-biasa').val([]).trigger('change');
+                    $('.bahan-process').val([]).trigger('change');
+                });
+    
+                // Modal shown event
+                $('#modalTambah').on('shown.bs.modal', function() {
+                    // Sembunyikan semua option bahan saat modal dibuka
+                    $('#bahan_biasa option, #bahan_process option').hide();
+    
+                    // Nonaktifkan select-nya
+                    $('#bahan_biasa, #bahan_process').prop('disabled', true);
+    
+                    // Kosongkan nilai yang mungkin masih terisi
+                    $('#bahan_biasa, #bahan_process').val(null).trigger('change');
+                    $('.gramasi-container').html(''); // Kosongkan komposisi gramasi
                 });
             });
         });
     </script>
+    
 
 @endsection

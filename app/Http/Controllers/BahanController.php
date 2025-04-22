@@ -12,43 +12,48 @@ use App\Events\StokMenipisEvent;
 class BahanController extends Controller
 {
     public function index(Request $request)
-    {
-        $kategoris = Kategori::all();
-        $user = Auth::user();
-        $sort = $request->query('sort', 'all');
+{
+    $kategoris = Kategori::all();
+    $user = Auth::user();
+    $kategoriBahan = $request->query('kategori_bahan', 'all');
+    
+    $query = Bahan::query();
 
-        $query = Bahan::query();
-
-        // Cek apakah ada filter sort dari user
-        if ($sort === 'BBAR') {
-            $query->where('kode_bahan', 'like', 'BBAR%');
-        } elseif ($sort === 'BBKTC') {
-            $query->where('kode_bahan', 'like', 'BBKTC%');
-        } else {
-            // Jika tidak ada sort, filter berdasarkan role
-            if ($user->hasRole(['Admin', 'Bar'])) {
-                $query->where('kode_bahan', 'LIKE', 'BBAR%');
+    // Filter berdasarkan kategori bahan (BBAR / BBKTC)
+    if ($kategoriBahan === 'BBAR') {
+        $query->where('kode_bahan', 'like', 'BBAR%');
+    } elseif ($kategoriBahan === 'BBKTC') {
+        $query->where('kode_bahan', 'like', 'BBKTC%');
+    } else {
+        // Filter berdasarkan role user
+        $query->where(function ($q) use ($user) {
+            if ($user->hasRole(['Admin','Headbar', 'Bar'])) {
+                $q->where('kode_bahan', 'LIKE', 'BBAR%');
             }
 
-            if ($user->hasRole(['Admin', 'Kitchen'])) {
-                $query->orWhere('kode_bahan', 'LIKE', 'BBKTC%');
+            if ($user->hasRole(['Admin','Headkitchen', 'Kitchen'])) {
+                $q->orWhere('kode_bahan', 'LIKE', 'BBKTC%');
             }
-        }
-
-        $bahan = $query->orderBy('created_at', 'desc')->get();
-
-        foreach ($bahan as $item) {
-            if ($item->sisa_stok > $item->batas_minimum) {
-                $item->status = '<span class="badge bg-success">AMAN</span>';
-            } elseif ($item->sisa_stok > 0) {
-                $item->status = '<span class="badge bg-warning text-dark">MENIPIS</span>';
-            } else {
-                $item->status = '<span class="badge bg-danger">HABIS</span>';
-            }
-        }
-
-        return view('bahan.daftarbahan', compact('bahan', 'kategoris'));
+        });
     }
+
+    $bahan = $query->orderBy('created_at', 'desc')->get();
+
+    // Proses status stok
+    foreach ($bahan as $item) {
+        if ($item->sisa_stok > $item->batas_minimum) {
+            $item->status = '<span class="badge bg-success">AMAN</span>';
+        } elseif ($item->sisa_stok > 0) {
+            $item->status = '<span class="badge bg-warning text-dark">MENIPIS</span>';
+        } else {
+            $item->status = '<span class="badge bg-danger">HABIS</span>';
+        }
+    }
+
+    return view('bahan.daftarbahan', compact('bahan', 'kategoris'));
+}
+
+
 
     public function laporan(Request $request)
     {
@@ -81,6 +86,7 @@ class BahanController extends Controller
         $request->validate([
             'kode_bahan' => 'required',
             'nama_bahan' => 'required',
+            'tipe' =>'required',
             'jenis_bahan' => 'required',
             'kategori_bahan' => 'required',
             'sisa_stok' => 'nullable|integer',
@@ -92,11 +98,12 @@ class BahanController extends Controller
         Bahan::create([
             'kode_bahan' => $request->kode_bahan,
             'nama_bahan' => $request->nama_bahan,
+            'tipe' => $request->tipe,
             'jenis_bahan' => $request->jenis_bahan,
             'kategori_bahan' => $request->kategori_bahan,
             'sisa_stok' => $request->sisa_stok ?? 0,
             'satuan' => $request->satuan,
-            'status' => $status,
+            'status' => $status
         ]);
 
         return redirect()->back()->with('success');
@@ -118,12 +125,13 @@ class BahanController extends Controller
     {
         $request->validate([
             'nama_bahan' => 'required',
+            'tipe'=> 'required',
             'satuan' => 'required',
             'batas_minimum' => 'required|integer|min:1'
         ]);
 
         $bahan = Bahan::findOrFail($id);
-        $bahan->update($request->only(['nama_bahan', 'satuan', 'batas_minimum']));
+        $bahan->update($request->only(['nama_bahan','tipe', 'satuan', 'batas_minimum']));
 
         return redirect()->back()->with('success');
     }

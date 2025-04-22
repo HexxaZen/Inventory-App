@@ -38,8 +38,14 @@
                                         <li>{{ $bahan->nama_bahan ?? 'Tidak Diketahui' }} - 
                                             {{ $bahan->pivot->gramasi ?? 0 }} {{$bahan->satuan}}</li>
                                     @endforeach
+                                    
+                                    @foreach ($item->menu->bahanProcesses ?? [] as $bahanProcess)
+                                        <li>{{ $bahanProcess->nama_bahan ?? 'Tidak Diketahui' }} - 
+                                            {{ $bahanProcess->pivot->gramasi ?? 0 }} {{$bahanProcess->satuan}}</li>
+                                    @endforeach
                                 </ul>
                             </td>
+                            
                             <td>
                                 <ul>
                                     @foreach ($item->menu->bahans ?? [] as $bahan)
@@ -48,8 +54,16 @@
                                         @endphp
                                         <li>{{ $bahan->nama_bahan }}: {{ $hasil_seharusnya }} {{$bahan->satuan}}</li>
                                     @endforeach
+                            
+                                    @foreach ($item->menu->bahanProcesses ?? [] as $bahanProcess)
+                                        @php
+                                            $hasil_seharusnya = $item->jumlah_terjual * ($bahanProcess->pivot->gramasi ?? 0);
+                                        @endphp
+                                        <li>{{ $bahanProcess->nama_bahan }}: {{ $hasil_seharusnya }} {{$bahanProcess->satuan}}</li>
+                                    @endforeach
                                 </ul>
                             </td>
+                            
                             <td>
                                 <button class="btn btn-warning btn-sm" data-bs-toggle="modal"style="color:white;" 
                                     data-bs-target="#editMenuTerjualModal{{ $item->id }}">
@@ -58,7 +72,7 @@
                                 <form action="{{ route('menu.terjual.destroy', $item->id) }}" method="POST" class="d-inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                    <button type="submit" class="btn btn-danger btn-sm btn-delete">Hapus</button>
                                 </form>
                             </td>
                         </tr>

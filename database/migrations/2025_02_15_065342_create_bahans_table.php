@@ -11,6 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->string('kode_bahan')->unique();
             $table->string('nama_bahan');
+            $table->string('tipe');
             $table->string('jenis_bahan');
             $table->string('kategori_bahan');
             $table->integer('sisa_stok')->default(0);

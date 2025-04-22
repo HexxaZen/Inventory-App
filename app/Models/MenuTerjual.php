@@ -35,7 +35,12 @@ class MenuTerjual extends Model
             'bahan_id'             // Local key di tabel perantara (MenuBahan)
         )->withPivot('gramasi');   // Mengambil kolom pivot (gramasi)
     }
-
+    public function bahanProcesses()
+    {
+        return $this->belongsToMany(BahanProcess::class, 'bahan_process_menu', 'menu_id', 'bahan_id')
+                    ->withPivot('gramasi')
+                    ->withTimestamps();
+    }
     /**
      * Relasi ke tabel bahan_keluar berdasarkan bahan yang digunakan dalam menu.
      */

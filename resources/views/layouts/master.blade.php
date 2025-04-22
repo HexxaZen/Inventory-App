@@ -95,6 +95,7 @@
             @yield('pemantauan')
             @yield('detailInventaris')
             @yield('databahanakhir')
+            @yield('bahanProcess')
 
         </div>
 

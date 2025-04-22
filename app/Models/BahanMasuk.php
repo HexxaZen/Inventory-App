@@ -22,5 +22,9 @@ class BahanMasuk extends Model
     {
         return $this->belongsTo(Bahan::class, 'kode_bahan', 'kode_bahan');
     }
+    public function bahanProcess()
+    {
+        return $this->belongsTo(BahanProcess::class,'kode_bahan', 'kode_bahan');
+    }
 }
 

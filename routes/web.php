@@ -15,8 +15,7 @@ use App\Http\Controllers\MenuController;
 use App\Http\Controllers\LaporanBahanBakuController;
 use App\Http\Controllers\MenuTerjualController;
 use App\Http\Controllers\PemantauanController;
-use SimpleSoftwareIO\QrCode\Facades\QrCode;
-
+use App\Http\Controllers\BahanProcessController;
 
 
 Route::get('/', function () {
@@ -52,6 +51,9 @@ Route::middleware(['role:Admin|Headbar|Headkitchen|Bar|Kitchen'])->group(functio
     Route::post('/bahan', [BahanController::class, 'store'])->name('bahan.store');
     Route::put('/bahan/{id}', [BahanController::class, 'update'])->name('bahan.update');
     Route::delete('/bahan/{id}', [BahanController::class, 'destroy'])->name('bahan.destroy');
+    // route process non-process
+    Route::get('/bahan/process', [BahanController::class, 'listProcess'])->name('bahan.process');
+    Route::get('/bahan/non-process', [BahanController::class, 'listNonProcess'])->name('bahan.nonprocess');
 });
     //laporan index
     Route::middleware(['role:Admin|Headbar|Headkitchen'])->group(function () {
@@ -63,7 +65,7 @@ Route::middleware('role:Admin|Headbar|Headkitchen')->group(function () {
     Route::get('/laporan/bahan/pdf', [BahanController::class, 'downloadPdf'])->name('laporan.bahan.pdf');
 });
 // route bahanmasuk
-Route::middleware('role:Admin|Admin|Headbar|Headkitchen|Bar|Kitchen')->group(function () {
+Route::middleware('role:Admin|Headbar|Headkitchen|Bar|Kitchen')->group(function () {
     Route::get('/bahan/bahanmasuk', [BahanMasukController::class, 'index'])->name('bahan.bahanmasuk');
     Route::post('/bahan/bahanmasuk', [BahanMasukController::class, 'store'])->name('bahan.bahanmasuk.store');
     Route::get('/bahan/bahanmasuk/{id}/edit', [BahanMasukController::class, 'edit'])->name('bahan.bahanmasuk.edit');
@@ -71,7 +73,7 @@ Route::middleware('role:Admin|Admin|Headbar|Headkitchen|Bar|Kitchen')->group(fun
     Route::delete('/bahan/bahanmasuk/{id}', [BahanMasukController::class, 'destroy'])->name('bahan.bahanmasuk.destroy');
 });
     // laporan bahanmasuk
-Route::middleware('role:Admin')->group(function () {
+Route::middleware('role:Admin|Headbar|Headkitchen')->group(function () {
     Route::get('/laporan/bahanmasuk', [BahanMasukController::class, 'laporanmasuk'])->name('laporan.bahanmasuk');
     Route::get('/laporan/bahanmasuk/pdf', [BahanMasukController::class, 'downloadPdfmasuk'])->name('laporan.bahanmasuk.pdf');
 });
@@ -92,7 +94,6 @@ Route::middleware('role:Admin|Headbar|Headkitchen')->group(function () {
     Route::get('/laporan/bahankeluar', [BahanKeluarController::class, 'laporankeluar'])->name('laporan.bahankeluar');
     Route::get('/laporan/bahankeluar/pdf', [BahanKeluarController::class, 'downloadPdfkeluar'])->name('laporan.bahankeluar.pdf');
 });
-
 
 // LAPORAN KESELURUHAN BAHAN BAKU
 Route::middleware('role:Admin|Headbar|Headkitchen')->group(function () {
@@ -150,5 +151,13 @@ Route::middleware(['auth', 'role:Admin|Headbar|Headkitchen'])->group(function ()
 Route::middleware(['role:Admin|Headbar|Headkitchen|Bar|Kitchen'])->group(function () {
 Route::get('/pemantauan-bahan', [PemantauanController::class, 'index'])->name('laporan.pemantauan');
 Route::get('/laporan/pemantauan/pdf', [PemantauanController::class, 'downloadPDF'])->name('laporan.pemantauan.pdf');
+});
+// Route bahan process
+Route::middleware(['auth'])->group(function () {
+    Route::get('/bahan/process', [BahanProcessController::class, 'index'])->name('bahan.process');
+    Route::post('/bahan/process', [BahanProcessController::class, 'store'])->name('bahan.process.store');
+    Route::get('/bahan/process/{id}/edit', [BahanProcessController::class, 'edit'])->name('bahan.process.edit');
+    Route::put('/bahan/process/{id}', [BahanProcessController::class, 'update'])->name('bahan.process.update');
+    Route::delete('/bahan/process/{id}', [BahanProcessController::class, 'destroy'])->name('bahan.process.destroy');
 });
 require __DIR__ . '/auth.php';

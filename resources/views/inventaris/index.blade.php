@@ -77,7 +77,7 @@
                                     onsubmit="return confirm('Apakah Anda yakin ingin menghapus inventaris ini?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                                    <button type="submit" class="btn btn-danger btn-sm btn-delete">Hapus</button>
                                 </form>
                             </td>
                         </tr>

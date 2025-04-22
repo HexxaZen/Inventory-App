@@ -20,11 +20,11 @@ class BahanKeluarController extends Controller
         $dataKeluar = BahanKeluar::all();
         $query = Bahan::query();
         $user = Auth::user();
-        if ($user->hasRole([ 'Admin','Bar'])) {
+        if ($user->hasRole([ 'Admin','Headbar','Bar'])) {
             $query->orWhere('kode_bahan', 'LIKE', 'BBAR%');
         }
 
-        if ($user->hasRole([ 'Admin', 'Kitchen'])) {
+        if ($user->hasRole([ 'Admin','Headkitchen', 'Kitchen'])) {
             $query->orWhere('kode_bahan', 'LIKE', 'BBKTC%');
         }
 
@@ -33,27 +33,27 @@ class BahanKeluarController extends Controller
     }
     public function laporankeluar(Request $request)
     {
-    $bahanKeluar = collect(); // Default kosong jika belum ada input tanggal
+    $dataKeluar = collect(); // Default kosong jika belum ada input tanggal
     $message = null;
     
     if ($request->has(['dari_tanggal', 'sampai_tanggal'])) {
         $dari_tanggal = $request->dari_tanggal . ' 00:00:00';
         $sampai_tanggal = $request->sampai_tanggal . ' 23:59:59';
 
-        $bahanKeluar = BahanKeluar::whereBetween('created_at', [$dari_tanggal, $sampai_tanggal])->get();
+        $dataKeluar = BahanKeluar::whereBetween('created_at', [$dari_tanggal, $sampai_tanggal])->get();
         
-        if ($bahanKeluar->isEmpty()) {
+        if ($dataKeluar->isEmpty()) {
             $message = "Maaf, tidak ada data di tanggal ini";
         }
     }
     
-    return view('laporan.bahankeluar', compact('bahanKeluar', 'message'));
+    return view('laporan.bahankeluar', compact('dataKeluar', 'message'));
     }
 
     public function downloadPdfkeluar()
     {
-        $bahanKeluar = BahanKeluar::where('kode_bahan', 'LIKE', 'BB%')->get();
-        $pdf = Pdf::loadView('laporan.bahankeluar_pdf', compact('bahanKeluar'));
+        $dataKeluar = BahanKeluar::where('kode_bahan', 'LIKE', 'BB%')->get();
+        $pdf = Pdf::loadView('laporan.bahankeluar_pdf', compact('dataKeluar'));
         return $pdf->download('laporan_bahan_keluar.pdf');
     }
 }

@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\BahanAkhir;
 use App\Models\Bahan;
+use App\Models\BahanProcess;
 use App\Models\BahanKeluar;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade\Pdf;
+
 class BahanAkhirController extends Controller
 {
     public function __construct()
@@ -35,28 +37,34 @@ class BahanAkhirController extends Controller
         }
 
         $user = Auth::user();
-        $query = Bahan::select('id', 'kode_bahan', 'kategori_bahan', 'nama_bahan', 'sisa_stok');
 
-        // Cek role menggunakan Spatie
-        if ($user->hasRole(['Admin', 'Bar'])) {
-            $query->orWhere('kode_bahan', 'LIKE', 'BBAR%');
+        // Query bahan non-proses
+        $queryNonProses = Bahan::select('id', 'kode_bahan', 'nama_bahan', 'kategori_bahan', 'sisa_stok');
+        if ($user->hasRole(['Admin', 'Headbar', 'Bar'])) {
+            $queryNonProses->orWhere('kode_bahan', 'LIKE', 'BBAR%');
         }
-
-        if ($user->hasRole(['Admin', 'Kitchen'])) {
-            $query->orWhere('kode_bahan', 'LIKE', 'BBKTC%');
+        if ($user->hasRole(['Admin', 'Headkitchen', 'Kitchen'])) {
+            $queryNonProses->orWhere('kode_bahan', 'LIKE', 'BBKTC%');
         }
+        $dataNonProses = $queryNonProses->get();
 
-        $data = $query->get();
+        // Query bahan proses
+        $queryProses = BahanProcess::select('id', 'kode_bahan', 'nama_bahan', 'kategori_bahan', 'sisa_stok');
+        if ($user->hasRole(['Admin', 'Headbar', 'Bar'])) {
+            $queryProses->orWhere('kode_bahan', 'LIKE', 'BBAR%');
+        }
+        if ($user->hasRole(['Admin', 'Headkitchen', 'Kitchen'])) {
+            $queryProses->orWhere('kode_bahan', 'LIKE', 'BBKTC%');
+        }
+        $dataProses = $queryProses->get();
 
-        return view('bahan.bahanakhir', compact('data', 'tanggal'));
+        return view('bahan.bahanakhir', compact('dataNonProses', 'dataProses', 'tanggal'));
     }
+
     public function tampilkan(Request $request)
     {
         $tanggal = $request->input('tanggal', now()->format('Y-m-d'));
-
-        // Ambil data bahan_akhir berdasarkan tanggal input
         $data = BahanAkhir::whereDate('tanggal_input', $tanggal)->get();
-
         return view('bahan.databahanakhir', compact('data', 'tanggal'));
     }
 
@@ -68,9 +76,7 @@ class BahanAkhirController extends Controller
         if ($request->has(['dari_tanggal', 'sampai_tanggal'])) {
             $dari_tanggal = $request->dari_tanggal . ' 00:00:00';
             $sampai_tanggal = $request->sampai_tanggal . ' 23:59:59';
-
             $data = BahanAkhir::whereBetween('created_at', [$dari_tanggal, $sampai_tanggal])->get();
-
             if ($data->isEmpty()) {
                 $message = "Maaf, tidak ada data di tanggal ini";
             }
@@ -85,51 +91,70 @@ class BahanAkhirController extends Controller
         $pdf = Pdf::loadView('laporan.bahanakhir_pdf', compact('data'));
         return $pdf->download('laporan_daftar_bahan_akhir.pdf');
     }
+
     public function update(Request $request)
-    {
-        $request->validate([
-            'sisa_stok' => 'required|array',
-            'sisa_stok.*' => 'required|integer|min:0',
-        ]);
+{
+    $request->validate([
+        'sisa_stok' => 'required|array',
+        'sisa_stok.*' => 'required|integer|min:0',
+    ]);
 
-        $tanggal = session('tanggal_input');
-        if (!$tanggal) {
-            return redirect()->route('bahan.akhir.tanggal')->with('error', 'Silakan pilih tanggal terlebih dahulu.');
-        }
-
-        foreach ($request->sisa_stok as $id => $stok_akhir) {
-            $bahan = Bahan::find($id);
-            if (!$bahan) {
-                return redirect()->route('bahan.akhir.index')->with('error', "Bahan dengan ID $id tidak ditemukan.");
-            }
-
-            $jumlah_keluar = $bahan->sisa_stok - $stok_akhir;
-            $bahan->update(['sisa_stok' => $stok_akhir]);
-
-            BahanAkhir::updateOrCreate(
-                [
-                    'tanggal_input' => $tanggal,
-                    'kode_bahan' => $bahan->kode_bahan,
-                ],
-                [
-                    'kategori_bahan' => $bahan->kategori_bahan,
-                    'nama_bahan' => $bahan->nama_bahan,
-                    'stok_terakhir' => $stok_akhir,
-                ]
-            );
-
-            if ($jumlah_keluar > 0) {
-                BahanKeluar::create([
-                    'bahan_id' => $bahan->id,
-                    'kode_bahan' => $bahan->kode_bahan,
-                    'nama_bahan' => $bahan->nama_bahan,
-                    'jumlah_keluar' => $jumlah_keluar,
-                    'tanggal_keluar' => $tanggal,
-                    'satuan' => $bahan->satuan,
-                ]);
-            }
-        }
-
-        return redirect()->route('bahan.akhir.index')->with('success');
+    $tanggal = session('tanggal_input');
+    if (!$tanggal) {
+        return redirect()->route('bahan.akhir.tanggal')->with('error', 'Silakan pilih tanggal terlebih dahulu.');
     }
+
+    foreach ($request->sisa_stok as $id => $stok_akhir) {
+        // Cek apakah ID berasal dari BahanProcess (pakai prefix "p_")
+        $isProses = str_starts_with($id, 'p_');
+        $modelId = $isProses ? str_replace('p_', '', $id) : $id;
+
+        $bahan = $isProses ? BahanProcess::find($modelId) : Bahan::find($modelId);
+        if (!$bahan) {
+            continue;
+        }
+
+        // Ambil stok sebelumnya dari bahan_akhirs berdasarkan tanggal terakhir sebelum hari ini
+        $stok_sebelumnya = BahanAkhir::where('kode_bahan', $bahan->kode_bahan)
+            ->where('tanggal_input', '<', $tanggal)
+            ->orderByDesc('tanggal_input')
+            ->value('stok_terakhir');
+
+        // Jika tidak ada data sebelumnya, fallback ke sisa_stok dari database saat ini
+        $stok_sebelumnya = $stok_sebelumnya ?? $bahan->sisa_stok;
+
+        $jumlah_keluar = $stok_sebelumnya - $stok_akhir;
+
+        // Update stok bahan (baik process maupun non-process)
+        $bahan->update(['sisa_stok' => $stok_akhir]);
+
+        // Simpan ke bahan_akhirs
+        BahanAkhir::updateOrCreate(
+            [
+                'tanggal_input' => $tanggal,
+                'kode_bahan' => $bahan->kode_bahan,
+            ],
+            [
+                'kategori_bahan' => $bahan->kategori_bahan,
+                'nama_bahan' => $bahan->nama_bahan,
+                'stok_terakhir' => $stok_akhir,
+            ]
+        );
+
+        // Catat bahan keluar jika ada pengurangan stok
+        if ($jumlah_keluar > 0) {
+            BahanKeluar::create([
+                'kode_bahan' => $bahan->kode_bahan,
+                'nama_bahan' => $bahan->nama_bahan,
+                'jumlah_keluar' => $jumlah_keluar,
+                'tanggal_keluar' => $tanggal,
+                'satuan' => $bahan->satuan,
+                'tipe_bahan' => $isProses ? 'proses' : 'non-proses',
+            ]);
+        }
+    }
+
+    return redirect()->route('bahan.akhir.index')->with('success', 'Data berhasil disimpan.');
+}
+
 }

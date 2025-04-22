@@ -70,7 +70,7 @@
                     <form action="{{ route('kategori.destroy', $kategori->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori ini?')">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                        <button type="submit" class="btn btn-danger btn-sm btn-delete">Hapus</button>
                     </form>
 
                     <!-- Modal Edit Kategori -->

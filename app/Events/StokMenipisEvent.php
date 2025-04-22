@@ -11,6 +11,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\Bahan;
+use App\Models\BahanProcess;
 
 class StokMenipisEvent implements ShouldBroadcastNow
 {
@@ -22,7 +23,7 @@ class StokMenipisEvent implements ShouldBroadcastNow
     {
         $this->bahan = $bahan;
     }
-
+    
     public function broadcastOn()
     {
         return new Channel('stok-menipis');

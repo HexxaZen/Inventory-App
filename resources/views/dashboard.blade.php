@@ -222,7 +222,7 @@
                                                                         @csrf
                                                                         @method('DELETE')
                                                                         <button type="submit"
-                                                                            class="btn btn-danger btn-sm">Hapus</button>
+                                                                            class="btn btn-danger btn-sm btn-delete btn-delete">Hapus</button>
                                                                     </form>
                                                                 </td>
                                                             @endif

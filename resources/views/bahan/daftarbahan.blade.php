@@ -2,7 +2,7 @@
 @section('title', 'Daftar Bahan')
 @section('daftarbahan')
 <div class="container">
-    <h1 class="mb-4 mx-5 my-5">Daftar Bahan</h1>
+    <h1 class="mb-4 mx-5 my-5">Data Bahan Baku</h1>
 
     @if(auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar'))
     <button class="btn btn-primary mb-3 float-end me-3" data-bs-toggle="modal" data-bs-target="#addBahanBarModal">
@@ -21,15 +21,22 @@
         </div>
     @endif
 {{-- sort by --}}
-    <div class="mb-3 px-3">
-        <label for="sortBahan" class="form-label">Sort By:</label>
-        <select class="form-control w-25" id="sortBahan">
-            <option value="all">Semua</option>
-            <option value="BBAR">Bahan Baku Bar</option>
-            <option value="BBKTC">Bahan Baku Kitchen</option>
-        </select>
-    </div>
+<div class="mb-3 px-3">
+    <form method="GET" action="{{ route('bahan.index') }}" id="filterForm">
+        <div class="row">
+            <div class="col-md-3">
+                <label for="sortBahan" class="form-label">Sort By Kategori:</label>
+                <select class="form-control" name="kategori_bahan" id="sortBahan" onchange="document.getElementById('filterForm').submit();">
+                    <option value="">Semua</option>
+                    <option value="BBAR" {{ request('kategori_bahan') == 'BBAR' ? 'selected' : '' }}>Bahan Baku Bar</option>
+                    <option value="BBKTC" {{ request('kategori_bahan') == 'BBKTC' ? 'selected' : '' }}>Bahan Baku Kitchen</option>
+                </select>
+            </div>
+        </div>
+    </form>
+</div>
 {{-- sort by end --}}
+
     <!-- Modal Tambah Bahan Bar -->
     <div class="modal fade" id="addBahanBarModal" tabindex="-1" aria-labelledby="addBahanBarModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -63,8 +70,17 @@
                             <input type="text" class="form-control" id="nama_bahan" name="nama_bahan" required>
                         </div>
                         <div class="mb-3">
+                            <label for="tipe" class="form-label">Tipe Bahan</label>
+                            <select name="tipe" class="form-control" required readonly>
+                                {{-- <option value="process">Process</option> --}}
+                                <option value="non-process">Non-Process</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
                             <label for="jenis_bahan" class="form-label">Jenis Bahan</label>
                             <select class="form-control" id="jenis_bahan" name="jenis_bahan" required>
+                                <option value="" disabled selected hidden>Pilih Jenis Bahan</option>
                                 <option value="kopi">Kopi</option>
                                 <option value="milk">Milk</option>
                                 <option value="syrup">Syrup</option>
@@ -74,12 +90,11 @@
                                 <option value="topping">Topping</option>
                                 <option value="buah">Buah</option>
                                 <option value="equip">Equipment</option>
-                                <option value="proses">Proses</option>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label for="kategori_bahan" class="form-label">Kategori bahan</label>
-                            <select class="form-control" id="kategori_bahan" name="kategori_bahan" required>
+                            <select class="form-control" id="kategori_bahan" name="kategori_bahan" required readonly>
                                 @foreach($kategoris as $kategori)
                                     @if(str_starts_with($kategori->kode_kategori, 'BBAR'))
                                         <option value="{{ $kategori->nama_kategori }}">{{ $kategori->nama_kategori }}</option>
@@ -96,10 +111,6 @@
                                 <option value="gram">Gram/ml</option>
                                 <option value="buah">Buah</option>
                             </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="status" class="form-label">Status</label>
-                            <input type="text" class="form-control" id="status" name="status" readonly>
                         </div>
                         <button type="submit" class="btn btn-primary">Simpan</button>
                     </form>
@@ -141,8 +152,15 @@
                             <input type="text" class="form-control" id="nama_bahan" name="nama_bahan" required>
                         </div>
                         <div class="mb-3">
+                            <label for="tipe" class="form-label">Tipe Bahan</label>
+                            <select name="tipe" class="form-control" required readonly>
+                                <option value="non-process">Non-Process</option>
+                            </select>
+                        </div>   
+                        <div class="mb-3">
                             <label for="jenis_bahan" class="form-label">Jenis Bahan</label>
                             <select class="form-control" id="jenis_bahan" name="jenis_bahan" required>
+                                <option value="" disabled selected hidden>Pilih Jenis Bahan</option>
                                 <option value="poultry">Poultry</option>
                                 <option value="herbpowder">Herb & Powder</option>
                                 <option value="grosary">Grosary</option>
@@ -152,9 +170,9 @@
                         </div>
                         <div class="mb-3">
                             <label for="kategori_bahan" class="form-label">Kategori bahan</label>
-                            <select class="form-control" id="kategori_bahan" name="kategori_bahan" required>
+                            <select class="form-control" id="kategori_bahan" name="kategori_bahan" required readonly>
                                 @foreach($kategoris as $kategori)
-                                    @if(str_starts_with($kategori->kode_kategori, 'BB'))
+                                    @if(str_starts_with($kategori->kode_kategori, 'BBKTC'))
                                         <option value="{{ $kategori->nama_kategori }}">{{ $kategori->nama_kategori }}</option>
                                     @endif
                                 @endforeach
@@ -169,10 +187,6 @@
                                 <option value="gram">Gram/ml</option>
                                 <option value="buah">Buah</option>
                             </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="status" class="form-label">Status</label>
-                            <input type="text" class="form-control" id="status" name="status" readonly>
                         </div>
                         <button type="submit" class="btn btn-primary">Simpan</button>
                     </form>
@@ -220,7 +234,7 @@
                         <form action="{{ route('bahan.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus bahan ini?')">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
+                            <button type="submit" class="btn btn-danger btn-sm btn-delete">Hapus</button>
                         </form>
                     </td>
                 </tr>
@@ -240,6 +254,13 @@
                                     <div class="mb-3">
                                         <label for="nama_bahan" class="form-label">Nama Bahan</label>
                                         <input type="text" class="form-control" id="nama_bahan" name="nama_bahan" value="{{ $item->nama_bahan }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="tipe" class="form-label">Tipe</label>
+                                        <select name="tipe" class="form-control" required>
+                                            <option value="process">Process</option>
+                                            <option value="non-process">Non-Process</option>
+                                        </select>
                                     </div>
                                     <div class="mb-3">
                                         <label for="batas_minimum" class="form-label">Batas Minimum</label>
@@ -271,12 +292,11 @@
     @if(session('success'))
         swal("Berhasil!", "{{ session('success') }}", "success");
     @endif
-
+    
     document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("sortBahan").addEventListener("change", function () {
         let sortValue = this.value;
         let url = "{{ route('bahan.index') }}?sort=" + sortValue;
-
         fetch(url)
             .then(response => response.text())
             .then(data => {
@@ -287,6 +307,7 @@
             .catch(error => console.error("Error fetching sorted data:", error));
     });
 });
+
 </script>
 <style>
     @media (max-width: 768px) {

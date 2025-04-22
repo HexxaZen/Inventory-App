@@ -4,7 +4,7 @@
 <div class="container mt-5">
     <div class="card shadow-sm mx-5 my-5">
         <div class="card-header d-flex flex-wrap align-items-center justify-content-between">
-            <h4 class="card-title mb-2">Laporan Daftar Bahan Baku</h4>
+            <h4 class="card-title mb-2">Laporan Bahan Baku</h4>
             <button class="btn btn-primary" onclick="window.location.href='{{ route('laporan.bahan.pdf') }}'">
                 <i class="fas fa-arrow-down"></i> DOWNLOAD PDF
             </button>

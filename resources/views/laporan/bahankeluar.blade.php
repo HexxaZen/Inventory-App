@@ -27,7 +27,7 @@
             </form>
             
             <div class="table-responsive">
-                @if ($bahanKeluar->isEmpty())
+                @if ($dataKeluar->isEmpty())
                     <div class="alert alert-warning text-center">Maaf, tidak ada data di tanggal ini</div>
                 @else
                     <table class="table table-bordered table-hover text-center">
