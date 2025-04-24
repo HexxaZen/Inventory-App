@@ -68,7 +68,7 @@
 
     <!-- Start Home Section -->
     <section id="home" class="hero-wrap js-fullheight"
-    style="background-image: url('{{ asset('landingpage/images/homebg.jpg') }}'); background-size: cover; background-position: center;"
+    style="background-image: url('{{ secure_asset('landingpage/images/homebg.jpg') }}'); background-size: cover; background-position: center;"
     data-stellar-background-ratio="0.5">
     <div class="overlay"></div>
     <div class="container">
@@ -134,23 +134,23 @@
         </svg></div>
 
 
-    <script src="{{ asset('landingpage/js/jquery.min.js') }}"></script>
-    <script src="{{ asset('landingpage/js/jquery-migrate-3.0.1.min.js') }}"></script>
-    <script src="{{ asset('landingpage/js/popper.min.js') }}"></script>
-    <script src="{{ asset('landingpage/js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('landingpage/js/jquery.easing.1.3.js') }}"></script>
-    <script src="{{ asset('landingpage/js/jquery.waypoints.min.js') }}"></script>
-    <script src="{{ asset('landingpage/js/jquery.stellar.min.js') }}"></script>
-    <script src="{{ asset('landingpage/js/owl.carousel.min.js') }}"></script>
-    <script src="{{ asset('landingpage/js/jquery.magnific-popup.min.js') }}"></script>
-    <script src="{{ asset('landingpage/js/aos.js') }}"></script>
-    <script src="{{ asset('landingpage/js/jquery.animateNumber.min.js') }}"></script>
-    <script src="{{ asset('landingpage/js/scrollax.min.js') }}"></script>
+    <script src="{{ secure_asset('landingpage/js/jquery.min.js') }}"></script>
+    <script src="{{ secure_asset('landingpage/js/jquery-migrate-3.0.1.min.js') }}"></script>
+    <script src="{{ secure_asset('landingpage/js/popper.min.js') }}"></script>
+    <script src="{{ secure_asset('landingpage/js/bootstrap.min.js') }}"></script>
+    <script src="{{ secure_asset('landingpage/js/jquery.easing.1.3.js') }}"></script>
+    <script src="{{ secure_asset('landingpage/js/jquery.waypoints.min.js') }}"></script>
+    <script src="{{ secure_asset('landingpage/js/jquery.stellar.min.js') }}"></script>
+    <script src="{{ secure_asset('landingpage/js/owl.carousel.min.js') }}"></script>
+    <script src="{{ secure_asset('landingpage/js/jquery.magnific-popup.min.js') }}"></script>
+    <script src="{{ secure_asset('landingpage/js/aos.js') }}"></script>
+    <script src="{{ secure_asset('landingpage/js/jquery.animateNumber.min.js') }}"></script>
+    <script src="{{ secure_asset('landingpage/js/scrollax.min.js') }}"></script>
     <script
-        src="{{ asset('landingpage/https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false') }}">
+        src="{{ secure_asset('landingpage/https://maps.googleapis.com/maps/api/js?key=AIzaSyBVWaKrjvy3MaE7SQ74_uJiULgl1JY0H2s&sensor=false') }}">
     </script>
-    <script src="{{ asset('landingpage/js/google-map.js') }}"></script>
-    <script src="{{ asset('landingpage/js/main.js') }}"></script>
+    <script src="{{ secure_asset('landingpage/js/google-map.js') }}"></script>
+    <script src="{{ secure_asset('landingpage/js/main.js') }}"></script>
 </body>
 
 </html>

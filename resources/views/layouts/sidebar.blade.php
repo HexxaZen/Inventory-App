@@ -2,7 +2,7 @@
     <div class="sidebar-logo">
         <div class="logo-header" data-background-color="dark" style="background-color: #3a3a3a;">
             <a href="{{ route('dashboard') }}" class="logo">
-                <img src="{{ asset('admin/assets/img/kaiadmin/favicon.png') }}" alt="Merra's Logo" class="navbar-brand" height="70" style="padding-top:10px;" />
+                <img secure_="{{ secure_asset('admin/assets/img/kaiadmin/favicon.png') }}" alt="Merra's Logo" class="navbar-brand" height="70" style="padding-top:10px;" />
             </a>
             <div class="nav-toggle d-flex align-items-center">
                 <!-- Toggle open (misalnya saat sidebar tertutup) -->
