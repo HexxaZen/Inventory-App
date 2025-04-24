@@ -187,9 +187,6 @@
                                                     <th>Nama Menu</th>
                                                     <th>Komposisi Menu</th>
                                                     <th>Status</th>
-                                                    @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Admin'))
-                                                        <th>Aksi</th>
-                                                    @endif
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -210,22 +207,6 @@
                                                                     {{ $bahanHabis->pluck('nama_bahan')->implode(', ') }}
                                                                 </span>
                                                             </td>
-
-                                                            @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Admin'))
-                                                                <td class="text-center">
-                                                                    <button class="btn btn-warning btn-sm mb-1"
-                                                                        data-bs-toggle="modal"
-                                                                        data-bs-target="#editmenuModal{{ $item->id }}">Edit</button>
-                                                                    <form action="{{ route('menu.destroy', $item->id) }}"
-                                                                        method="POST" class="d-inline"
-                                                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus menu ini?')">
-                                                                        @csrf
-                                                                        @method('DELETE')
-                                                                        <button type="submit"
-                                                                            class="btn btn-danger btn-sm btn-delete btn-delete">Hapus</button>
-                                                                    </form>
-                                                                </td>
-                                                            @endif
                                                         </tr>
                                                     @endif
                                                 @endforeach
