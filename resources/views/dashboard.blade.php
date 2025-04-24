@@ -237,6 +237,7 @@
                         </div>
                     </div>
                     {{-- end button --}}
+<<<<<<< HEAD
 
                     @if ($bahan_low_stock->isNotEmpty())
                         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -277,4 +278,53 @@
                             }
                         </style>
                     @endif
+=======
+                    {{-- Menu Kosong --}}
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header bg-primary text-white">
+                                    <h4 class="card-title mb-0"style="color: aliceblue;">Unavailable Menu Karena Bahan Kosong</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="table-responsive">
+                                        <table id="basic-datatables"
+                                            class="table table-bordered table-striped table-hover">
+                                            <thead class="text-center">
+                                                <tr>
+                                                    <th>Kode Menu</th>
+                                                    <th>Nama Menu</th>
+                                                    <th>Komposisi Menu</th>
+                                                    <th>Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($menu as $item)
+                                                    @php
+                                                        $bahanHabis = $item->bahans->where('sisa_stok', '<=', 0);
+                                                    @endphp
+                                                    @if ($bahanHabis->isNotEmpty())
+                                                        {{-- Hanya tampilkan jika ada bahan habis --}}
+                                                        <tr>
+                                                            <td>{{ $item->kode_menu }}</td>
+                                                            <td>{{ $item->nama_menu }}</td>
+                                                            <td>{{ implode(', ', $item->bahans->pluck('nama_bahan')->toArray()) }}
+                                                            </td>
+                                                            <td class="text-center">
+                                                                <span class="badge bg-danger p-2">
+                                                                    Bahan Habis:
+                                                                    {{ $bahanHabis->pluck('nama_bahan')->implode(', ') }}
+                                                                </span>
+                                                            </td>
+                                                        </tr>
+                                                    @endif
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+>>>>>>> 4916c37 (Fix: Bootstrap collapse menu not working after deploy)
                 @endsection
