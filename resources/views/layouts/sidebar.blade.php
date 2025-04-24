@@ -4,10 +4,18 @@
             <a href="{{ route('dashboard') }}" class="logo">
                 <img src="{{ asset('admin/assets/img/kaiadmin/favicon.png') }}" alt="Merra's Logo" class="navbar-brand" height="70" style="padding-top:10px;" />
             </a>
-            <div class="nav-toggle">
-                <button class="btn btn-toggle toggle-sidebar"><i class="gg-menu-right"></i></button>
-                <button class="btn btn-toggle sidenav-toggler"><i class="gg-menu-left"></i></button>
+            <div class="nav-toggle d-flex align-items-center">
+                <!-- Toggle open (misalnya saat sidebar tertutup) -->
+                <button class="btn btn-toggle toggle-sidebar" type="button" aria-label="Open sidebar">
+                    <i class="gg-menu-right"></i>
+                </button>
+            
+                <!-- Toggle close (misalnya saat sidebar terbuka) -->
+                <button class="btn btn-toggle sidenav-toggler d-none" type="button" aria-label="Close sidebar">
+                    <i class="gg-menu-left"></i>
+                </button>
             </div>
+            
             <button class="topbar-toggler more"><i class="gg-more-vertical-alt"></i></button>
         </div>
     </div>
