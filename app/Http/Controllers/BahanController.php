@@ -37,7 +37,7 @@ class BahanController extends Controller
         });
     }
 
-    $bahan = $query->orderBy('created_at', 'desc')->get();
+    $bahan = $query->orderBy('status', 'desc')->get();
 
     // Proses status stok
     foreach ($bahan as $item) {

@@ -5533,7 +5533,7 @@ label.error {
   .gg-menu::after {
     top: 6px; }
 
-.gg-menu-left {
+.fa-solid fa-burger {
   transform: scale(var(--ggs, 1));
   box-sizing: border-box;
   position: relative;
@@ -5542,7 +5542,7 @@ label.error {
   height: 2px;
   border-radius: 3px;
   background: currentColor; }
-  .gg-menu-left::after, .gg-menu-left::before {
+  .fa-solid fa-burger::after, .fa-solid fa-burger::before {
     box-sizing: border-box;
     position: relative;
     display: block;
@@ -5550,16 +5550,16 @@ label.error {
     height: 2px;
     border-radius: 3px;
     background: currentColor; }
-  .gg-menu-left::after, .gg-menu-left::before {
+  .fa-solid fa-burger::after, .fa-solid fa-burger::before {
     content: "";
     position: absolute;
     top: -6px;
     width: 10px; }
-  .gg-menu-left::after {
+  .fa-solid fa-burger::after {
     top: 6px;
     width: 14px; }
 
-.gg-menu-right {
+.fa-solid fa-burger {
   transform: scale(var(--ggs, 1));
   box-sizing: border-box;
   position: relative;
@@ -5568,7 +5568,7 @@ label.error {
   height: 2px;
   border-radius: 3px;
   background: currentColor; }
-  .gg-menu-right::after, .gg-menu-right::before {
+  .fa-solid fa-burger::after, .fa-solid fa-burger::before {
     box-sizing: border-box;
     position: relative;
     display: block;
@@ -5576,19 +5576,19 @@ label.error {
     height: 2px;
     border-radius: 3px;
     background: currentColor; }
-  .gg-menu-right::after, .gg-menu-right::before {
+  .fa-solid fa-burger::after, .fa-solid fa-burger::before {
     content: "";
     position: absolute;
     top: -6px;
     right: 0;
     width: 10px; }
-  .gg-menu-right::after {
+  .fa-solid fa-burger::after {
     top: 6px;
     width: 14px; }
 
-.gg-menu-left::after, .gg-menu-left::before, .gg-menu-right::after, .gg-menu-right::before {
+.fa-solid fa-burger::after, .fa-solid fa-burger::before, .fa-solid fa-burger::after, .fa-solid fa-burger::before {
   transition: all .2s; }
-.gg-menu-left:hover::after, .gg-menu-left:hover::before, .gg-menu-right:hover::after, .gg-menu-right:hover::before {
+.fa-solid fa-burger:hover::after, .fa-solid fa-burger:hover::before, .fa-solid fa-burger:hover::after, .fa-solid fa-burger:hover::before {
   width: 100%; }
 
 .gg-menu-round {

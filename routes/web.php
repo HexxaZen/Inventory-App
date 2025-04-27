@@ -16,15 +16,18 @@ use App\Http\Controllers\LaporanBahanBakuController;
 use App\Http\Controllers\MenuTerjualController;
 use App\Http\Controllers\PemantauanController;
 use App\Http\Controllers\BahanProcessController;
+use App\Http\Controllers\StokController;
 
+Route::get('/kirim-notifikasi-stok', [StokController::class, 'kirimNotifikasiStok']);
 
 Route::get('/', function () {
     return view('welcome');
 });
-
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::middleware('web')->group(function () {
+    Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class, 'login']);
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

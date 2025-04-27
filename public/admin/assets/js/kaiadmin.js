@@ -212,7 +212,7 @@ $(document).ready(function(){
 			if (mini_sidebar == 1) {
 				$('.wrapper').removeClass('sidebar_minimize')
 				minibutton.removeClass('toggled');
-				minibutton.html('<i class="gg-menu-right"></i>');
+				minibutton.html('<i class="fa-solid fa-burger"></i>');
 				mini_sidebar = 0;
 			} else {
 				$('.wrapper').addClass('sidebar_minimize');

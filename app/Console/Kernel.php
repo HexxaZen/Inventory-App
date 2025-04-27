@@ -13,8 +13,15 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
 {
-    $schedule->command('check:low-stock')->everyMinute();
+    $schedule->call(function () {
+        $bahans = \App\Models\Bahan::where('sisa_stok', '<=', 5)->get();
+
+        if ($bahans->count()) {
+            \Mail::to('owner@coffeeshop.com')->send(new \App\Mail\StokMenipisNotification($bahans));
+        }
+    })->daily(); // bisa diganti hourly, weekly, dll.
 }
+
 
 
 

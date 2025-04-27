@@ -138,12 +138,12 @@
 </div>
 <!-- End Modal Tambah Pengguna -->
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        @if(session('success'))
-            swal("Berhasil!", "{{ session('success') }}", "success");
-        @endif
-    });
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            @if (session('success'))
+                swal("Berhasil!", "{{ session('success') }}", "success");
+            @endif
+        });
 
 </script>
 @endsection

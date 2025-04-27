@@ -5,15 +5,16 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>@yield('title', 'Dashboard | Merra Inventory')</title>
     <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="icon" href="{{ secure_asset('admin/assets/img/kaiadmin/favicon.ico') }}" type="image/x-icon" />
+    <link rel="icon" href="{{ asset('admin/assets/img/kaiadmin/favicon.ico') }}" type="image/x-icon" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.js"></script>
     <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.css" />
     <!-- Fonts and icons -->'
-    <script src="{{ secure_asset('admin/assets/js/plugin/webfont/webfont.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/plugin/webfont/webfont.min.js') }}"></script>
     <script>
         WebFont.load({
             google: {
@@ -33,14 +34,40 @@
             },
         });
     </script>
+    <style>
+        <style>.sidebar {
+            transition: all 0.3s ease;
+            transform: translateX(-100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            z-index: 1000;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        @media (min-width: 992px) {
+
+            /* Untuk desktop biasa (jangan geser sidebar) */
+            .sidebar {
+                transform: none !important;
+                position: static;
+            }
+        }
+    </style>
+
+    </style>
 
     <!-- CSS Files -->
-    <link rel="stylesheet" href="{{ secure_asset('admin/assets/css/bootstrap.min.css') }}" />
-    <link rel="stylesheet" href="{{ secure_asset('admin/assets/css/plugins.min.css') }}" />
-    <link rel="stylesheet" href="{{ secure_asset('admin/assets/css/kaiadmin.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/plugins.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/kaiadmin.min.css') }}" />
 
     <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link rel="stylesheet" href="{{ secure_asset('admin/assets/css/demo.css') }}" />
+    <link rel="stylesheet" href="{{ asset('admin/assets/css/demo.css') }}" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
 </head>
@@ -55,15 +82,15 @@
                     <!-- Logo Header -->
                     <div class="logo-header" data-background-color="dark">
                         <a href="index.html" class="logo">
-                            <img src="{{ secure_asset('admin/assets/img/kaiadmin/logomerra.png') }}" alt="navbar brand"
+                            <img src="{{ asset('admin/assets/img/kaiadmin/logomerra.png') }}" alt="navbar brand"
                                 class="navbar-brand" height="20" />
                         </a>
                         <div class="nav-toggle">
                             <button class="btn btn-toggle toggle-sidebar">
-                                <i class="gg-menu-right"></i>
+                                <i class="fa-solid fa-burger"></i>
                             </button>
                             <button class="btn btn-toggle sidenav-toggler">
-                                <i class="gg-menu-left"></i>
+                                <i class="fa-solid fa-burger"></i>
                             </button>
                         </div>
                         <button class="topbar-toggler more">
@@ -162,79 +189,136 @@
         <!-- End Custom template -->
     </div>
     <!--   Core JS Files   -->
-    <script src="{{ secure_asset('admin/assets/js/core/jquery-3.7.1.min.js') }}"></script>
-    <script src="{{ secure_asset('admin/assets/js/core/popper.min.js') }}"></script>
-    <script src="{{ secure_asset('admin/assets/js/core/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/core/jquery-3.7.1.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/core/popper.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/core/bootstrap.min.js') }}"></script>
 
     <!-- jQuery Scrollbar -->
-    <script src="{{ secure_asset('admin/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
 
     <!-- Chart JS -->
-    <script src="{{ secure_asset('admin/assets/js/plugin/chart.js/chart.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/plugin/chart.js/chart.min.js') }}"></script>
 
     <!-- jQuery Sparkline -->
-    <script src="{{ secure_asset('admin/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js') }}"></script>
 
     <!-- Chart Circle -->
-    <script src="{{ secure_asset('admin/assets/js/plugin/chart-circle/circles.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/plugin/chart-circle/circles.min.js') }}"></script>
 
     <!-- Datatables -->
-    <script src="{{ secure_asset('admin/assets/js/plugin/datatables/datatables.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/plugin/datatables/datatables.min.js') }}"></script>
 
     <!-- Bootstrap Notify -->
-    <script src="{{ secure_asset('admin/assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
 
     <!-- jQuery Vector Maps -->
-    <script src="{{ secure_asset('admin/assets/js/plugin/jsvectormap/jsvectormap.min.js') }}"></script>
-    <script src="{{ secure_asset('admin/assets/js/plugin/jsvectormap/world.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/plugin/jsvectormap/jsvectormap.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/plugin/jsvectormap/world.js') }}"></script>
 
     <!-- Sweet Alert -->
-    <script src="{{ secure_asset('admin/assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
 
     <!-- Kaiadmin JS -->
-    <script src="{{ secure_asset('admin/assets/js/kaiadmin.min.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/kaiadmin.min.js') }}"></script>
 
     <!-- Kaiadmin DEMO methods, don't include it in your project! -->
-    <script src="{{ secure_asset('admin/assets/js/setting-demo.js') }}"></script>
-    <script src="{{ secure_asset('admin/assets/js/demo.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/setting-demo.js') }}"></script>
+    <script src="{{ asset('admin/assets/js/demo.js') }}"></script>
     <script>
-        Pusher.logToConsole = true;
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleSidebarBtn = document.querySelector('.toggle-sidebar');
+            const sidenavTogglerBtn = document.querySelector('.sidenav-toggler');
+            const topbarToggler = document.querySelector('.topbar-toggler');
+            const sidebar = document.querySelector('.sidebar');
 
-        var pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
-            cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
-            forceTLS: true
-        });
+            // Fungsi untuk membuka atau menutup sidebar
+            function toggleSidebar() {
+                document.body.classList.toggle('nav_open');
+                sidebar.classList.toggle('open');
+            }
 
-        var channel = pusher.subscribe('stok-menipis');
-        channel.bind('stokMenipis', function(data) {
-            alert("⚠️ Stok " + data.bahan.nama_bahan + " menipis! Sisa: " + data.bahan.sisa_stok);
-        });
+            // Menambahkan event listener untuk toggle sidebar dengan tombol toggleSidebarBtn
+            if (toggleSidebarBtn) {
+                toggleSidebarBtn.addEventListener('click', function(e) {
+                    e.stopPropagation(); // Cegah event bubbling
+                    document.body.classList.toggle('sidebar_minimize');
+                });
+            }
 
-        $("#lineChart").sparkline([102, 109, 120, 99, 110, 105, 115], {
-            type: "line",
-            height: "70",
-            width: "100%",
-            lineWidth: "2",
-            lineColor: "#177dff",
-            fillColor: "rgba(23, 125, 255, 0.14)",
-        });
+            // Menambahkan event listener untuk toggle sidebar dengan tombol sidenavTogglerBtn
+            if (sidenavTogglerBtn) {
+                sidenavTogglerBtn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    toggleSidebar(); // Toggle sidebar pada tombol toggler
+                });
+            }
 
-        $("#lineChart2").sparkline([99, 125, 122, 105, 110, 124, 115], {
-            type: "line",
-            height: "70",
-            width: "100%",
-            lineWidth: "2",
-            lineColor: "#f3545d",
-            fillColor: "rgba(243, 84, 93, .14)",
-        });
+            // Menambahkan event listener untuk toggle topbar
+            if (topbarToggler) {
+                topbarToggler.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    document.body.classList.toggle('topbar_open');
+                });
+            }
 
-        $("#lineChart3").sparkline([105, 103, 123, 100, 95, 105, 115], {
-            type: "line",
-            height: "70",
-            width: "100%",
-            lineWidth: "2",
-            lineColor: "#ffa534",
-            fillColor: "rgba(255, 165, 52, .14)",
+            // Tutup sidebar saat klik di luar sidebar
+            document.addEventListener('click', function(e) {
+                const isSidebarOpen = sidebar.classList.contains('open');
+
+                if (isSidebarOpen && !sidebar.contains(e.target) && !sidenavTogglerBtn.contains(e.target)) {
+                    sidebar.classList.remove('open');
+                    document.body.classList.remove('nav_open');
+                }
+            });
+
+            // Cegah sidebar tertutup ketika klik di dalam sidebar
+            if (sidebar) {
+                sidebar.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            }
+
+            // Pusher untuk notifikasi stok menipis
+            Pusher.logToConsole = true;
+
+            var pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
+                cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
+                forceTLS: true
+            });
+
+            var channel = pusher.subscribe('stok-menipis');
+            channel.bind('stokMenipis', function(data) {
+                alert("⚠️ Stok " + data.bahan.nama_bahan + " menipis! Sisa: " + data.bahan.sisa_stok);
+            });
+
+            // Inisialisasi grafik sparkline
+            $("#lineChart").sparkline([102, 109, 120, 99, 110, 105, 115], {
+                type: "line",
+                height: "70",
+                width: "100%",
+                lineWidth: "2",
+                lineColor: "#177dff",
+                fillColor: "rgba(23, 125, 255, 0.14)",
+            });
+
+            $("#lineChart2").sparkline([99, 125, 122, 105, 110, 124, 115], {
+                type: "line",
+                height: "70",
+                width: "100%",
+                lineWidth: "2",
+                lineColor: "#f3545d",
+                fillColor: "rgba(243, 84, 93, .14)",
+            });
+
+            $("#lineChart3").sparkline([105, 103, 123, 100, 95, 105, 115], {
+                type: "line",
+                height: "70",
+                width: "100%",
+                lineWidth: "2",
+                lineColor: "#ffa534",
+                fillColor: "rgba(255, 165, 52, .14)",
+            });
+
         });
     </script>
 

@@ -29,7 +29,7 @@ class LowStockNotification extends Notification
             ->subject('⚠️ Peringatan: Stok Bahan Menipis')
             ->greeting('Halo, Admin!')
             ->line('Bahan berikut hampir habis:')
-            ->line('🛒 Nama: ' . $this->bahan->nama_bahan)
+            ->line('🛒 Nama Bahan\: ' . $this->bahan->nama_bahan)
             ->line('📉 Sisa Stok: ' . $this->bahan->sisa_stok . ' ' . $this->bahan->satuan)
             ->line('📌 Batas Minimum: ' . $this->bahan->batas_minimum . ' ' . $this->bahan->satuan)
             ->action('Cek Stok', url('/dashboard/bahan'))

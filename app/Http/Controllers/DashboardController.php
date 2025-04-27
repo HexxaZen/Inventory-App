@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Menu;
+use App\Models\Bahan;
 
 class DashboardController extends Controller
 {
@@ -24,8 +25,9 @@ class DashboardController extends Controller
     }
     public function dashboard()
     {
+        $bahan_low_stock = Bahan::whereColumn('sisa_stok', '<=', 'batas_minimum')->get();
         $menu = Menu::with('bahans')->get();
-        return view('dashboard', compact('menu'));
+        return view('dashboard', compact('menu', 'bahan_low_stock'));
     }
     public function indexlaporan()
     {

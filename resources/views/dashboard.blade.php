@@ -165,7 +165,7 @@
                                     </a>
                                 </div>
                             @endif
-                            
+
                         </div>
                     </div>
 
@@ -175,7 +175,8 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-header bg-primary text-white">
-                                    <h4 class="card-title mb-0"style="color: aliceblue;">Unavailable Menu Karena Bahan Kosong</h4>
+                                    <h4 class="card-title mb-0"style="color: aliceblue;">Unavailable Menu Karena Bahan
+                                        Kosong</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
@@ -236,4 +237,43 @@
                             </div>
                         </div>
                     </div>
+                    @if ($bahan_low_stock->isNotEmpty())
+                        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function() {
+                                Swal.fire({
+                                    title: '⚠️ Peringatan Stok Menipis!',
+                                    html: `
+                    <ul style="list-style-type: none; padding: 0;">
+                        @foreach ($bahan_low_stock as $bahan)
+                            <li style="text-align: left; margin-bottom: 8px;">
+                                <strong>{{ $bahan->nama_bahan }}</strong> 
+                                (Stok: {{ $bahan->sisa_stok }} | Minimum: {{ $bahan->batas_minimum }})
+                            </li>
+                        @endforeach
+                    </ul>
+                `,
+                                    icon: 'warning',
+                                    showCancelButton: true,
+                                    confirmButtonColor: '#3085d6',
+                                    cancelButtonColor: '#d33',
+                                    confirmButtonText: 'Lihat Bahan',
+                                    cancelButtonText: 'Nanti Saja',
+                                    customClass: {
+                                        popup: 'swal-wide' // opsional kalau mau pop-up nya lebih lebar
+                                    }
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = "{{ route('bahan.index') }}";
+                                    }
+                                })
+                            });
+                        </script>
+
+                        <style>
+                            .swal-wide {
+                                width: 600px !important;
+                            }
+                        </style>
+                    @endif
                 @endsection

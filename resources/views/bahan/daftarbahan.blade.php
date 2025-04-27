@@ -211,7 +211,15 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($bahan->sortByDesc('created_at') as $item)
+                @foreach($bahan->sortBy(function($item) {
+                    if ($item->sisa_stok <= 0) {
+                        return 0; // Habis (urutan pertama)
+                    } elseif ($item->sisa_stok <= $item->batas_minimum) {
+                        return 1; // Menipis (urutan kedua)
+                    } else {
+                        return 2; // Aman (urutan ketiga)
+                    }
+                }) as $item)                
                 <tr>
                     <td>{{ $item->kode_bahan }}</td>
                     <td>{{ $item->nama_bahan }}</td>
