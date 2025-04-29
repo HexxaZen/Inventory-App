@@ -27,12 +27,6 @@ class Menu extends Model
                     ->withPivot('gramasi')
                     ->withTimestamps();
     }
-
-
-
-    /**
-     * Aksesori untuk mendapatkan status menu berdasarkan stok bahan
-     */
     public function getStatusMenuAttribute()
     {
         $bahanHabis = $this->bahans->whereNotNull('sisa_stok')->where('sisa_stok', '<=', 0);

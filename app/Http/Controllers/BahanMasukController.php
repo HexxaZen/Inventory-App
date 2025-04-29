@@ -16,7 +16,7 @@ class BahanMasukController extends Controller
     public function index()
     {
         $user = Auth::user();
-        $bahanMasuk = BahanMasuk::with('bahan')->get();
+        $bahanMasuk = BahanMasuk::with('bahan', 'bahanProcess')->get();
 
         $query = Bahan::query();
 
@@ -77,56 +77,70 @@ class BahanMasukController extends Controller
                 if ($jumlahMasuk <= 0)
                     continue;
 
-                // Ambil bahan sesuai tipe
-                $bahan = $tipe === 'proses'
-                    ? BahanProcess::with('komposisis.bahan')->find($bahan_id)
-                    : Bahan::find($bahan_id);
-
-                if (!$bahan)
-                    continue;
-
-                // Simpan data bahan masuk
-                BahanMasuk::create([
-                    'tanggal_masuk' => $request->tanggal_masuk,
-                    'kode_bahan' => $bahan->kode_bahan,
-                    'nama_bahan' => $bahan->nama_bahan,
-                    'jumlah_masuk' => $jumlahMasuk,
-                    'satuan' => $bahan->satuan,
-                    'tipe' => $tipe
-                ]);
-
-                // Tambah stok
-                $bahan->increment('sisa_stok', $jumlahMasuk);
-
-                // Jika bahan proses, kurangi bahan-bahan komposisi
                 if ($tipe === 'proses') {
-                    $totalGramasi = $bahan->komposisis->sum('gramasi');
+                    $bahanProses = BahanProcess::with(['komposisis.bahan', 'komposisiBahanProses.bahan'])->find($bahan_id);
+                    if (!$bahanProses)
+                        continue;
 
-                    if ($totalGramasi > 0) {
-                        $rasio = $jumlahMasuk / $totalGramasi;
+                    // Simpan bahan masuk
+                    BahanMasuk::create([
+                        'tanggal_masuk' => $request->tanggal_masuk,
+                        'kode_bahan' => $bahanProses->kode_bahan,
+                        'nama_bahan' => $bahanProses->nama_bahan,
+                        'jumlah_masuk' => $jumlahMasuk,
+                        'satuan' => $bahanProses->satuan,
+                        'tipe' => $tipe
+                    ]);
 
-                        foreach ($bahan->komposisis as $komposisi) {
-                            $bahanNonProses = $komposisi->bahan;
-                            $jumlahKeluar = $komposisi->gramasi * $rasio;
+                    // Hitung total gramasi bahan non-proses dari relasi 'komposisis'
+                    $totalGramasi = $bahanProses->komposisis->sum('gramasi');
+                    $sisaStokBaru = $jumlahMasuk * $totalGramasi;
 
-                            if ($bahanNonProses && $jumlahKeluar > 0) {
-                                $bahanNonProses->decrement('sisa_stok', $jumlahKeluar);
+                    $bahanProses->update([
+                        'jumlah_batch' => $jumlahMasuk,
+                        'sisa_stok' => $sisaStokBaru
+                    ]);
 
-                                BahanKeluar::create([
-                                    'tanggal_keluar' => $request->tanggal_masuk,
-                                    'kode_bahan' => $bahanNonProses->kode_bahan,
-                                    'nama_bahan' => $bahanNonProses->nama_bahan,
-                                    'jumlah_keluar' => $jumlahKeluar,
-                                    'satuan' => $bahanNonProses->satuan
-                                ]);
-                            }
+                    // Kurangi stok bahan non-proses dari relasi 'komposisis'
+                    foreach ($bahanProses->komposisis as $komposisi) {
+                        $bahanNonProses = $komposisi->bahan;
+                        $jumlahKeluar = $jumlahMasuk * $komposisi->gramasi;
+
+                        if ($bahanNonProses && $jumlahKeluar > 0) {
+                            $bahanNonProses->decrement('sisa_stok', $jumlahKeluar);
                         }
                     }
+
+                    // Kurangi stok bahan proses lain dari relasi 'komposisiBahanProses'
+                    foreach ($bahanProses->komposisiBahanProses as $komposisiProses) {
+                        $bahanProsesLain = $komposisiProses->bahan;
+                        $jumlahKeluar = $jumlahMasuk * $komposisiProses->gramasi;
+
+                        if ($bahanProsesLain && $jumlahKeluar > 0) {
+                            $bahanProsesLain->decrement('sisa_stok', $jumlahKeluar);
+                        }
+                    }
+
+                } else {
+                    $bahan = Bahan::find($bahan_id);
+                    if (!$bahan)
+                        continue;
+
+                    BahanMasuk::create([
+                        'tanggal_masuk' => $request->tanggal_masuk,
+                        'kode_bahan' => $bahan->kode_bahan,
+                        'nama_bahan' => $bahan->nama_bahan,
+                        'jumlah_masuk' => $jumlahMasuk,
+                        'satuan' => $bahan->satuan,
+                        'tipe' => $tipe
+                    ]);
+
+                    $bahan->increment('sisa_stok', $jumlahMasuk);
                 }
             }
         });
 
-        return redirect()->route('bahan.bahanmasuk')->with('success');
+        return redirect()->route('bahan.bahanmasuk')->with('success', 'Data bahan masuk berhasil disimpan.');
     }
 
 
@@ -176,26 +190,26 @@ class BahanMasukController extends Controller
 
                         $bahanBaku->save();
 
-                        // Update atau tambah BahanKeluar
-                        $keluar = BahanKeluar::where('bahan_masuk_id', $bahanMasuk->id)
-                            ->where('bahan_id', $bahanBaku->id)
-                            ->first();
+                        // // Update atau tambah BahanKeluar
+                        // $keluar = BahanKeluar::where('bahan_masuk_id', $bahanMasuk->id)
+                        //     ->where('bahan_id', $bahanBaku->id)
+                        //     ->first();
 
-                        if ($keluar) {
-                            // Update BahanKeluar
-                            $keluar->jumlah_keluar += $selisih * $gramasi;
-                            $keluar->save();
-                        } else {
-                            // Tambah BahanKeluar baru
-                            BahanKeluar::create([
-                                'tanggal_keluar' => now(),
-                                'kode_bahan' => $bahanBaku->kode_bahan,
-                                'nama_bahan' => $bahanBaku->nama_bahan,
-                                'jumlah_keluar' => $selisih * $gramasi,
-                                'satuan' => $bahanBaku->satuan,
-                                'bahan_masuk_id' => $bahanMasuk->id, // Relasi ke BahanMasuk
-                            ]);
-                        }
+                        // if ($keluar) {
+                        //     // Update BahanKeluar
+                        //     $keluar->jumlah_keluar += $selisih * $gramasi;
+                        //     $keluar->save();
+                        // } else {
+                        //     // Tambah BahanKeluar baru
+                        //     BahanKeluar::create([
+                        //         'tanggal_keluar' => now(),
+                        //         'kode_bahan' => $bahanBaku->kode_bahan,
+                        //         'nama_bahan' => $bahanBaku->nama_bahan,
+                        //         'jumlah_keluar' => $selisih * $gramasi,
+                        //         'satuan' => $bahanBaku->satuan,
+                        //         'bahan_masuk_id' => $bahanMasuk->id, // Relasi ke BahanMasuk
+                        //     ]);
+                        // }
                     }
                 }
             }
@@ -204,52 +218,74 @@ class BahanMasukController extends Controller
         $bahanMasuk->jumlah_masuk = $newJumlah;
         $bahanMasuk->save();
 
-        return redirect()->back()->with('success', 'Bahan masuk berhasil diperbarui.');
+        return redirect()->back()->with('success');
     }
 
 
 
 
     public function destroy($id)
-    {
-        $bahanMasuk = BahanMasuk::findOrFail($id);
-        $kodeBahan = $bahanMasuk->kode_bahan;
-        $jumlahMasuk = $bahanMasuk->jumlah_masuk;
+{
+    $bahanMasuk = BahanMasuk::findOrFail($id);
+    $kodeBahan = $bahanMasuk->kode_bahan;
+    $jumlahMasuk = $bahanMasuk->jumlah_masuk;
 
+    DB::transaction(function () use ($bahanMasuk, $kodeBahan, $jumlahMasuk) {
         $bahan = Bahan::where('kode_bahan', $kodeBahan)->first();
 
         if ($bahan) {
-            // Tipe Non-Proses
+            // Bahan Non-Proses
             $bahan->sisa_stok = max(0, $bahan->sisa_stok - $jumlahMasuk);
             $bahan->save();
         } else {
-            // Tipe Proses
-            $bahanProcess = BahanProcess::where('kode_bahan', $kodeBahan)->first();
+            // Bahan Proses
+            $bahanProcess = BahanProcess::with('komposisis.bahan')->where('kode_bahan', $kodeBahan)->first();
+
             if ($bahanProcess) {
-                $bahanProcess->sisa_stok = max(0, $bahanProcess->sisa_stok - $jumlahMasuk);
+                // Kurangi jumlah_batch
+                $bahanProcess->jumlah_batch = max(0, $bahanProcess->jumlah_batch - $jumlahMasuk);
+
+                // Hitung ulang sisa_stok
+                $totalGramasi = $bahanProcess->komposisis->sum(function ($komposisi) {
+                    return $komposisi->gramasi;
+                });
+                $bahanProcess->sisa_stok = $bahanProcess->jumlah_batch * $totalGramasi;
                 $bahanProcess->save();
 
-                // Kembalikan stok bahan baku yang dikurangi sebelumnya
-                foreach ($bahanProcess->bahans as $bahanBaku) {
-                    $gramasi = $bahanBaku->pivot->gramasi;
-                    $totalPengaruh = $jumlahMasuk * $gramasi;
+                // Kembalikan stok bahan non-proses (komposisi)
+                foreach ($bahanProcess->komposisis as $komposisi) {
+                    $bahanKomposisi = $komposisi->bahan;
+                    $jumlahKembali = $jumlahMasuk * $komposisi->gramasi;
 
-                    $bahanBaku->sisa_stok += $totalPengaruh;
-                    $bahanBaku->save();
-
-                    // Hapus BahanKeluar terkait
-                    BahanKeluar::where('bahan_masuk_id', $bahanMasuk->id)
-                        ->where('bahan_id', $bahanBaku->id)
-                        ->delete();
+                    if ($bahanKomposisi) {
+                        $bahanKomposisi->increment('sisa_stok', $jumlahKembali);
+                    }
                 }
+
+                // Kembalikan stok bahan proses lain (komposisi dalam proses)
+                foreach ($bahanProcess->komposisiBahanProses as $komposisi) {
+                    $bahanProsesLain = $komposisi->bahan;
+
+                    // Pastikan ini bahan proses (bukan bahan biasa)
+                    if ($bahanProsesLain instanceof \App\Models\BahanProcess) {
+                        $jumlahKembaliProses = $jumlahMasuk * $komposisi->gramasi;
+
+                        if ($jumlahKembaliProses > 0) {
+                            $bahanProsesLain->increment('sisa_stok', $jumlahKembaliProses);
+                        }
+                    }
+                }
+
+                // Hapus data bahan keluar yang terkait
+                BahanKeluar::where('bahan_masuk_id', $bahanMasuk->id)->delete();
             }
         }
 
+        // Hapus bahan masuk
         $bahanMasuk->delete();
+    });
 
-        return redirect()->route('bahan.bahanmasuk')->with('success');
-    }
-
-
+    return redirect()->route('bahan.bahanmasuk')->with('success', 'Data bahan masuk berhasil dihapus dan stok dikembalikan.');
+}
 
 }

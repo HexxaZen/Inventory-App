@@ -12,6 +12,7 @@ class BahanProcess extends Model
     protected $fillable = [
         'kode_bahan',
         'nama_bahan',
+        'jumlah_batch',
         'tipe',
         'satuan',
         'sisa_stok',
@@ -19,26 +20,49 @@ class BahanProcess extends Model
         'kategori_bahan'
     ];
 
-    /**
-     * Relasi many-to-many ke model Bahan dengan pivot gramasi
-     */
+    public function bahan()
+    {
+        return $this->belongsTo(Bahan::class, 'kode_bahan');
+    }
+
     public function bahans()
     {
         return $this->belongsToMany(Bahan::class, 'bahan_process_bahan', 'bahan_process_id', 'bahan_id')
-                    ->withPivot('gramasi')
-                    ->withTimestamps();
+            ->withPivot('gramasi')
+            ->withTimestamps();
     }
+
+    /**
+     * Relasi many-to-many ke BahanProcess lain sebagai komposisi (bahan proses dalam bahan proses)
+     */
+    public function bahanProcesses()
+    {
+        return $this->belongsToMany(BahanProcess::class, 'komposisis', 'bahan_process_id', 'bahan_id')
+            ->withPivot('gramasi')
+            ->withTimestamps();
+    }
+
+    /**
+     * Relasi hasMany ke komposisi detail, jika kamu ingin pakai model pivot eksplisit
+     */
     public function komposisis()
     {
-        return $this->hasMany(\App\Models\BahanProcessBahan::class, 'bahan_process_id');
-    }    
+        return $this->hasMany(BahanProcessBahan::class, 'bahan_process_id');
+    }
+    public function komposisiBahanProses()
+    {
+        return $this->hasMany(Komposisis::class, 'bahan_process_id');
+    }
+    // Relasi kebalikannya: bahan proses ini digunakan sebagai komposisi oleh bahan proses lain
+    public function digunakanDalam()
+    {
+        return $this->hasMany(Komposisis::class, 'bahan_id');
+    }
     public function bahanMasuk()
     {
         return $this->hasMany(BahanMasuk::class, 'kode_bahan', 'kode_bahan');
     }
-    /**
-     * Relasi ke Kategori (many-to-one)
-     */
+
     public function kategori()
     {
         return $this->belongsTo(Kategori::class);

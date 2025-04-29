@@ -57,9 +57,11 @@ class Bahan extends Model
                     ->withTimestamps();
     }
 
-    /**
-     * Relasi dengan tabel BahanKeluar berdasarkan kode_bahan
-     */
+    public function bahanProcess()
+{
+    return $this->hasOne(BahanProcess::class, 'kode_bahan'); // Sesuaikan dengan foreign key
+}
+
     public function bahanKeluar()
     {
         return $this->hasMany(BahanKeluar::class, 'kode_bahan', 'kode_bahan');

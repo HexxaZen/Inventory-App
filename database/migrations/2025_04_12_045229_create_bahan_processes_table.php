@@ -11,6 +11,7 @@ class CreateBahanProcessesTable extends Migration
             $table->id();
             $table->string('kode_bahan')->unique();
             $table->string('nama_bahan');
+            $table->integer('jumlah_batch')->default (0);
             $table->integer('sisa_stok')->default(0);
             $table->integer('batas_minimum')->default(0);
             $table->string('satuan');

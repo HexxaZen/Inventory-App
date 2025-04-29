@@ -43,7 +43,7 @@ class MenuTerjualController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'jumlah_terjual' => 'required|integer|min:1',
+            'jumlah_terjual' => 'required|integer',
         ]);
 
         $menuTerjual = MenuTerjual::findOrFail($id);

@@ -81,50 +81,49 @@ class MenuController extends Controller
     }
 
     public function update(Request $request, $id)
-    {
-        $request->validate([
-            'nama_menu' => 'required|string|max:255',
-            'bahan_biasa' => 'nullable|array',
-            'bahan_biasa.*' => 'exists:bahans,id',
-            'gramasi_biasa' => 'nullable|array',
-            'gramasi_biasa.*' => 'numeric|min:1',
-            'bahan_process' => 'nullable|array',
-            'bahan_process.*' => 'exists:bahan_processes,id',
-            'gramasi_process' => 'nullable|array',
-            'gramasi_process.*' => 'numeric|min:1',
-        ]);
+{
+    $request->validate([
+        'nama_menu' => 'required|string|max:255',
+        'bahan_biasa' => 'nullable|array',
+        'bahan_biasa.*' => 'exists:bahans,id',
+        'gramasi_biasa' => 'nullable|array',
+        'gramasi_biasa.*' => 'nullable|numeric',
+        'bahan_process' => 'nullable|array',
+        'bahan_process.*' => 'exists:bahan_processes,id',
+        'gramasi_process' => 'nullable|array',
+        'gramasi_process.*' => 'nullable|numeric',
+    ]);
 
-        $menu = Menu::findOrFail($id);
-        $menu->update(['nama_menu' => $request->nama_menu]);
+    $menu = Menu::findOrFail($id);
+    $menu->update([
+        'nama_menu' => $request->nama_menu,
+    ]);
 
-        // Update bahan biasa
-        if ($request->bahan_biasa) {
-            $bahanBiasaData = [];
-            foreach ($request->bahan_biasa as $index => $bahanId) {
-                if (isset($request->gramasi_biasa[$index])) {
-                    $bahanBiasaData[$bahanId] = ['gramasi' => $request->gramasi_biasa[$index]];
-                }
-            }
-            $menu->bahans()->sync($bahanBiasaData);
-        } else {
-            $menu->bahans()->detach(); // hapus semua bahan biasa jika kosong
+    // Update bahan biasa
+    $bahanBiasaData = [];
+    if ($request->filled('bahan_biasa')) {
+        foreach ($request->bahan_biasa as $bahanId) {
+            $gramasi = $request->gramasi_biasa[$bahanId] ?? null;
+            $bahanBiasaData[$bahanId] = ['gramasi' => $gramasi ?? 0];
         }
-
-        // Update bahan process
-        if ($request->bahan_process) {
-            $bahanProcessData = [];
-            foreach ($request->bahan_process as $index => $bahanId) {
-                if (isset($request->gramasi_process[$index])) {
-                    $bahanProcessData[$bahanId] = ['gramasi' => $request->gramasi_process[$index]];
-                }
-            }
-            $menu->bahanProcesses()->sync($bahanProcessData);
-        } else {
-            $menu->bahanProcesses()->detach(); // hapus semua bahan proses jika kosong
-        }
-
-        return redirect()->route('menu.index')->with('success');
     }
+    $menu->bahans()->sync($bahanBiasaData);
+
+    // Update bahan process
+    $bahanProcessData = [];
+    if ($request->filled('bahan_process')) {
+        foreach ($request->bahan_process as $bahanId) {
+            $gramasi = $request->gramasi_process[$bahanId] ?? null;
+            $bahanProcessData[$bahanId] = ['gramasi' => $gramasi ?? 0];
+        }
+    }
+    $menu->bahanProcesses()->sync($bahanProcessData);
+
+    return redirect()->route('menu.index')->with('success', 'Menu berhasil diperbarui.');
+}
+
+
+
 
     public function destroy($id)
     {

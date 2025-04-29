@@ -105,7 +105,6 @@
                                                     multiple>
                                                     @foreach ($bahans as $bahan)
                                                         <option value="{{ $bahan->id }}"
-                                                            data-nama="{{ $bahan->nama_bahan }}"
                                                             {{ in_array($bahan->id, $item->bahans->pluck('id')->toArray()) ? 'selected' : '' }}>
                                                             {{ $bahan->nama_bahan }}
                                                         </option>
@@ -114,12 +113,30 @@
                                             </div>
 
                                             <div class="mb-3">
+                                                <label class="form-label">Gramasi Bahan Biasa</label>
+                                                @foreach ($bahans as $bahan)
+                                                    @php
+                                                        $selectedBahan = $item->bahans
+                                                            ->where('id', $bahan->id)
+                                                            ->first();
+                                                    @endphp
+                                                    <div class="mb-2 {{ in_array($bahan->id, $item->bahans->pluck('id')->toArray()) ? '' : 'd-none' }} gramasi-biasa-group"
+                                                        data-bahan-id="{{ $bahan->id }}">
+                                                        <label class="form-label">Gramasi untuk
+                                                            {{ $bahan->nama_bahan }}</label>
+                                                        <input type="number" class="form-control"
+                                                            name="gramasi_biasa[{{ $bahan->id }}]"
+                                                            value="{{ $selectedBahan ? $selectedBahan->pivot->gramasi : '' }}">
+                                                    </div>
+                                                @endforeach
+                                            </div>
+
+                                            <div class="mb-3">
                                                 <label class="form-label">Bahan Process</label>
                                                 <select class="form-control multi-select bahan-process"
                                                     name="bahan_process[]" multiple>
                                                     @foreach ($bahanProcesses as $bp)
                                                         <option value="{{ $bp->id }}"
-                                                            data-nama="{{ $bp->nama_bahan }}"
                                                             {{ in_array($bp->id, $item->bahanProcesses->pluck('id')->toArray()) ? 'selected' : '' }}>
                                                             {{ $bp->nama_bahan }}
                                                         </option>
@@ -127,25 +144,21 @@
                                                 </select>
                                             </div>
 
-                                            <div class="mb-3 gramasi-container">
-                                                @foreach ($item->bahans as $bahan)
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Gramasi untuk {{ $bahan->nama_bahan }}
-                                                            (Biasa)
-                                                        </label>
-                                                        <input type="number" class="form-control"
-                                                            name="gramasi_biasa[{{ $bahan->id }}]"
-                                                            value="{{ $bahan->pivot->gramasi }}" required>
-                                                    </div>
-                                                @endforeach
-                                                @foreach ($item->bahanProcesses as $bp)
-                                                    <div class="mb-3">
-                                                        <label class="form-label">Gramasi untuk {{ $bp->nama_bahan }}
-                                                            (Process)
-                                                        </label>
+                                            <div class="mb-3">
+                                                <label class="form-label">Gramasi Bahan Process</label>
+                                                @foreach ($bahanProcesses as $bp)
+                                                    @php
+                                                        $selectedProcess = $item->bahanProcesses
+                                                            ->where('id', $bp->id)
+                                                            ->first();
+                                                    @endphp
+                                                    <div class="mb-2 {{ in_array($bp->id, $item->bahanProcesses->pluck('id')->toArray()) ? '' : 'd-none' }} gramasi-process-group"
+                                                        data-bahan-id="{{ $bp->id }}">
+                                                        <label class="form-label">Gramasi untuk
+                                                            {{ $bp->nama_bahan }}</label>
                                                         <input type="number" class="form-control"
                                                             name="gramasi_process[{{ $bp->id }}]"
-                                                            value="{{ $bp->pivot->gramasi }}" required>
+                                                            value="{{ $selectedProcess ? $selectedProcess->pivot->gramasi : '' }}">
                                                     </div>
                                                 @endforeach
                                             </div>
@@ -227,11 +240,11 @@
             @if (session('success'))
                 swal("Berhasil!", "{{ session('success') }}", "success");
             @endif
-    
+
             $(document).ready(function() {
                 // Initialize dropdown if needed (Ensure dropdown.js is loaded)
                 $('.multi-select').dropdown();
-    
+
                 // Event listener hanya untuk modal yang aktif
                 $('.bahan-biasa, .bahan-process').on('change', function() {
                     let $modal = $(this).closest('.modal');
@@ -240,12 +253,14 @@
                     let bahanProcess = ($modal.find('.bahan-process').val() || []).filter(item =>
                         item !== "");
                     let gramasiContainer = $modal.find('.gramasi-container');
-    
-                    gramasiContainer.html(''); // Kosongkan gramasi container sebelum menambah input baru
-    
+
+                    gramasiContainer.html(
+                    ''); // Kosongkan gramasi container sebelum menambah input baru
+
                     // Generate gramasi input untuk bahan biasa
                     bahanBiasa.forEach(bahanId => {
-                        let bahanName = $modal.find('.bahan-biasa option[value="' + bahanId + '"]').data('nama');
+                        let bahanName = $modal.find('.bahan-biasa option[value="' +
+                            bahanId + '"]').data('nama');
                         gramasiContainer.append(`
                             <div class="mb-3">
                                 <label class="form-label">Gramasi untuk ${bahanName} (Biasa)</label>
@@ -253,10 +268,11 @@
                             </div>
                         `);
                     });
-    
+
                     // Generate gramasi input untuk bahan process
                     bahanProcess.forEach(bahanId => {
-                        let bahanName = $modal.find('.bahan-process option[value="' + bahanId + '"]').data('nama');
+                        let bahanName = $modal.find('.bahan-process option[value="' +
+                            bahanId + '"]').data('nama');
                         gramasiContainer.append(`
                             <div class="mb-3">
                                 <label class="form-label">Gramasi untuk ${bahanName} (Process)</label>
@@ -265,20 +281,23 @@
                         `);
                     });
                 });
-    
+
                 // Filtering berdasarkan kode kategori saat pilih kategori menu
                 $('select[name="kategori_id"]').on('change', function() {
-                    const selectedKode = $(this).find(':selected').data('kode'); // Ambil kode_kategori (ex: BBAR/BBKTC)
-    
+                    const selectedKode = $(this).find(':selected').data(
+                    'kode'); // Ambil kode_kategori (ex: BBAR/BBKTC)
+
                     // Jika tidak ada kategori yang dipilih, nonaktifkan bahan dan sembunyikan komposisi
                     if (!selectedKode) {
-                        $('#bahan_biasa, #bahan_process').prop('disabled', true); // Nonaktifkan dropdown bahan
-                        $('#bahan_biasa option, #bahan_process option').hide(); // Sembunyikan semua opsi bahan
+                        $('#bahan_biasa, #bahan_process').prop('disabled',
+                        true); // Nonaktifkan dropdown bahan
+                        $('#bahan_biasa option, #bahan_process option')
+                    .hide(); // Sembunyikan semua opsi bahan
                         $('.gramasi-container').html(''); // Kosongkan komposisi gramasi
                     } else {
                         // Reset dan sembunyikan semua opsi bahan terlebih dahulu
                         $('#bahan_biasa option, #bahan_process option').show();
-    
+
                         // Filter bahan biasa berdasarkan kategori
                         $('.bahan-biasa option').each(function() {
                             const kodeBahan = $(this).data('kode_bahan');
@@ -286,7 +305,7 @@
                                 $(this).hide();
                             }
                         });
-    
+
                         // Filter bahan proses berdasarkan kategori
                         $('.bahan-process option').each(function() {
                             const kodeBahan = $(this).data('kode_bahan');
@@ -294,24 +313,24 @@
                                 $(this).hide();
                             }
                         });
-    
+
                         // Aktifkan dropdown bahan setelah kategori dipilih
                         $('#bahan_biasa, #bahan_process').prop('disabled', false);
                     }
-    
+
                     // Kosongkan nilai yang mungkin masih terisi setelah kategori dipilih
                     $('.bahan-biasa').val([]).trigger('change');
                     $('.bahan-process').val([]).trigger('change');
                 });
-    
+
                 // Modal shown event
                 $('#modalTambah').on('shown.bs.modal', function() {
                     // Sembunyikan semua option bahan saat modal dibuka
                     $('#bahan_biasa option, #bahan_process option').hide();
-    
+
                     // Nonaktifkan select-nya
                     $('#bahan_biasa, #bahan_process').prop('disabled', true);
-    
+
                     // Kosongkan nilai yang mungkin masih terisi
                     $('#bahan_biasa, #bahan_process').val(null).trigger('change');
                     $('.gramasi-container').html(''); // Kosongkan komposisi gramasi
@@ -319,6 +338,6 @@
             });
         });
     </script>
-    
+
 
 @endsection

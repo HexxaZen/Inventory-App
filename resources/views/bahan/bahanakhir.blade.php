@@ -4,7 +4,7 @@
 
 @section('BahanAkhir')
     <div class="container mt-4">
-        <h2 class="mb-4 text-center">Data Bahan Akhir</h2>
+        <h2 class="mb-4 my-5 py-3 text-center">Data Bahan Akhir</h2>
 
         <!-- Form Input Tanggal -->
         <form action="{{ route('bahan.akhir.tanggal') }}" method="POST" class="mb-4">

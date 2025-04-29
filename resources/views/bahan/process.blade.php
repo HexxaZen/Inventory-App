@@ -33,7 +33,6 @@
                         <th>Komposisi Bahan</th>
                         <th>Batas Minimum</th>
                         <th>Satuan</th>
-                        <th>Status</th>
                         @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar') || auth()->user()->hasRole('Headkitchen'))
                             <th>Aksi</th>
                         @endif
@@ -59,15 +58,6 @@
                             </td>
                             <td>{{ $item->batas_minimum }}</td>
                             <td>{{ $item->satuan }}</td>
-                            <td>
-                                @if ($item->sisa_stok > $item->batas_minimum)
-                                    <span class="badge bg-success">AMAN</span>
-                                @elseif($item->sisa_stok <= $item->batas_minimum && $item->sisa_stok > 0)
-                                    <span class="badge bg-warning">MENIPIS</span>
-                                @else
-                                    <span class="badge bg-danger">HABIS</span>
-                                @endif
-                            </td>
                             @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar') || auth()->user()->hasRole('Headkitchen'))
                                 <td>
                                     <button class="btn btn-warning btn-sm mb-1" data-bs-toggle="modal"
@@ -206,16 +196,32 @@
                                 <input type="text" class="form-control" name="nama_bahan" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Komposisi Bahan</label>
-                                <select class="form-control bahan-process multi-select" name="bahan_process[]" multiple
-                                    required>
+                                <label class="form-label" for="bahan_biasa">Komposisi Bahan Non-Proses</label>
+                                <select class="form-control bahan-biasa multi-select" name="bahan_biasa[]" multiple>
                                     @foreach ($bahans as $bahan)
                                         @if (str_starts_with($bahan->kode_bahan, 'BBAR'))
-                                            <option value="{{ $bahan->id }}">{{ $bahan->nama_bahan }}</option>
+                                            <option value="{{ $bahan->id }}" data-nama="{{ $bahan->nama_bahan }}"
+                                                data-kode_bahan="{{ $bahan->kode_bahan }}">
+                                                {{ $bahan->nama_bahan }}
+                                            </option>
                                         @endif
                                     @endforeach
                                 </select>
                             </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label" for="bahan_process">Komposisi Bahan Process</label>
+                                <select class="form-control bahan-process multi-select" name="bahan_process[]" multiple>
+                                    @foreach ($bahanProcesses as $bp)
+                                        @if (str_starts_with($bp->kode_bahan, 'BBAR'))
+                                            <option value="{{ $bp->id }}" data-nama="{{ $bp->nama_bahan }}"
+                                                data-kode_bahan="{{ $bp->kode_bahan }}">
+                                                {{ $bp->nama_bahan }}
+                                            </option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div>                            
                             <div class="mb-3 gramasi-container" data-target="bar"></div>
                             <div class="mb-3">
                                 <label for="batas_minimum" class="form-label">Batas Minimum</label>
@@ -284,16 +290,32 @@
                                 <input type="text" class="form-control" name="nama_bahan" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Komposisi Bahan</label>
-                                <select class="form-control bahan-process multi-select" name="bahan_process[]" multiple
-                                    required>
+                                <label class="form-label" for="bahan_biasa">Komposisi Bahan Non-Proses</label>
+                                <select class="form-control bahan-biasa multi-select" name="bahan_biasa[]"multiple>
                                     @foreach ($bahans as $bahan)
                                         @if (str_starts_with($bahan->kode_bahan, 'BBKTC'))
-                                            <option value="{{ $bahan->id }}">{{ $bahan->nama_bahan }}</option>
+                                            <option value="{{ $bahan->id }}" data-nama="{{ $bahan->nama_bahan }}"
+                                                data-kode_bahan="{{ $bahan->kode_bahan }}">
+                                                {{ $bahan->nama_bahan }}
+                                            </option>
                                         @endif
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="bahan_process">Komposisi Bahan Process</label>
+                                <select class="form-control bahan-process multi-select" name="bahan_process[]"multiple>
+                                    @foreach ($bahanProcesses as $bp)
+                                        @if (str_starts_with($bp->kode_bahan, 'BBKTC'))
+                                            <option value="{{ $bp->id }}" data-nama="{{ $bp->nama_bahan }}"
+                                                data-kode_bahan="{{ $bp->kode_bahan }}">
+                                                {{ $bp->nama_bahan }}
+                                            </option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div>
+                            
                             <div class="mb-3" id="gramasi-container" data-target="kitchen"></div>
                             <div class="mb-3">
                                 <label for="batas_minimum" class="form-label">Batas Minimum</label>
@@ -320,40 +342,49 @@
     {{-- JS --}}
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            @if (session('success'))
-                swal("Berhasil!", "{{ session('success') }}", "success");
-            @endif
-
-            // Inisialisasi setelah semua elemen dimuat
-            $('.multi-select, .bahan-process').each(function() {
-                if ($(this).dropdown) {
-                    $(this).dropdown(); // hanya jika pakai Semantic UI atau plugin sejenis
-                }
-            });
-
-            // Handler untuk semua elemen dengan class 'bahan-process'
-            $('.bahan-process').on('change', function() {
-                const $modalBody = $(this).closest('.modal-body');
-                const targetContainer = $modalBody.find('.gramasi-container, #gramasi-container');
-                const selectedOptions = $(this).val() || [];
-
-                targetContainer.html(''); // kosongkan container
-
-                selectedOptions.forEach(bahanId => {
-                    const bahanName = $(this).find(`option[value="${bahanId}"]`).text();
-
-                    const inputGroup = `
+        $(document).ready(function () {
+            // Event perubahan bahan biasa / bahan process di kedua modal
+            $(document).on('change', '.bahan-biasa, .bahan-process', function () {
+                let $modal = $(this).closest('.modal');
+                let bahanBiasa = $modal.find('.bahan-biasa').val() || [];
+                let bahanProcess = $modal.find('.bahan-process').val() || [];
+                let gramasiContainer = $modal.find('.gramasi-container');
+    
+                gramasiContainer.html(''); // Kosongkan container sebelum diisi ulang
+    
+                // Tambahkan input gramasi untuk bahan biasa
+                bahanBiasa.forEach(function (bahanId) {
+                    let bahanOption = $modal.find(`.bahan-biasa option[value="${bahanId}"]`);
+                    let bahanName = bahanOption.data('nama') || bahanOption.text();
+                    gramasiContainer.append(`
                         <div class="mb-3">
-                            <label class="form-label">Gramasi untuk ${bahanName}</label>
-                            <input type="number" class="form-control" name="gramasi[${bahanId}]" required>
+                            <label class="form-label">Gramasi untuk ${bahanName} (Biasa)</label>
+                            <input type="number" class="form-control" name="gramasi_biasa[${bahanId}]" min="1" required>
                         </div>
-                    `;
-
-                    targetContainer.append(inputGroup);
+                    `);
                 });
+    
+                // Tambahkan input gramasi untuk bahan process
+                bahanProcess.forEach(function (bahanId) {
+                    let bahanOption = $modal.find(`.bahan-process option[value="${bahanId}"]`);
+                    let bahanName = bahanOption.data('nama') || bahanOption.text();
+                    gramasiContainer.append(`
+                        <div class="mb-3">
+                            <label class="form-label">Gramasi untuk ${bahanName} (Process)</label>
+                            <input type="number" class="form-control" name="gramasi_process[${bahanId}]" min="1" required>
+                        </div>
+                    `);
+                });
+            });
+    
+            // Opsional: Reset form ketika modal ditutup agar tidak cache field sebelumnya
+            $('.modal').on('hidden.bs.modal', function () {
+                $(this).find('form')[0].reset(); // reset form
+                $(this).find('.gramasi-container').html(''); // hapus input dinamis
+                $(this).find('.multi-select').val(null).trigger('change'); // reset select2 jika dipakai
             });
         });
     </script>
+    
 
 @endsection

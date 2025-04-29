@@ -89,7 +89,7 @@ class PemantauanController extends Controller
         if ($selisih == 0) {
             $bahan['status_pemantauan'] = "Balance";
         } elseif ($selisih > 0) {
-            $bahan['status_pemantauan'] = "Minus: -{$selisih} {$bahan['satuan']}";
+            $bahan['status_pemantauan'] = "Waste: -{$selisih} {$bahan['satuan']}";
         } else {
             $bahan['status_pemantauan'] = "Plus: +" . abs($selisih) . " {$bahan['satuan']}";
         }
@@ -168,7 +168,7 @@ class PemantauanController extends Controller
             if ($selisih == 0) {
                 $bahan['status_pemantauan'] = "Balance";
             } elseif ($selisih > 0) {
-                $bahan['status_pemantauan'] = "Minus: -{$selisih} {$bahan['satuan']}";
+                $bahan['status_pemantauan'] = "Waste: -{$selisih} {$bahan['satuan']}";
             } else {
                 $bahan['status_pemantauan'] = "Plus: +" . abs($selisih) . " {$bahan['satuan']}";
             }

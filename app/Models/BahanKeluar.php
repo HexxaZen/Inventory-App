@@ -69,7 +69,7 @@ class BahanKeluar extends Model
         if ($jumlah_keluar == $hasil_seharusnya) {
             return 'Balance';
         } elseif ($jumlah_keluar > $hasil_seharusnya) {
-            return 'Minus: ' . abs($jumlah_keluar - $hasil_seharusnya) . ' ' . $this->satuan;
+            return 'Waste: ' . abs($jumlah_keluar - $hasil_seharusnya) . ' ' . $this->satuan;
         } else {
             return 'Plus: +' . abs($hasil_seharusnya - $jumlah_keluar) . ' ' . $this->satuan;
         }
