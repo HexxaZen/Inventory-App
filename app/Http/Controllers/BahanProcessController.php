@@ -13,50 +13,45 @@ use App\Models\BahanProcessKomposisi;
 class BahanProcessController extends Controller
 {
     public function index()
-{
-    $user = auth()->user();
+    {
+        $user = auth()->user();
+        $kategoriFilter = request('kategori_bahan');
 
-    // Ambil semua data untuk Admin
-    if ($user->hasRole('Admin')) {
-        $bahanProcesses = BahanProcess::with(['bahans'])->get();
-        $bahans = Bahan::where('tipe', 'non-process')->get();
+        $query = BahanProcess::with(['bahans']);
+        $bahanQuery = Bahan::where('tipe', 'non-process');
+
+        if ($user->hasRole('Admin')) {
+            // Admin bisa lihat semua, tapi tetap bisa difilter berdasarkan kategori_bahan
+            if ($kategoriFilter) {
+                $query->whereHas('bahans', function ($q) use ($kategoriFilter) {
+                    $q->where('kode_bahan', 'LIKE', $kategoriFilter . '%');
+                });
+                $bahanQuery->where('kode_bahan', 'LIKE', $kategoriFilter . '%');
+            }
+        } elseif ($user->hasAnyRole(['Headbar', 'Bar'])) {
+            $query->whereHas('bahans', function ($q) {
+                $q->where('kode_bahan', 'LIKE', 'BBAR%');
+            });
+            $bahanQuery->where('kode_bahan', 'LIKE', 'BBAR%');
+        } elseif ($user->hasAnyRole(['Headkitchen', 'Kitchen'])) {
+            $query->whereHas('bahans', function ($q) {
+                $q->where('kode_bahan', 'LIKE', 'BBKTC%');
+            });
+            $bahanQuery->where('kode_bahan', 'LIKE', 'BBKTC%');
+        } else {
+            $bahanProcesses = collect();
+            $bahans = collect();
+            $kategoris = Kategori::all();
+            return view('bahan.process', compact('bahanProcesses', 'bahans', 'kategoris'));
+        }
+
+        $bahanProcesses = $query->get();
+        $bahans = $bahanQuery->get();
+        $kategoris = Kategori::all();
+
+        return view('bahan.process', compact('bahanProcesses', 'bahans', 'kategoris'));
     }
 
-    // Khusus Headbar dan Bar: kode_bahan berawalan BBAR
-    elseif ($user->hasAnyRole(['Headbar', 'Bar'])) {
-        $bahanProcesses = BahanProcess::with(['bahans'])
-            ->whereHas('bahans', function ($query) {
-                $query->where('kode_bahan', 'LIKE', 'BBAR%');
-            })
-            ->get();
-
-        $bahans = Bahan::where('tipe', 'non-process')
-            ->where('kode_bahan', 'LIKE', 'BBAR%')
-            ->get();
-    }
-
-    // Khusus Headkitchen dan Kitchen: kode_bahan berawalan BBKTC
-    elseif ($user->hasAnyRole(['Headkitchen', 'Kitchen'])) {
-        $bahanProcesses = BahanProcess::with(['bahans'])
-            ->whereHas('bahans', function ($query) {
-                $query->where('kode_bahan', 'LIKE', 'BBKTC%');
-            })
-            ->get();
-
-        $bahans = Bahan::where('tipe', 'non-process')
-            ->where('kode_bahan', 'LIKE', 'BBKTC%')
-            ->get();
-    }
-
-    // Default jika role tidak dikenal
-    else {
-        $bahanProcesses = collect();
-        $bahans = collect();
-    }
-
-    $kategoris = Kategori::all();
-    return view('bahan.process', compact('bahanProcesses', 'bahans', 'kategoris'));
-}
 
 
     public function cekStokMenipis()
@@ -126,49 +121,54 @@ class BahanProcessController extends Controller
 
 
     public function update(Request $request, $id)
-    {
-        // Pastikan validasi sesuai dengan input pada form (termasuk 'jumlah_batch' jika memang diperlukan)
-        $request->validate([
-            'nama_bahan' => 'required|string',
-            'satuan' => 'required|string',
-            'batas_minimum' => 'required|integer|min:0',
-            'bahan_proses' => 'required|array',
-            'gramasi' => 'required|array',
-            'jumlah_batch' => 'required|numeric' // Tambahkan validasi ini jika field jumlah_batch di form
-        ]);
+{
+    // Validasi input
+    $request->validate([
+        'nama_bahan' => 'required|string|max:255',
+        'satuan' => 'required|string|in:gram,ml',
+        'batas_minimum' => 'required|integer|min:0',
+        'bahan_proses' => 'required|array',
+        'bahan_proses.*' => 'exists:bahans,id',
+        'gramasi' => 'required|array',
+        'gramasi.*' => 'nullable|numeric|min:0'
+    ]);
 
-        $bahanProses = BahanProcess::findOrFail($id);
+    // Ambil model
+    $bahanProses = BahanProcess::findOrFail($id);
 
-        // Hitung ulang total gramasi
-        $totalGramasi = 0;
-        foreach ($request->bahan_proses as $bahanId) {
-            if (isset($request->gramasi[$bahanId])) {
-                $totalGramasi += (int) $request->gramasi[$bahanId];
-            }
+    // Hitung total gramasi hanya dari bahan yang dipilih
+    $totalGramasi = 0;
+    foreach ($request->bahan_proses as $bahanId) {
+        $gramasi = $request->gramasi[$bahanId] ?? null;
+        if (!is_null($gramasi)) {
+            $totalGramasi += (float) $gramasi;
         }
-
-        // Hitung sisa stok baru
-        $sisaStok = $request->jumlah_batch * $totalGramasi;
-
-        // Perbarui data utama bahan proses
-        $bahanProses->update([
-            'nama_bahan' => $request->nama_bahan,
-            'satuan' => $request->satuan,
-            'batas_minimum' => $request->batas_minimum,
-            'sisa_stok' => $sisaStok
-        ]);
-
-        // Persiapkan data pivot: key-nya adalah id bahan, value-nya adalah array attribute pivot (gramasi)
-        $dataPivot = [];
-        foreach ($request->bahan_proses as $bahanId) {
-            if (isset($request->gramasi[$bahanId])) {
-                $dataPivot[$bahanId] = ['gramasi' => $request->gramasi[$bahanId]];
-            }
-        }
-        $bahanProses->bahans()->sync($dataPivot);
-
-        return redirect()->back()->with('success', 'Data berhasil diperbarui.');
     }
+
+    // Update field utama di model
+    $bahanProses->update([
+        'nama_bahan' => $request->nama_bahan,
+        'satuan' => $request->satuan,
+        'batas_minimum' => $request->batas_minimum,
+        'sisa_stok' => $totalGramasi, // Sesuaikan jika perlu dikosongkan
+    ]);
+
+    // Siapkan data pivot untuk sync (hanya bahan yang dipilih dan memiliki gramasi)
+    $pivotData = [];
+    foreach ($request->bahan_proses as $bahanId) {
+        $gramasi = $request->gramasi[$bahanId] ?? null;
+        if (!is_null($gramasi)) {
+            $pivotData[$bahanId] = ['gramasi' => (float) $gramasi];
+        }
+    }
+
+    // Sinkronisasi relasi many-to-many (bahan_proses <-> bahan)
+    $bahanProses->bahans()->sync($pivotData);
+
+    return redirect()->back()->with('success', 'Data proses bahan berhasil diperbarui.');
+}
+
+
 
 
     public function destroy($id)

@@ -19,7 +19,25 @@
                 {{ session('success') }}
             </div>
         @endif
-
+        {{-- sort by --}}
+        <div class="mb-3 px-3">
+            <form method="GET" action="{{ route('bahan.bahanmasuk') }}" id="filterForm">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label for="sortBahan" class="form-label">Sort By Kategori:</label>
+                        <select class="form-control" name="kategori_bahan" id="sortBahan"
+                            onchange="document.getElementById('filterForm').submit();">
+                            <option value="">Semua</option>
+                            <option value="BBAR" {{ request('kategori_bahan') == 'BBAR' ? 'selected' : '' }}>Bahan Baku
+                                Bar</option>
+                            <option value="BBKTC" {{ request('kategori_bahan') == 'BBKTC' ? 'selected' : '' }}>Bahan Baku
+                                Kitchen</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+        </div>
+        {{-- sort by end --}}
         <div class="table-responsive px-3">
             <table class="table table-bordered table-striped text-center" id="table_bahan_masuk">
                 <thead style="align-content: center;">
@@ -245,11 +263,24 @@
     @endforeach
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
+        @if (session('success'))
+            swal("Berhasil!", "{{ session('success') }}", "success");
+        @endif
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("sortBahan").addEventListener("change", function() {
+                let sortValue = this.value;
+                let url = "{{ route('bahan.index') }}?sort=" + sortValue;
+                fetch(url)
+                    .then(response => response.text())
+                    .then(data => {
+                        document.querySelector("tbody").innerHTML =
+                            new DOMParser().parseFromString(data, "text/html")
+                            .querySelector("tbody").innerHTML;
+                    })
+                    .catch(error => console.error("Error fetching sorted data:", error));
+            });
+        });
         document.addEventListener('DOMContentLoaded', function() {
-            @if (session('success'))
-                swal("Berhasil!", "{{ session('success') }}", "success");
-            @endif
-
             function setupTipeBahanToggle(selectId, nonProsesId, prosesId) {
                 const tipeSelect = document.getElementById(selectId);
                 const nonProsesList = document.getElementById(nonProsesId);

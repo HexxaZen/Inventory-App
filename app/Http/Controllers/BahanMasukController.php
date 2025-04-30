@@ -13,43 +13,45 @@ use App\Models\BahanKeluar;
 
 class BahanMasukController extends Controller
 {
-    public function index()
+    public function index(Request $request)
 {
     $user = Auth::user();
+    $filterKategori = $request->input('kategori_bahan'); // Ambil filter dari form GET
 
-    // Filter bahan masuk berdasarkan role
-    if ($user->hasRole('Admin')) {
-        $bahanMasuk = BahanMasuk::with('bahan', 'bahanProcess')->get();
-    } elseif ($user->hasAnyRole(['Headbar', 'Bar'])) {
-        $bahanMasuk = BahanMasuk::with('bahan', 'bahanProcess')
-            ->where('kode_bahan', 'LIKE', 'BBAR%')->get();
-    } elseif ($user->hasAnyRole(['Headkitchen', 'Kitchen'])) {
-        $bahanMasuk = BahanMasuk::with('bahan', 'bahanProcess')
-            ->where('kode_bahan', 'LIKE', 'BBKTC%')->get();
-    } else {
-        $bahanMasuk = collect(); // Kosong jika role tidak dikenali
-    }
-
-    // Ambil bahan sesuai role juga
+    $bahanMasukQuery = BahanMasuk::with('bahan', 'bahanProcess');
     $bahanQuery = Bahan::query();
     $prosesQuery = BahanProcess::query();
 
+    // Role-based filter
     if ($user->hasRole('Admin')) {
-        $bahans = $bahanQuery->get();
-        $bahan_processes = $prosesQuery->get();
+        // Admin bisa melihat semua, tapi tetap cek filter kategori jika ada
+        if ($filterKategori) {
+            $bahanMasukQuery->where('kode_bahan', 'LIKE', $filterKategori . '%');
+            $bahanQuery->where('kode_bahan', 'LIKE', $filterKategori . '%');
+            $prosesQuery->where('kode_bahan', 'LIKE', $filterKategori . '%');
+        }
     } elseif ($user->hasAnyRole(['Headbar', 'Bar'])) {
-        $bahans = $bahanQuery->where('kode_bahan', 'LIKE', 'BBAR%')->get();
-        $bahan_processes = $prosesQuery->where('kode_bahan', 'LIKE', 'BBAR%')->get();
+        $bahanMasukQuery->where('kode_bahan', 'LIKE', 'BBAR%');
+        $bahanQuery->where('kode_bahan', 'LIKE', 'BBAR%');
+        $prosesQuery->where('kode_bahan', 'LIKE', 'BBAR%');
     } elseif ($user->hasAnyRole(['Headkitchen', 'Kitchen'])) {
-        $bahans = $bahanQuery->where('kode_bahan', 'LIKE', 'BBKTC%')->get();
-        $bahan_processes = $prosesQuery->where('kode_bahan', 'LIKE', 'BBKTC%')->get();
+        $bahanMasukQuery->where('kode_bahan', 'LIKE', 'BBKTC%');
+        $bahanQuery->where('kode_bahan', 'LIKE', 'BBKTC%');
+        $prosesQuery->where('kode_bahan', 'LIKE', 'BBKTC%');
     } else {
+        $bahanMasuk = collect();
         $bahans = collect();
         $bahan_processes = collect();
+        return view('bahan.bahanmasuk', compact('bahanMasuk', 'bahans', 'bahan_processes'));
     }
+
+    $bahanMasuk = $bahanMasukQuery->get();
+    $bahans = $bahanQuery->get();
+    $bahan_processes = $prosesQuery->get();
 
     return view('bahan.bahanmasuk', compact('bahanMasuk', 'bahans', 'bahan_processes'));
 }
+
 
 
 
