@@ -150,6 +150,7 @@ class BahanAkhirController extends Controller
                 'tanggal_keluar' => $tanggal,
                 'satuan' => $bahan->satuan,
                 'tipe_bahan' => $isProses ? 'proses' : 'non-proses',
+                'bahan_masuk_id' => null,
             ]);
         }
     }
