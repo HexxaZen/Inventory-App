@@ -1,8 +1,8 @@
 @extends('layouts.master')
 @section('title','Pemantauan Bahan Baku')
 @section('pemantauan')
-<div class="container-fluid mt-4 py-5">
-    <div class="card">
+<div class="container mt-5">
+    <div class="card shadow-sm mx-5 my-5">
         <div class="card-header d-flex align-items-center justify-content-between">
             <h4 class="card-title mb-0">Pemantauan Bahan Baku</h4>
             @if(request('dari_tanggal') && request('sampai_tanggal'))
