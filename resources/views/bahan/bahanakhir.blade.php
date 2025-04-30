@@ -49,7 +49,6 @@
 
             <form action="{{ route('bahan.akhir.update') }}" method="POST">
                 @csrf
-
                 {{-- Bahan Non-Proses --}}
                 <h4 class="mt-4 mx-5 my-5">Bahan Non-Proses</h4>
                 <div class="table-responsive px-3 my-5">

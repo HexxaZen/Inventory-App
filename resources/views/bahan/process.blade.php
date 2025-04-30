@@ -21,7 +21,7 @@
         @if (session('success'))
             <div class="alert alert-success">{{ session('success') }}</div>
         @endif
-
+        {{-- TABEL --}}
         <div class="table-responsive px-3">
             <table class="table table-bordered table-striped text-center">
                 <thead>
@@ -62,78 +62,7 @@
                                 <td>
                                     <button class="btn btn-warning btn-sm mb-1" data-bs-toggle="modal"
                                         data-bs-target="#editProcessModal{{ $item->id }}">Edit</button>
-                                    <!-- Modal Edit Proses -->
-                                    <div class="modal fade" id="editProcessModal{{ $item->id }}" tabindex="-1"
-                                        aria-labelledby="editProcessModalLabel{{ $item->id }}" aria-hidden="true">
-                                        <div class="modal-dialog">
-                                            <div class="modal-content">
-                                                <form action="{{ route('bahan.process.update', $item->id) }}"
-                                                    method="POST">
-                                                    @csrf
-                                                    @method('PUT')
-                                                    <div class="modal-header">
-                                                        <h5 class="modal-title">Edit Proses Bahan</h5>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                                            aria-label="Close"></button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <div class="mb-3">
-                                                            <label for="nama_bahan" class="form-label">Nama Proses</label>
-                                                            <input type="text" class="form-control" name="nama_bahan"
-                                                                value="{{ $item->nama_bahan }}" required>
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label class="form-label">Komposisi Bahan</label>
-                                                            <select class="form-control multi-select" name="bahan_proses[]"
-                                                                multiple required>
-                                                                @foreach ($bahans as $bahan)
-                                                                    <option value="{{ $bahan->id }}"
-                                                                        {{ in_array($bahan->id, $item->bahans->pluck('id')->toArray()) ? 'selected' : '' }}>
-                                                                        {{ $bahan->nama_bahan }}
-                                                                    </option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div>
-
-                                                        @foreach ($bahans as $bahan)
-                                                            @php
-                                                                $pivot = $item->bahans->firstWhere('id', $bahan->id)
-                                                                    ?->pivot;
-                                                            @endphp
-                                                            <div class="mb-3">
-                                                                <label class="form-label">Gramasi untuk
-                                                                    {{ $bahan->nama_bahan }}</label>
-                                                                <input type="number" class="form-control" name="gramasi[]"
-                                                                    value="{{ $pivot ? $pivot->gramasi : '' }}"
-                                                                    {{ in_array($bahan->id, $item->bahans->pluck('id')->toArray()) ? '' : 'disabled' }}>
-                                                            </div>
-                                                        @endforeach
-                                                        <div class="mb-3">
-                                                            <label for="batas_minimum" class="form-label">Batas
-                                                                Minimum</label>
-                                                            <input type="number" class="form-control" id="batas_minimum"
-                                                                name="batas_minimum" value="{{ $item->batas_minimum }}">
-                                                        </div>
-                                                        <div class="mb-3">
-                                                            <label for="satuan" class="form-label">Satuan</label>
-                                                            <select class="form-select" name="satuan" required>
-                                                                <option value="gram"
-                                                                    {{ $item->satuan == 'gram' ? 'selected' : '' }}>
-                                                                    Gram</option>
-                                                                <option value="ml"
-                                                                    {{ $item->satuan == 'ml' ? 'selected' : '' }}>ML
-                                                                </option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="modal-footer">
-                                                        <button class="btn btn-primary w-100" type="submit">Update
-                                                            Proses</button>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
                                     <form action="{{ route('bahan.process.destroy', $item->id) }}" method="POST"
                                         class="d-inline"
                                         onsubmit="return confirm('Apakah Anda yakin ingin menghapus proses bahan ini?')">
@@ -149,7 +78,82 @@
                 </tbody>
             </table>
         </div>
+        {{-- END TABEL --}}
+        <!-- Modal Edit Proses -->
+        @foreach ( $bahanProcesses as $item )
+        <div class="modal fade" id="editProcessModal{{ $item->id }}" tabindex="-1"
+            aria-labelledby="editProcessModalLabel{{ $item->id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form action="{{ route('bahan.process.update', $item->id) }}"
+                        method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="modal-header">
+                            <h5 class="modal-title">Edit Proses Bahan</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="nama_bahan" class="form-label">Nama Proses</label>
+                                <input type="text" class="form-control" name="nama_bahan"
+                                    value="{{ $item->nama_bahan }}" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Komposisi Bahan</label>
+                                <select class="form-control multi-select" name="bahan_proses[]"
+                                    multiple required>
+                                    @foreach ($bahans as $bahan)
+                                        <option value="{{ $bahan->id }}"
+                                            {{ in_array($bahan->id, $item->bahans->pluck('id')->toArray()) ? 'selected' : '' }}>
+                                            {{ $bahan->nama_bahan }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
 
+                            @foreach ($bahans as $bahan)
+                                @php
+                                    $pivot = $item->bahans->firstWhere('id', $bahan->id)
+                                        ?->pivot;
+                                @endphp
+                                <div class="mb-3">
+                                    <label class="form-label">Gramasi untuk
+                                        {{ $bahan->nama_bahan }}</label>
+                                    <input type="number" class="form-control" name="gramasi[{{ $bahan->id }}]"
+                                        value="{{ $pivot ? $pivot->gramasi : '' }}"
+                                        {{ in_array($bahan->id, $item->bahans->pluck('id')->toArray()) ? '' : 'disabled' }}>
+                                </div>
+                            @endforeach
+                            <div class="mb-3">
+                                <label for="batas_minimum" class="form-label">Batas
+                                    Minimum</label>
+                                <input type="number" class="form-control" id="batas_minimum"
+                                    name="batas_minimum" value="{{ $item->batas_minimum }}">
+                            </div>
+                            <div class="mb-3">
+                                <label for="satuan" class="form-label">Satuan</label>
+                                <select class="form-select" name="satuan" required>
+                                    <option value="gram"
+                                        {{ $item->satuan == 'gram' ? 'selected' : '' }}>
+                                        Gram</option>
+                                    <option value="ml"
+                                        {{ $item->satuan == 'ml' ? 'selected' : '' }}>ML
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-primary w-100" type="submit">Update
+                                Proses</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        @endforeach
+        {{-- END MODAL EDIT --}}
         <!-- Modal Tambah Proses BAR -->
         <div class="modal fade" id="addProcessModalBAR" tabindex="-1" aria-labelledby="addProcessModalLabel"
             aria-hidden="true">
@@ -208,7 +212,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            
+
                             <div class="mb-3">
                                 <label class="form-label" for="bahan_process">Komposisi Bahan Process</label>
                                 <select class="form-control bahan-process multi-select" name="bahan_process[]" multiple>
@@ -221,7 +225,7 @@
                                         @endif
                                     @endforeach
                                 </select>
-                            </div>                            
+                            </div>
                             <div class="mb-3 gramasi-container" data-target="bar"></div>
                             <div class="mb-3">
                                 <label for="batas_minimum" class="form-label">Batas Minimum</label>
@@ -315,7 +319,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            
+
                             <div class="mb-3" id="gramasi-container" data-target="kitchen"></div>
                             <div class="mb-3">
                                 <label for="batas_minimum" class="form-label">Batas Minimum</label>
@@ -342,18 +346,18 @@
     {{-- JS --}}
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             // Event perubahan bahan biasa / bahan process di kedua modal
-            $(document).on('change', '.bahan-biasa, .bahan-process', function () {
+            $(document).on('change', '.bahan-biasa, .bahan-process', function() {
                 let $modal = $(this).closest('.modal');
                 let bahanBiasa = $modal.find('.bahan-biasa').val() || [];
                 let bahanProcess = $modal.find('.bahan-process').val() || [];
                 let gramasiContainer = $modal.find('.gramasi-container');
-    
+
                 gramasiContainer.html(''); // Kosongkan container sebelum diisi ulang
-    
+
                 // Tambahkan input gramasi untuk bahan biasa
-                bahanBiasa.forEach(function (bahanId) {
+                bahanBiasa.forEach(function(bahanId) {
                     let bahanOption = $modal.find(`.bahan-biasa option[value="${bahanId}"]`);
                     let bahanName = bahanOption.data('nama') || bahanOption.text();
                     gramasiContainer.append(`
@@ -363,9 +367,9 @@
                         </div>
                     `);
                 });
-    
+
                 // Tambahkan input gramasi untuk bahan process
-                bahanProcess.forEach(function (bahanId) {
+                bahanProcess.forEach(function(bahanId) {
                     let bahanOption = $modal.find(`.bahan-process option[value="${bahanId}"]`);
                     let bahanName = bahanOption.data('nama') || bahanOption.text();
                     gramasiContainer.append(`
@@ -376,15 +380,15 @@
                     `);
                 });
             });
-    
+
             // Opsional: Reset form ketika modal ditutup agar tidak cache field sebelumnya
-            $('.modal').on('hidden.bs.modal', function () {
+            $('.modal').on('hidden.bs.modal', function() {
                 $(this).find('form')[0].reset(); // reset form
                 $(this).find('.gramasi-container').html(''); // hapus input dinamis
                 $(this).find('.multi-select').val(null).trigger('change'); // reset select2 jika dipakai
             });
         });
     </script>
-    
+
 
 @endsection

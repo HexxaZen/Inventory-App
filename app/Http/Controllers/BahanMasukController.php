@@ -14,24 +14,44 @@ use App\Models\BahanKeluar;
 class BahanMasukController extends Controller
 {
     public function index()
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
+
+    // Filter bahan masuk berdasarkan role
+    if ($user->hasRole('Admin')) {
         $bahanMasuk = BahanMasuk::with('bahan', 'bahanProcess')->get();
-
-        $query = Bahan::query();
-
-        if ($user->hasRole(['Admin', 'Headbar', 'Bar'])) {
-            $query->where('kode_bahan', 'LIKE', 'BBAR%');
-        }
-
-        if ($user->hasRole(['Admin', 'Headkitchen', 'Kitchen'])) {
-            $query->orWhere('kode_bahan', 'LIKE', 'BBKTC%');
-        }
-
-        $bahans = $query->get();
-        $bahan_processes = BahanProcess::all();
-        return view('bahan.bahanmasuk', compact('bahanMasuk', 'bahans', 'bahan_processes'));
+    } elseif ($user->hasAnyRole(['Headbar', 'Bar'])) {
+        $bahanMasuk = BahanMasuk::with('bahan', 'bahanProcess')
+            ->where('kode_bahan', 'LIKE', 'BBAR%')->get();
+    } elseif ($user->hasAnyRole(['Headkitchen', 'Kitchen'])) {
+        $bahanMasuk = BahanMasuk::with('bahan', 'bahanProcess')
+            ->where('kode_bahan', 'LIKE', 'BBKTC%')->get();
+    } else {
+        $bahanMasuk = collect(); // Kosong jika role tidak dikenali
     }
+
+    // Ambil bahan sesuai role juga
+    $bahanQuery = Bahan::query();
+    $prosesQuery = BahanProcess::query();
+
+    if ($user->hasRole('Admin')) {
+        $bahans = $bahanQuery->get();
+        $bahan_processes = $prosesQuery->get();
+    } elseif ($user->hasAnyRole(['Headbar', 'Bar'])) {
+        $bahans = $bahanQuery->where('kode_bahan', 'LIKE', 'BBAR%')->get();
+        $bahan_processes = $prosesQuery->where('kode_bahan', 'LIKE', 'BBAR%')->get();
+    } elseif ($user->hasAnyRole(['Headkitchen', 'Kitchen'])) {
+        $bahans = $bahanQuery->where('kode_bahan', 'LIKE', 'BBKTC%')->get();
+        $bahan_processes = $prosesQuery->where('kode_bahan', 'LIKE', 'BBKTC%')->get();
+    } else {
+        $bahans = collect();
+        $bahan_processes = collect();
+    }
+
+    return view('bahan.bahanmasuk', compact('bahanMasuk', 'bahans', 'bahan_processes'));
+}
+
+
 
     public function laporanmasuk(Request $request)
     {

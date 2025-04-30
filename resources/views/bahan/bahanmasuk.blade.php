@@ -59,137 +59,137 @@
     </div>
 
     <!-- Modal Tambah Bahan Masuk Bar-->
-<div class="modal fade" id="addBahanMasukBarModal" tabindex="-1" aria-labelledby="addBahanMasukBarLabel"
-aria-hidden="true">
-<div class="modal-dialog">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="addBahanMasukLabel">Tambah Bahan Masuk</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <form action="{{ route('bahan.bahanmasuk.store') }}" method="POST">
-                @csrf
-
-                <div class="mb-3">
-                    <label class="form-label">Tanggal Masuk</label>
-                    <input type="date" class="form-control w-30" name="tanggal_masuk" id="tanggal_masuk"
-                        required>
+    <div class="modal fade" id="addBahanMasukBarModal" tabindex="-1" aria-labelledby="addBahanMasukBarLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addBahanMasukLabel">Tambah Bahan Masuk</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
+                <div class="modal-body">
+                    <form action="{{ route('bahan.bahanmasuk.store') }}" method="POST">
+                        @csrf
 
-                <div class="mb-3">
-                    <label class="form-label">Tipe Bahan</label>
-                    <select class="form-select" id="tipe_bahan_select_bar">
-                        <option value="non-proses" selected>Non-Proses</option>
-                        <option value="proses">Proses</option>
-                    </select>
+                        <div class="mb-3">
+                            <label class="form-label">Tanggal Masuk</label>
+                            <input type="date" class="form-control w-30" name="tanggal_masuk" id="tanggal_masuk"
+                                required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Tipe Bahan</label>
+                            <select class="form-select" id="tipe_bahan_select_bar">
+                                <option value="non-proses" selected>Non-Proses</option>
+                                <option value="proses">Proses</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Nama Bahan dan Jumlah Masuk</label>
+
+                            {{-- Non-Proses Section --}}
+                            <div id="bahan-nonproses-bar" class="list-group bahan-list">
+                                @foreach ($bahans as $bahan)
+                                    @if (strpos($bahan->kode_bahan, 'BBAR') === 0)
+                                        <div class="d-flex align-items-center mb-2">
+                                            <span class="me-3">{{ $bahan->nama_bahan }}</span>
+                                            <input type="hidden" name="bahan_id[]" value="{{ $bahan->id }}">
+                                            <input type="hidden" name="tipe_bahan[]" value="non-proses">
+                                            <input type="number" class="form-control w-25 ms-auto" name="jumlah_masuk[]"
+                                                min="0" placeholder="Jumlah Masuk">
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
+
+                            {{-- Proses Section --}}
+                            <div id="bahan-proses-bar" class="list-group bahan-list d-none">
+                                @foreach ($bahan_processes as $process)
+                                    @if (strpos($process->kode_bahan, 'BBAR') === 0)
+                                        <div class="d-flex align-items-center mb-2">
+                                            <span class="me-3">{{ $process->nama_bahan }}</span>
+                                            <input type="hidden" name="bahan_id[]" value="{{ $process->id }}">
+                                            <input type="hidden" name="tipe_bahan[]" value="proses">
+                                            <input type="number" class="form-control w-25 ms-auto" name="jumlah_masuk[]"
+                                                min="0" placeholder="Jumlah Masuk">
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </form>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Nama Bahan dan Jumlah Masuk</label>
-
-                    {{-- Non-Proses Section --}}
-                    <div id="bahan-nonproses-bar" class="list-group bahan-list">
-                        @foreach ($bahans as $bahan)
-                            @if (strpos($bahan->kode_bahan, 'BBAR') === 0)
-                                <div class="d-flex align-items-center mb-2">
-                                    <span class="me-3">{{ $bahan->nama_bahan }}</span>
-                                    <input type="hidden" name="bahan_id[]" value="{{ $bahan->id }}">
-                                    <input type="hidden" name="tipe_bahan[]" value="non-proses">
-                                    <input type="number" class="form-control w-25 ms-auto" name="jumlah_masuk[]"
-                                        min="0" placeholder="Jumlah Masuk">
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
-
-                    {{-- Proses Section --}}
-                    <div id="bahan-proses-bar" class="list-group bahan-list d-none">
-                        @foreach ($bahan_processes as $process)
-                            @if (strpos($process->kode_bahan,'BBAR') === 0)
-                                <div class="d-flex align-items-center mb-2">
-                                    <span class="me-3">{{ $process->nama_bahan }}</span>
-                                    <input type="hidden" name="bahan_id[]" value="{{ $process->id }}">
-                                    <input type="hidden" name="tipe_bahan[]" value="proses">
-                                    <input type="number" class="form-control w-25 ms-auto" name="jumlah_masuk[]"
-                                        min="0" placeholder="Jumlah Masuk">
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-primary">Simpan</button>
-            </form>
+            </div>
         </div>
     </div>
-</div>
-</div>
 
 
     <!-- Modal Tambah Bahan Masuk Kitchen-->
-<div class="modal fade" id="addBahanMasukKitchenModal" tabindex="-1" aria-labelledby="addBahanMasukKitchenLabel"
-aria-hidden="true">
-<div class="modal-dialog">
-    <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="addBahanMasukLabel">Tambah Bahan Masuk</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <form action="{{ route('bahan.bahanmasuk.store') }}" method="POST">
-                @csrf
-                <div class="mb-3">
-                    <label class="form-label">Tanggal Masuk</label>
-                    <input type="date" class="form-control w-30" name="tanggal_masuk" id="tanggal_masuk"><br>
+    <div class="modal fade" id="addBahanMasukKitchenModal" tabindex="-1" aria-labelledby="addBahanMasukKitchenLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="addBahanMasukLabel">Tambah Bahan Masuk</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label">Tipe Bahan</label>
-                    <select class="form-select" id="tipe_bahan_select_kitchen">
-                        <option value="non-proses" selected>Non-Proses</option>
-                        <option value="proses">Proses</option>
-                    </select>
+                <div class="modal-body">
+                    <form action="{{ route('bahan.bahanmasuk.store') }}" method="POST">
+                        @csrf
+                        <div class="mb-3">
+                            <label class="form-label">Tanggal Masuk</label>
+                            <input type="date" class="form-control w-30" name="tanggal_masuk" id="tanggal_masuk"><br>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Tipe Bahan</label>
+                            <select class="form-select" id="tipe_bahan_select_kitchen">
+                                <option value="non-proses" selected>Non-Proses</option>
+                                <option value="proses">Proses</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Nama Bahan dan Jumlah Masuk</label>
+
+                            {{-- Non-Proses Section --}}
+                            <div id="bahan-nonproses-kitchen" class="list-group bahan-list">
+                                @foreach ($bahans as $bahan)
+                                    @if (strpos($bahan->kode_bahan, 'BBKTC') === 0)
+                                        <div class="d-flex align-items-center mb-2">
+                                            <span class="me-3">{{ $bahan->nama_bahan }}</span>
+                                            <input type="hidden" name="bahan_id[]" value="{{ $bahan->id }}">
+                                            <input type="hidden" name="tipe_bahan[]" value="non-proses">
+                                            <input type="number" class="form-control w-25 ms-auto" name="jumlah_masuk[]"
+                                                min="0" placeholder="Jumlah Masuk">
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
+
+                            {{-- Proses Section --}}
+                            <div id="bahan-proses-kitchen" class="list-group bahan-list d-none">
+                                @foreach ($bahan_processes as $process)
+                                    @if (strpos($process->kode_bahan, 'BBKTC') === 0)
+                                        <div class="d-flex align-items-center mb-2">
+                                            <span class="me-3">{{ $process->nama_bahan }}</span>
+                                            <input type="hidden" name="bahan_id[]" value="{{ $process->id }}">
+                                            <input type="hidden" name="tipe_bahan[]" value="proses">
+                                            <input type="number" class="form-control w-25 ms-auto" name="jumlah_masuk[]"
+                                                min="0" placeholder="Jumlah Masuk">
+                                        </div>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
+                    </form>
                 </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Nama Bahan dan Jumlah Masuk</label>
-
-                    {{-- Non-Proses Section --}}
-                    <div id="bahan-nonproses-kitchen" class="list-group bahan-list">
-                        @foreach ($bahans as $bahan)
-                            @if (strpos($bahan->kode_bahan, 'BBKTC') === 0)
-                                <div class="d-flex align-items-center mb-2">
-                                    <span class="me-3">{{ $bahan->nama_bahan }}</span>
-                                    <input type="hidden" name="bahan_id[]" value="{{ $bahan->id }}">
-                                    <input type="hidden" name="tipe_bahan[]" value="non-proses">
-                                    <input type="number" class="form-control w-25 ms-auto" name="jumlah_masuk[]"
-                                        min="0" placeholder="Jumlah Masuk">
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
-
-                    {{-- Proses Section --}}
-                    <div id="bahan-proses-kitchen" class="list-group bahan-list d-none">
-                        @foreach ($bahan_processes as $process)
-                            @if (strpos($process->kode_bahan, 'BBKTC') === 0)
-                                <div class="d-flex align-items-center mb-2">
-                                    <span class="me-3">{{ $process->nama_bahan }}</span>
-                                    <input type="hidden" name="bahan_id[]" value="{{ $process->id }}">
-                                    <input type="hidden" name="tipe_bahan[]" value="proses">
-                                    <input type="number" class="form-control w-25 ms-auto" name="jumlah_masuk[]"
-                                        min="0" placeholder="Jumlah Masuk">
-                                </div>
-                            @endif
-                        @endforeach
-                    </div>
-                </div>
-                <button type="submit" class="btn btn-primary">Simpan</button>
-            </form>
+            </div>
         </div>
     </div>
-</div>
-</div>
 
 
     <!-- JavaScript untuk mengisi satuan otomatis -->
@@ -245,19 +245,19 @@ aria-hidden="true">
     @endforeach
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             @if (session('success'))
                 swal("Berhasil!", "{{ session('success') }}", "success");
             @endif
-    
+
             function setupTipeBahanToggle(selectId, nonProsesId, prosesId) {
                 const tipeSelect = document.getElementById(selectId);
                 const nonProsesList = document.getElementById(nonProsesId);
                 const prosesList = document.getElementById(prosesId);
-    
+
                 if (!tipeSelect || !nonProsesList || !prosesList) return;
-    
-                tipeSelect.addEventListener('change', function () {
+
+                tipeSelect.addEventListener('change', function() {
                     if (this.value === 'proses') {
                         prosesList.classList.remove('d-none');
                         nonProsesList.classList.add('d-none');
@@ -267,10 +267,10 @@ aria-hidden="true">
                     }
                 });
             }
-    
+
             setupTipeBahanToggle('tipe_bahan_select_bar', 'bahan-nonproses-bar', 'bahan-proses-bar');
             setupTipeBahanToggle('tipe_bahan_select_kitchen', 'bahan-nonproses-kitchen', 'bahan-proses-kitchen');
         });
     </script>
-    
+
 @endsection

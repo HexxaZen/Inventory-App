@@ -75,7 +75,7 @@
                         </a>
                     </li>
                 @endif
-                @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar') || auth()->user()->hasRole('Bar'))
+                @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar'))
                     <li class="nav-item {{ Request::routeIs('menu.terjual.index') ? 'active' : '' }}">
                         <a href="{{ route('menu.terjual.index') }}" class="nav-link">
                             <i class="fa-solid fa-receipt"></i>
@@ -132,16 +132,16 @@
                         </a>
                     </li>
                 @endif
-                <li class="nav-item">
-                    <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
+                <li class="nav-item {{ Request::routeIs('logout') ? 'active' : '' }}">
+                    <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <p>Log Out</p>
+                    </a>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                         @csrf
-                        <button type="submit" class="nav-link d-flex align-items-center"
-                            style="border: none; background: none; color: inherit; width: 100%; text-align: left;">
-                            <i class="fa-solid fa-right-from-bracket" style="margin-left: 16px"></i>
-                            <p style="margin-left:20px; margin-bottom: 0;">Log Out</p>
-                        </button>
                     </form>
-                </li>
+                </li>                
+                
             </ul>
         </div>
     </div>

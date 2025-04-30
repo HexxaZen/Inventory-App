@@ -6,14 +6,19 @@
     <title>@yield('title', 'Dashboard | Merra Inventory')</title>
     <meta content="width=device-width, initial-scale=1.0, shrink-to-fit=no" name="viewport" />
     <link rel="icon" href="{{ asset('admin/assets/img/kaiadmin/favicon.ico') }}" type="image/x-icon" />
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    {{-- External Libraries --}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.js"></script>
     <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.1/semantic.min.css" />
-    <!-- Fonts and icons -->'
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    {{-- Web Fonts --}}
     <script src="{{ asset('admin/assets/js/plugin/webfont/webfont.min.js') }}"></script>
     <script>
         WebFont.load({
@@ -27,15 +32,17 @@
                     "Font Awesome 5 Brands",
                     "simple-line-icons",
                 ],
-                urls: ["assets/css/fonts.min.css"],
+                urls: ["{{ asset('admin/assets/css/fonts.min.css') }}"],
             },
-            active: function() {
+            active: function () {
                 sessionStorage.fonts = true;
             },
         });
     </script>
+
+    {{-- Custom Sidebar Style --}}
     <style>
-        <style>.sidebar {
+        .sidebar {
             transition: all 0.3s ease;
             transform: translateX(-100%);
             position: fixed;
@@ -50,8 +57,6 @@
         }
 
         @media (min-width: 992px) {
-
-            /* Untuk desktop biasa (jangan geser sidebar) */
             .sidebar {
                 transform: none !important;
                 position: static;
@@ -59,17 +64,11 @@
         }
     </style>
 
-    </style>
-
-    <!-- CSS Files -->
+    {{-- Kaiadmin Core Styles --}}
     <link rel="stylesheet" href="{{ asset('admin/assets/css/bootstrap.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('admin/assets/css/plugins.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('admin/assets/css/kaiadmin.min.css') }}" />
-
-    <!-- CSS Just for demo purpose, don't include it in your project -->
     <link rel="stylesheet" href="{{ asset('admin/assets/css/demo.css') }}" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-
 </head>
 
 <body>
@@ -77,12 +76,12 @@
         @include('layouts.sidebar')
 
         <div class="main-panel">
+            {{-- Main Header --}}
             <div class="main-header">
                 <div class="main-header-logo">
-                    <!-- Logo Header -->
                     <div class="logo-header" data-background-color="dark">
-                        <a href="index.html" class="logo">
-                            <img src="{{ asset('admin/assets/img/kaiadmin/logomerra.png') }}" alt="navbar brand"
+                        <a href="{{ url('/') }}" class="logo">
+                            <img src="{{ asset('admin/assets/img/kaiadmin/logomerra.png') }}" alt="Merra Logo"
                                 class="navbar-brand" height="20" />
                         </a>
                         <div class="nav-toggle">
@@ -97,7 +96,6 @@
                             <i class="gg-more-vertical-alt"></i>
                         </button>
                     </div>
-                    <!-- End Logo Header -->
                 </div>
                 @include('layouts.header')
             </div>
@@ -188,141 +186,116 @@
         </div>
         <!-- End Custom template -->
     </div>
-    <!--   Core JS Files   -->
-    <script src="{{ asset('admin/assets/js/core/jquery-3.7.1.min.js') }}"></script>
-    <script src="{{ asset('admin/assets/js/core/popper.min.js') }}"></script>
-    <script src="{{ asset('admin/assets/js/core/bootstrap.min.js') }}"></script>
+{{-- Core Scripts --}}
+<script src="{{ asset('admin/assets/js/core/jquery-3.7.1.min.js') }}"></script>
+<script src="{{ asset('admin/assets/js/core/popper.min.js') }}"></script>
+<script src="{{ asset('admin/assets/js/core/bootstrap.min.js') }}"></script>
 
-    <!-- jQuery Scrollbar -->
-    <script src="{{ asset('admin/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
+{{-- Plugins --}}
+<script src="{{ asset('admin/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js') }}"></script>
+<script src="{{ asset('admin/assets/js/plugin/chart.js/chart.min.js') }}"></script>
+<script src="{{ asset('admin/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js') }}"></script>
+<script src="{{ asset('admin/assets/js/plugin/chart-circle/circles.min.js') }}"></script>
+<script src="{{ asset('admin/assets/js/plugin/datatables/datatables.min.js') }}"></script>
+<script src="{{ asset('admin/assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
+<script src="{{ asset('admin/assets/js/plugin/jsvectormap/jsvectormap.min.js') }}"></script>
+<script src="{{ asset('admin/assets/js/plugin/jsvectormap/world.js') }}"></script>
+<script src="{{ asset('admin/assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
 
-    <!-- Chart JS -->
-    <script src="{{ asset('admin/assets/js/plugin/chart.js/chart.min.js') }}"></script>
+{{-- Kaiadmin Scripts --}}
+<script src="{{ asset('admin/assets/js/kaiadmin.min.js') }}"></script>
+<script src="{{ asset('admin/assets/js/setting-demo.js') }}"></script>
+<script src="{{ asset('admin/assets/js/demo.js') }}"></script>
 
-    <!-- jQuery Sparkline -->
-    <script src="{{ asset('admin/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js') }}"></script>
+{{-- Custom Script --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggleSidebarBtn = document.querySelector('.toggle-sidebar');
+        const sidenavTogglerBtn = document.querySelector('.sidenav-toggler');
+        const topbarToggler = document.querySelector('.topbar-toggler');
+        const sidebar = document.querySelector('.sidebar');
 
-    <!-- Chart Circle -->
-    <script src="{{ asset('admin/assets/js/plugin/chart-circle/circles.min.js') }}"></script>
+        function toggleSidebar() {
+            document.body.classList.toggle('nav_open');
+            sidebar.classList.toggle('open');
+        }
 
-    <!-- Datatables -->
-    <script src="{{ asset('admin/assets/js/plugin/datatables/datatables.min.js') }}"></script>
+        if (toggleSidebarBtn) {
+            toggleSidebarBtn.addEventListener('click', e => {
+                e.stopPropagation();
+                document.body.classList.toggle('sidebar_minimize');
+            });
+        }
 
-    <!-- Bootstrap Notify -->
-    <script src="{{ asset('admin/assets/js/plugin/bootstrap-notify/bootstrap-notify.min.js') }}"></script>
+        if (sidenavTogglerBtn) {
+            sidenavTogglerBtn.addEventListener('click', e => {
+                e.stopPropagation();
+                toggleSidebar();
+            });
+        }
 
-    <!-- jQuery Vector Maps -->
-    <script src="{{ asset('admin/assets/js/plugin/jsvectormap/jsvectormap.min.js') }}"></script>
-    <script src="{{ asset('admin/assets/js/plugin/jsvectormap/world.js') }}"></script>
+        if (topbarToggler) {
+            topbarToggler.addEventListener('click', e => {
+                e.stopPropagation();
+                document.body.classList.toggle('topbar_open');
+            });
+        }
 
-    <!-- Sweet Alert -->
-    <script src="{{ asset('admin/assets/js/plugin/sweetalert/sweetalert.min.js') }}"></script>
-
-    <!-- Kaiadmin JS -->
-    <script src="{{ asset('admin/assets/js/kaiadmin.min.js') }}"></script>
-
-    <!-- Kaiadmin DEMO methods, don't include it in your project! -->
-    <script src="{{ asset('admin/assets/js/setting-demo.js') }}"></script>
-    <script src="{{ asset('admin/assets/js/demo.js') }}"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const toggleSidebarBtn = document.querySelector('.toggle-sidebar');
-            const sidenavTogglerBtn = document.querySelector('.sidenav-toggler');
-            const topbarToggler = document.querySelector('.topbar-toggler');
-            const sidebar = document.querySelector('.sidebar');
-
-            // Fungsi untuk membuka atau menutup sidebar
-            function toggleSidebar() {
-                document.body.classList.toggle('nav_open');
-                sidebar.classList.toggle('open');
+        document.addEventListener('click', e => {
+            if (sidebar.classList.contains('open') &&
+                !sidebar.contains(e.target) &&
+                !sidenavTogglerBtn.contains(e.target)) {
+                sidebar.classList.remove('open');
+                document.body.classList.remove('nav_open');
             }
-
-            // Menambahkan event listener untuk toggle sidebar dengan tombol toggleSidebarBtn
-            if (toggleSidebarBtn) {
-                toggleSidebarBtn.addEventListener('click', function(e) {
-                    e.stopPropagation(); // Cegah event bubbling
-                    document.body.classList.toggle('sidebar_minimize');
-                });
-            }
-
-            // Menambahkan event listener untuk toggle sidebar dengan tombol sidenavTogglerBtn
-            if (sidenavTogglerBtn) {
-                sidenavTogglerBtn.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    toggleSidebar(); // Toggle sidebar pada tombol toggler
-                });
-            }
-
-            // Menambahkan event listener untuk toggle topbar
-            if (topbarToggler) {
-                topbarToggler.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    document.body.classList.toggle('topbar_open');
-                });
-            }
-
-            // Tutup sidebar saat klik di luar sidebar
-            document.addEventListener('click', function(e) {
-                const isSidebarOpen = sidebar.classList.contains('open');
-
-                if (isSidebarOpen && !sidebar.contains(e.target) && !sidenavTogglerBtn.contains(e.target)) {
-                    sidebar.classList.remove('open');
-                    document.body.classList.remove('nav_open');
-                }
-            });
-
-            // Cegah sidebar tertutup ketika klik di dalam sidebar
-            if (sidebar) {
-                sidebar.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                });
-            }
-
-            // Pusher untuk notifikasi stok menipis
-            Pusher.logToConsole = true;
-
-            var pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
-                cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
-                forceTLS: true
-            });
-
-            var channel = pusher.subscribe('stok-menipis');
-            channel.bind('stokMenipis', function(data) {
-                alert("⚠️ Stok " + data.bahan.nama_bahan + " menipis! Sisa: " + data.bahan.sisa_stok);
-            });
-
-            // Inisialisasi grafik sparkline
-            $("#lineChart").sparkline([102, 109, 120, 99, 110, 105, 115], {
-                type: "line",
-                height: "70",
-                width: "100%",
-                lineWidth: "2",
-                lineColor: "#177dff",
-                fillColor: "rgba(23, 125, 255, 0.14)",
-            });
-
-            $("#lineChart2").sparkline([99, 125, 122, 105, 110, 124, 115], {
-                type: "line",
-                height: "70",
-                width: "100%",
-                lineWidth: "2",
-                lineColor: "#f3545d",
-                fillColor: "rgba(243, 84, 93, .14)",
-            });
-
-            $("#lineChart3").sparkline([105, 103, 123, 100, 95, 105, 115], {
-                type: "line",
-                height: "70",
-                width: "100%",
-                lineWidth: "2",
-                lineColor: "#ffa534",
-                fillColor: "rgba(255, 165, 52, .14)",
-            });
-
         });
-    </script>
 
+        if (sidebar) {
+            sidebar.addEventListener('click', e => e.stopPropagation());
+        }
 
+        // Pusher for stok notification
+        Pusher.logToConsole = true;
+
+        var pusher = new Pusher("{{ env('PUSHER_APP_KEY') }}", {
+            cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
+            forceTLS: true
+        });
+
+        var channel = pusher.subscribe('stok-menipis');
+        channel.bind('stokMenipis', function (data) {
+            alert("⚠️ Stok " + data.bahan.nama_bahan + " menipis! Sisa: " + data.bahan.sisa_stok);
+        });
+
+        // Sparkline charts
+        $("#lineChart").sparkline([102, 109, 120, 99, 110, 105, 115], {
+            type: "line",
+            height: "70",
+            width: "100%",
+            lineWidth: "2",
+            lineColor: "#177dff",
+            fillColor: "rgba(23, 125, 255, 0.14)",
+        });
+
+        $("#lineChart2").sparkline([99, 125, 122, 105, 110, 124, 115], {
+            type: "line",
+            height: "70",
+            width: "100%",
+            lineWidth: "2",
+            lineColor: "#f3545d",
+            fillColor: "rgba(243, 84, 93, .14)",
+        });
+
+        $("#lineChart3").sparkline([105, 103, 123, 100, 95, 105, 115], {
+            type: "line",
+            height: "70",
+            width: "100%",
+            lineWidth: "2",
+            lineColor: "#ffa534",
+            fillColor: "rgba(255, 165, 52, .14)",
+        });
+    });
+</script>
 </body>
 
 </html>
