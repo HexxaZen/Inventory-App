@@ -12,46 +12,46 @@ use App\Events\StokMenipisEvent;
 class BahanController extends Controller
 {
     public function index(Request $request)
-{
-    $kategoris = Kategori::all();
-    $user = Auth::user();
-    $kategoriBahan = $request->query('kategori_bahan', 'all');
-    
-    $query = Bahan::query();
+    {
+        $kategoris = Kategori::all();
+        $user = Auth::user();
+        $kategoriBahan = $request->query('kategori_bahan', 'all');
 
-    // Filter berdasarkan kategori bahan (BBAR / BBKTC)
-    if ($kategoriBahan === 'BBAR') {
-        $query->where('kode_bahan', 'like', 'BBAR%');
-    } elseif ($kategoriBahan === 'BBKTC') {
-        $query->where('kode_bahan', 'like', 'BBKTC%');
-    } else {
-        // Filter berdasarkan role user
-        $query->where(function ($q) use ($user) {
-            if ($user->hasRole(['Admin','Headbar', 'Bar'])) {
-                $q->where('kode_bahan', 'LIKE', 'BBAR%');
-            }
+        $query = Bahan::query();
 
-            if ($user->hasRole(['Admin','Headkitchen', 'Kitchen'])) {
-                $q->orWhere('kode_bahan', 'LIKE', 'BBKTC%');
-            }
-        });
-    }
-
-    $bahan = $query->orderBy('status', 'desc')->get();
-
-    // Proses status stok
-    foreach ($bahan as $item) {
-        if ($item->sisa_stok > $item->batas_minimum) {
-            $item->status = '<span class="badge bg-success">AMAN</span>';
-        } elseif ($item->sisa_stok > 0) {
-            $item->status = '<span class="badge bg-warning text-dark">MENIPIS</span>';
+        // Filter berdasarkan kategori bahan (BBAR / BBKTC)
+        if ($kategoriBahan === 'BBAR') {
+            $query->where('kode_bahan', 'like', 'BBAR%');
+        } elseif ($kategoriBahan === 'BBKTC') {
+            $query->where('kode_bahan', 'like', 'BBKTC%');
         } else {
-            $item->status = '<span class="badge bg-danger">HABIS</span>';
-        }
-    }
+            // Filter berdasarkan role user
+            $query->where(function ($q) use ($user) {
+                if ($user->hasRole(['Admin', 'Headbar', 'Bar'])) {
+                    $q->where('kode_bahan', 'LIKE', 'BBAR%');
+                }
 
-    return view('bahan.daftarbahan', compact('bahan', 'kategoris'));
-}
+                if ($user->hasRole(['Admin', 'Headkitchen', 'Kitchen'])) {
+                    $q->orWhere('kode_bahan', 'LIKE', 'BBKTC%');
+                }
+            });
+        }
+
+        $bahan = $query->orderBy('status', 'desc')->get();
+
+        // Proses status stok
+        foreach ($bahan as $item) {
+            if ($item->sisa_stok > $item->batas_minimum) {
+                $item->status = '<span class="badge bg-success">AMAN</span>';
+            } elseif ($item->sisa_stok > 0) {
+                $item->status = '<span class="badge bg-warning text-dark">MENIPIS</span>';
+            } else {
+                $item->status = '<span class="badge bg-danger">HABIS</span>';
+            }
+        }
+
+        return view('bahan.daftarbahan', compact('bahan', 'kategoris'));
+    }
 
 
 
@@ -86,7 +86,7 @@ class BahanController extends Controller
         $request->validate([
             'kode_bahan' => 'required',
             'nama_bahan' => 'required',
-            'tipe' =>'required',
+            'tipe' => 'required',
             'jenis_bahan' => 'required',
             'kategori_bahan' => 'required',
             'sisa_stok' => 'nullable|integer',
@@ -125,20 +125,25 @@ class BahanController extends Controller
     {
         $request->validate([
             'nama_bahan' => 'required',
-            'tipe'=> 'required',
+            'tipe' => 'required',
             'satuan' => 'required',
             'batas_minimum' => 'required|integer|min:1'
         ]);
 
         $bahan = Bahan::findOrFail($id);
-        $bahan->update($request->only(['nama_bahan','tipe', 'satuan', 'batas_minimum']));
+        $bahan->update($request->only(['nama_bahan', 'tipe', 'satuan', 'batas_minimum']));
 
         return redirect()->back()->with('success');
     }
 
     public function destroy($id)
     {
-        Bahan::findOrFail($id)->delete();
+        $bahan = Bahan::findOrFail($id);
+        // Hapus semua data bahan_keluar yang terkait
+        $bahan->bahanKeluar()->delete();
+
+        // Hapus data bahan
+        $bahan->delete();
         return redirect()->back()->with('success');
     }
 }

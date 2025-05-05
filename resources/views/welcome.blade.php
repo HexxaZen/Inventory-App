@@ -82,16 +82,15 @@
                              style="max-width: 80%; height: auto;">
                     </a>
                     <h1 class="mb-4">We Make <br>Something Great for You</h1>
-                    <p class="mb-4">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Perspiciatis similique eius placeat ut
-                        tempore recusandae praesentium nesciunt. Beatae dolorum libero voluptate magnam deleniti.
-                        Mollitia cumque quisquam neque officia officiis optio.
-                    </p>
                     <p class="mt-5">
-                        <a href="{{ route('login') }}" class="btn-custom">
-                            Staff's Login <span class="ion-ios-arrow-round-forward"></span>
+                        <a href="{{ route('login') }}">
+                            Staff's Login 
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                            <span></span>
                         </a>
-                    </p>
+                    </p>                    
                 </div>
             </div>
         </div>

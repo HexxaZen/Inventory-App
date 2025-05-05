@@ -64,6 +64,6 @@ class Bahan extends Model
 
     public function bahanKeluar()
     {
-        return $this->hasMany(BahanKeluar::class, 'kode_bahan', 'kode_bahan');
+        return $this->hasMany(BahanKeluar::class);
     }
 }
