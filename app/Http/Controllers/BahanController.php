@@ -141,7 +141,7 @@ class BahanController extends Controller
         $bahan = Bahan::findOrFail($id);
         // Hapus semua data bahan_keluar yang terkait
         $bahan->bahanKeluar()->delete();
-
+        $bahan->bahanMasuk()->delete();
         // Hapus data bahan
         $bahan->delete();
         return redirect()->back()->with('success');

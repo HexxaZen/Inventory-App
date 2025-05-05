@@ -66,4 +66,8 @@ class Bahan extends Model
     {
         return $this->hasMany(BahanKeluar::class);
     }
+    public function bahanMasuk()
+    {
+        return $this->hasMany(BahanMasuk::class);
+    }
 }
