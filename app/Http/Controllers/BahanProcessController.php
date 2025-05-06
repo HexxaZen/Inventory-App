@@ -73,12 +73,12 @@ class BahanProcessController extends Controller
             'bahan_process' => 'nullable|array',
             'bahan_process.*' => 'exists:bahan_processes,id',
             'gramasi_process' => 'nullable|array',
-            'gramasi_process.*' => 'numeric|min:1',
+            'gramasi_process.*' => 'numeric|min:0',
             'satuan' => 'required',
             'bahan_biasa' => 'nullable|array',
             'bahan_biasa.*' => 'exists:bahans,id',
             'gramasi_biasa' => 'nullable|array',
-            'gramasi_biasa.*' => 'numeric|min:1',
+            'gramasi_biasa.*' => 'numeric|min:0',
             'batas_minimum' => 'required|integer|min:0',
         ]);
 

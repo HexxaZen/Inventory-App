@@ -50,6 +50,7 @@
                         <th>Kode Bahan</th>
                         <th>Kategori Bahan</th>
                         <th>Nama Bahan Proses</th>
+                        <th>Jumlah</th>
                         <th>Sisa Stok</th>
                         <th>Komposisi Bahan</th>
                         <th>Batas Minimum</th>
@@ -65,6 +66,7 @@
                             <td>{{ $item->kode_bahan }}</td>
                             <td>{{ $item->kategori_bahan }}</td>
                             <td>{{ $item->nama_bahan }}</td>
+                            <td>{{ $item->jumlah_batch}}</td>
                             <td>{{ $item->sisa_stok }}</td>
                             <td>
                                 @if ($item->bahans->isEmpty())
@@ -328,7 +330,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="mb-3">
+                            {{-- <div class="mb-3">
                                 <label class="form-label" for="bahan_process">Komposisi Bahan Process</label>
                                 <select class="form-control bahan-process multi-select" name="bahan_process[]"multiple>
                                     @foreach ($bahanProcesses as $bp)
@@ -340,9 +342,9 @@
                                         @endif
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
 
-                            <div class="mb-3" id="gramasi-container" data-target="kitchen"></div>
+                            <div class="mb-3 gramasi-container" data-target="kitchen"></div>
                             <div class="mb-3">
                                 <label for="batas_minimum" class="form-label">Batas Minimum</label>
                                 <input type="number" class="form-control" id="batas_minimum" name="batas_minimum"
