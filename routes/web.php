@@ -154,6 +154,8 @@ Route::middleware(['auth', 'role:Admin|Headbar|Headkitchen'])->group(function ()
 Route::middleware(['role:Admin|Headbar|Headkitchen|Bar|Kitchen'])->group(function () {
 Route::get('/pemantauan-bahan', [PemantauanController::class, 'index'])->name('laporan.pemantauan');
 Route::get('/laporan/pemantauan/pdf', [PemantauanController::class, 'downloadPDF'])->name('laporan.pemantauan.pdf');
+Route::post('/laporan/pemantauan/pdf', [PemantauanController::class, 'downloadPDF'])->name('laporan.pemantauan.pdf');
+
 });
 // Route bahan process
 Route::middleware(['auth'])->group(function () {

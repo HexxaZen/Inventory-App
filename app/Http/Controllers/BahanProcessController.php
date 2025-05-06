@@ -165,7 +165,7 @@ class BahanProcessController extends Controller
     // Sinkronisasi relasi many-to-many (bahan_proses <-> bahan)
     $bahanProses->bahans()->sync($pivotData);
 
-    return redirect()->back()->with('success', 'Data proses bahan berhasil diperbarui.');
+    return redirect()->back()->with('success');
 }
 
 
@@ -177,6 +177,6 @@ class BahanProcessController extends Controller
         $bahanProses->bahans()->detach();
         $bahanProses->delete();
 
-        return redirect()->route('bahan.process')->with('success', 'Data berhasil dihapus.');
+        return redirect()->route('bahan.process')->with('success');
     }
 }

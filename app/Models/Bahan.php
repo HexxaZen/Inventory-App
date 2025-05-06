@@ -64,10 +64,10 @@ class Bahan extends Model
 
     public function bahanKeluar()
     {
-        return $this->hasMany(BahanKeluar::class);
+        return $this->hasMany(BahanKeluar::class, 'kode_bahan', 'kode_bahan');
     }
     public function bahanMasuk()
     {
-        return $this->hasMany(BahanMasuk::class);
+        return $this->hasMany(BahanMasuk::class,'kode_bahan','kode_bahan');
     }
 }

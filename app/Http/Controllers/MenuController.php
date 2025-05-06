@@ -119,7 +119,7 @@ class MenuController extends Controller
     }
     $menu->bahanProcesses()->sync($bahanProcessData);
 
-    return redirect()->route('menu.index')->with('success', 'Menu berhasil diperbarui.');
+    return redirect()->route('menu.index')->with('success');
 }
 
 

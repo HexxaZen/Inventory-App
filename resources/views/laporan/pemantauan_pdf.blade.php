@@ -95,16 +95,18 @@
                 <th>Total Bahan Masuk</th>
                 <th>Total Bahan Keluar</th>
                 <th>Status Pemantauan</th>
+                <th>Keterangan</th>
             </tr>
         </thead>
         <tbody>
-            @forelse ($laporan as $data)
+            @forelse ($laporan as $index=>$data)
                 <tr>
                     <td>{{ $data['kode_bahan'] }}</td>
                     <td>{{ $data['nama_bahan'] }}</td>
                     <td class="text-right">{{ $data['total_masuk'] }}</td>
                     <td class="text-right">{{ $data['total_keluar'] }}</td>
                     <td class="text-center">{{ $data['status_pemantauan'] }}</td>
+                    <td class="text-center">{{$data['keterangan']}}</td>
                 </tr>
             @empty
                 <tr>

@@ -4,6 +4,8 @@
 @section('bahanProcess')
     <div class="container">
         <h1 class="mb-4 mx-5 my-5">Komposisi Bahan Proses</h1>
+        
+        {{-- END BAR --}}
         {{-- TAMBAH BAHAN PROSES BAR --}}
         @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar') || auth()->user()->hasRole('Bar'))
             <button class="btn btn-primary mb-3 float-end me-3" data-bs-toggle="modal" data-bs-target="#addProcessModalBAR">
@@ -172,6 +174,7 @@
         @endforeach
 
         {{-- END MODAL EDIT --}}
+        
         <!-- Modal Tambah Proses BAR -->
         <div class="modal fade" id="addProcessModalBAR" tabindex="-1" aria-labelledby="addProcessModalLabel"
             aria-hidden="true">
@@ -219,7 +222,7 @@
                                 <input type="text" class="form-control" name="nama_bahan" required>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label" for="bahan_biasa">Komposisi Bahan Non-Proses</label>
+                                <label class="form-label" for="bahan_biasa">Komposisi Bahan</label>
                                 <select class="form-control bahan-biasa multi-select" name="bahan_biasa[]" multiple>
                                     @foreach ($bahans as $bahan)
                                         @if (str_starts_with($bahan->kode_bahan, 'BBAR'))
@@ -232,7 +235,7 @@
                                 </select>
                             </div>
 
-                            <div class="mb-3">
+                            {{-- <div class="mb-3">
                                 <label class="form-label" for="bahan_process">Komposisi Bahan Process</label>
                                 <select class="form-control bahan-process multi-select" name="bahan_process[]" multiple>
                                     @foreach ($bahanProcesses as $bp)
@@ -244,7 +247,7 @@
                                         @endif
                                     @endforeach
                                 </select>
-                            </div>
+                            </div> --}}
                             <div class="mb-3 gramasi-container" data-target="bar"></div>
                             <div class="mb-3">
                                 <label for="batas_minimum" class="form-label">Batas Minimum</label>
