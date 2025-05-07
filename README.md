@@ -19,7 +19,21 @@ Pendataan terperinci untuk stok bahan dan inventaris yang sangat Coffee Shop Fri
 - Node.js & NPM
 ## Demo
 
-![Screenshot](demo-pic)
+![Screenshot](demo-pic/welcome.png)
+![Screenshot](demo-pic/login.png)
+![Screenshot](demo-pic/Dashboard.png)
+![Screenshot](demo-pic/Kategori.png)
+![Screenshot](demo-pic/BahanBaku.png)
+![Screenshot](demo-pic/BahanMasuk.png)
+![Screenshot](demo-pic/BahanKeluar.png)
+![Screenshot](demo-pic/BahanAkhir.png)
+![Screenshot](demo-pic/BahanProses.png)
+![Screenshot](demo-pic/Menu.png)
+![Screenshot](demo-pic/MenuTerjual.png)
+![Screenshot](demo-pic/DaftarInventaris.png)
+![Screenshot](demo-pic/pengguna.png)
+![Screenshot](demo-pic/Laporan1.png)
+![Screenshot](demo-pic/Laporan2.png)
 
 ## Installation
 
