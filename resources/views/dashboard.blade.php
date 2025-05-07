@@ -237,8 +237,6 @@
                         </div>
                     </div>
                     {{-- end button --}}
-<<<<<<< HEAD
-
                     @if ($bahan_low_stock->isNotEmpty())
                         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
                         <script>
@@ -278,7 +276,6 @@
                             }
                         </style>
                     @endif
-=======
                     {{-- Menu Kosong --}}
                     <div class="row">
                         <div class="col-12">
