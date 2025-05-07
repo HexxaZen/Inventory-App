@@ -17,6 +17,9 @@ Pendataan terperinci untuk stok bahan dan inventaris yang sangat Coffee Shop Fri
 - Composer
 - MySQL or PostgreSQL
 - Node.js & NPM
+## Demo
+
+![Screenshot](demo-pic)
 
 ## Installation
 
@@ -28,3 +31,5 @@ composer install
 npm install && npm run dev
 php artisan key:generate
 php artisan migrate --seed
+
+
