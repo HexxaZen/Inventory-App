@@ -326,5 +326,4 @@
                             </div>
                         </div>
                     </div>
->>>>>>> 4916c37 (Fix: Bootstrap collapse menu not working after deploy)
                 @endsection

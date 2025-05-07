@@ -294,7 +294,6 @@
             lineColor: "#ffa534",
             fillColor: "rgba(255, 165, 52, .14)",
         });
-<<<<<<< HEAD
     });
 </script>
 =======
@@ -303,7 +302,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 
->>>>>>> 4916c37 (Fix: Bootstrap collapse menu not working after deploy)
 </body>
 
 </html>
