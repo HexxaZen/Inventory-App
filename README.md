@@ -1,11 +1,15 @@
-# Laravel Inventory App
+# Coffee Shop Inventory App (LARAVEL)
 
-A simple Laravel-based inventory management application.
-
+Pendataan terperinci untuk stok bahan dan inventaris yang sangat Coffee Shop Friendly
 ## Features
-- CRUD for products, categories, and suppliers
-- Real-time stock notification with Pusher
-- WhatsApp alerts for low stock
+- 5 Roles (Admin, HeadBar, HeadKitchen, Bar, Kitchen)
+- CRUD Bahan(Bahan baku non-proses, Bahan proses, Bahan Masuk, Bahan Keluar, Bahan akhir(sisa bahan)).
+- CRUD Kategori Inventory
+- CRUD MENU (detail menu beserta komposisi bahan baku untuk membuat menu)
+- CRUD MENU TERJUAL (Detail menu terjual untuk menyesuaikan bahan keluar dan komposisi bahan dari menu yang terjual)
+- CRUD INVENTARIS (Bar, Kitchen, Operasional)
+- Laporan (PEMANTAUAN BAHAN BAKU, BAHAN BAKU, BAHAN MASUK, BAHAN KELUAR)
+- Real-time stock notification
 - Barcode system for inventory scanning
 
 ## Requirements
