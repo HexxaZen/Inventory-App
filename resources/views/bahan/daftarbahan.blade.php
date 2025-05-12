@@ -56,7 +56,9 @@
                         <th>Batas Minimum</th>
                         <th>Satuan</th>
                         <th>Status</th>
+                        @if(auth()->user()->hasRole('Admin')||auth()->user()->hasRole('Headbar')||auth()->user()->hasRole('Headkitchen'))
                         <th>Aksi</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -106,6 +108,7 @@
                                         <span class="badge bg-danger">HABIS</span>
                                     @endif
                                 </td>
+                                @if(auth()->user()->hasRole('Admin')||auth()->user()->hasRole('Headbar')||auth()->user()->hasRole('Headkitchen'))
                                 <td>
                                     <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
                                         data-bs-target="#editBahanModal{{ $item->id }}">Edit</button>
@@ -116,6 +119,7 @@
                                         <button type="submit" class="btn btn-danger btn-sm btn-delete">Hapus</button>
                                     </form>
                                 </td>
+                                @endif
                             </tr>
                         @endif
                     @endforeach
@@ -350,7 +354,8 @@
                             <select class="form-control" id="satuan" name="satuan" required>
                                 <option value="pack">Pack</option>
                                 <option value="pcs">Pcs</option>
-                                <option value="gram">Gram/ml</option>
+                                <option value="gram">Gram</option>
+                                <option value="kg">Kg</option>
                                 <option value="buah">Buah</option>
                             </select>
                         </div>

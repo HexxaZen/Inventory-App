@@ -182,7 +182,7 @@ class BahanMasukController extends Controller
             }
         });
 
-        return redirect()->route('bahan.bahanmasuk')->with('success', 'Data bahan masuk berhasil disimpan.');
+        return redirect()->route('bahan.bahanmasuk')->with('success');
     }
 
 
@@ -262,7 +262,7 @@ class BahanMasukController extends Controller
         $bahanMasuk->jumlah_masuk = $newJumlah;
         $bahanMasuk->save();
 
-        return redirect()->back()->with('success', 'Data berhasil diperbarui.');
+        return redirect()->back()->with('success');
     }
 
 
@@ -330,7 +330,7 @@ class BahanMasukController extends Controller
             $bahanMasuk->delete();
         });
 
-        return redirect()->route('bahan.bahanmasuk')->with('success', 'Data bahan masuk berhasil dihapus dan stok dikembalikan.');
+        return redirect()->route('bahan.bahanmasuk')->with('success');
     }
 
 }

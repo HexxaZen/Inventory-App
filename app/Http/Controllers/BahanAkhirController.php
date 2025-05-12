@@ -105,30 +105,34 @@ class BahanAkhirController extends Controller
     }
 
     foreach ($request->sisa_stok as $id => $stok_akhir) {
-        // Cek apakah ID berasal dari BahanProcess (pakai prefix "p_")
         $isProses = str_starts_with($id, 'p_');
         $modelId = $isProses ? str_replace('p_', '', $id) : $id;
 
         $bahan = $isProses ? BahanProcess::find($modelId) : Bahan::find($modelId);
-        if (!$bahan) {
-            continue;
-        }
+        if (!$bahan) continue;
 
-        // Ambil stok sebelumnya dari bahan_akhirs berdasarkan tanggal terakhir sebelum hari ini
-        $stok_sebelumnya = BahanAkhir::where('kode_bahan', $bahan->kode_bahan)
-            ->where('tanggal_input', '<', $tanggal)
-            ->orderByDesc('tanggal_input')
+        // Ambil stok hari ini jika sebelumnya sudah pernah disimpan
+        $stok_hari_ini = BahanAkhir::where('kode_bahan', $bahan->kode_bahan)
+            ->where('tanggal_input', $tanggal)
             ->value('stok_terakhir');
 
-        // Jika tidak ada data sebelumnya, fallback ke sisa_stok dari database saat ini
-        $stok_sebelumnya = $stok_sebelumnya ?? $bahan->sisa_stok;
+        // Jika belum ada, ambil stok terakhir sebelum hari ini
+        if ($stok_hari_ini !== null) {
+            $stok_sebelumnya = $stok_hari_ini;
+        } else {
+            $stok_sebelumnya = BahanAkhir::where('kode_bahan', $bahan->kode_bahan)
+                ->where('tanggal_input', '<', $tanggal)
+                ->orderByDesc('tanggal_input')
+                ->value('stok_terakhir') ?? $bahan->sisa_stok;
+        }
 
         $jumlah_keluar = $stok_sebelumnya - $stok_akhir;
 
-        // Update stok bahan (baik process maupun non-process)
+        // Update sisa stok di tabel bahan
         $bahan->update(['sisa_stok' => $stok_akhir]);
 
-        // Simpan ke bahan_akhirs
+        // Update/simpan data bahan akhir
+        if ($stok_akhir > 0){
         BahanAkhir::updateOrCreate(
             [
                 'tanggal_input' => $tanggal,
@@ -140,22 +144,35 @@ class BahanAkhirController extends Controller
                 'stok_terakhir' => $stok_akhir,
             ]
         );
+        }
 
-        // Catat bahan keluar jika ada pengurangan stok
+        // Catat atau update bahan keluar hanya jika ada pengurangan stok
         if ($jumlah_keluar > 0) {
-            BahanKeluar::create([
-                'kode_bahan' => $bahan->kode_bahan,
-                'nama_bahan' => $bahan->nama_bahan,
-                'jumlah_keluar' => $jumlah_keluar,
-                'tanggal_keluar' => $tanggal,
-                'satuan' => $bahan->satuan,
-                'tipe_bahan' => $isProses ? 'proses' : 'non-proses',
-                'bahan_masuk_id' => null,
-            ]);
+            $bahanKeluar = BahanKeluar::where('kode_bahan', $bahan->kode_bahan)
+                ->whereDate('tanggal_keluar', $tanggal)
+                ->first();
+
+            if ($bahanKeluar) {
+                // Update jumlah_keluar jika data sebelumnya sudah ada
+                $bahanKeluar->update([
+                    'jumlah_keluar' => $bahanKeluar->jumlah_keluar + $jumlah_keluar,
+                ]);
+            } else {
+                // Atau buat data baru jika belum ada
+                BahanKeluar::create([
+                    'kode_bahan' => $bahan->kode_bahan,
+                    'nama_bahan' => $bahan->nama_bahan,
+                    'jumlah_keluar' => $jumlah_keluar,
+                    'tanggal_keluar' => $tanggal,
+                    'satuan' => $bahan->satuan,
+                    'bahan_masuk_id' => null,
+                ]);
+            }
         }
     }
 
-    return redirect()->route('bahan.akhir.index')->with('success', 'Data berhasil disimpan.');
+    return redirect()->route('bahan.akhir.index')->with('success', 'Data bahan akhir berhasil disimpan.');
 }
+
 
 }

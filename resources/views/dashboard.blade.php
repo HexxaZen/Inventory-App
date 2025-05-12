@@ -281,7 +281,8 @@
                         <div class="col-12">
                             <div class="card">
                                 <div class="card-header bg-primary text-white">
-                                    <h4 class="card-title mb-0"style="color: aliceblue;">Unavailable Menu Karena Bahan Kosong</h4>
+                                    <h4 class="card-title mb-0"style="color: aliceblue;">Unavailable Menu Karena Bahan
+                                        Kosong</h4>
                                 </div>
                                 <div class="card-body">
                                     <div class="table-responsive">
