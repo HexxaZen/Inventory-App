@@ -17,6 +17,7 @@ use App\Http\Controllers\MenuTerjualController;
 use App\Http\Controllers\PemantauanController;
 use App\Http\Controllers\BahanProcessController;
 use App\Http\Controllers\StokController;
+use App\Http\Controllers\DataBahanakhirController;
 
 Route::get('/kirim-notifikasi-stok', [StokController::class, 'kirimNotifikasiStok']);
 
@@ -88,6 +89,11 @@ Route::middleware(['role:Admin|Headbar|Headkitchen|Bar|Kitchen'])->group(functio
     Route::post('/bahan/akhir/update', [BahanAkhirController::class, 'update'])->name('bahan.akhir.update');
     Route::get('/bahan/akhir/tampilkan', [BahanAkhirController::class, 'tampilkan'])->name('bahan.akhir.tampilkan');
 });
+// route edit bahan akhir
+Route::put('/bahanakhir/{id}', [DataBahanakhirController::class, 'update'])->name('bahanakhir.update');
+// route update single bahan akhir
+Route::put('/bahanakhir/update/{id}', [DataBahanakhirController::class, 'updateSingle'])->name('bahanakhir.update');
+
 // Routes untuk Bahan Keluar
 Route::middleware(['role:Admin|Headbar|Headkitchen|Bar|Kitchen'])->group(function () {
     Route::get('/bahan/bahankeluar', [BahanKeluarController::class, 'index'])->name('bahan.bahankeluar');
@@ -133,7 +139,7 @@ Route::middleware(['role:Admin|Headbar|Headkitchen'])->group(function () {
     Route::delete('/inventaris/{id}', [InventarisController::class, 'destroy'])->name('inventaris.destroy');
     Route::get('/inventaris/cetak-barcode/{id}', [InventarisController::class, 'cetakBarcode'])->name('inventaris.cetakBarcode');
 });
-// routes public inventaris
+// routes inventaris
 Route::get('/scan-inventaris/{id}', [InventarisController::class, 'showAfterLogin'])
     ->middleware('auth')
     ->name('inventaris.scan');
@@ -168,4 +174,8 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/bahan/process/{id}', [BahanProcessController::class, 'update'])->name('bahan.process.update');
     Route::delete('/bahan/process/{id}', [BahanProcessController::class, 'destroy'])->name('bahan.process.destroy');
 });
+Route::get('/check-session', function () {
+    return response()->json(['status' => auth()->check()]);
+})->name('check.session');
+
 require __DIR__ . '/auth.php';
