@@ -41,7 +41,7 @@
                             <td>
                                 {{ $item->kode_inventaris }} <br>
                                 @php
-                                    $qrCode = DNS2D::getBarcodePNG(route('inventaris.show', $item->id), 'QRCODE');
+                                    $qrCode = DNS2D::getBarcodePNG(route('inventaris.scan', $item->id), 'QRCODE');
                                 @endphp
                                 <img src="data:image/png;base64,{{ $qrCode }}" alt="QR Code" width="100">
                                 <br>

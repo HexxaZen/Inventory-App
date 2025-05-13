@@ -129,12 +129,15 @@ Route::middleware(['role:Admin|Headbar|Headkitchen'])->group(function () {
     Route::resource('inventaris', InventarisController::class);
     Route::get('/inventaris', [InventarisController::class, 'index'])->name('inventaris.index');
     Route::post('/inventaris', [InventarisController::class, 'store'])->name('inventaris.store');
-    Route::get('/inventaris/{id}', [InventarisController::class, 'show'])->name('inventaris.detail');
     Route::put('/inventaris/{id}', [InventarisController::class, 'update'])->name('inventaris.update');
     Route::delete('/inventaris/{id}', [InventarisController::class, 'destroy'])->name('inventaris.destroy');
     Route::get('/inventaris/cetak-barcode/{id}', [InventarisController::class, 'cetakBarcode'])->name('inventaris.cetakBarcode');
-
 });
+// routes public inventaris
+Route::get('/scan-inventaris/{id}', [InventarisController::class, 'showAfterLogin'])
+    ->middleware('auth')
+    ->name('inventaris.scan');
+
 // profile
 Route::middleware(['role:Admin|Headbar|Headkitchen|Bar|Kitchen'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');

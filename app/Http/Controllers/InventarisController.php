@@ -32,7 +32,12 @@ class InventarisController extends Controller
     return view('inventaris.index', compact('inventaris', 'kategoris'));
 }
 
-    
+public function showAfterLogin($id)
+{
+    $inventaris = Inventaris::findOrFail($id);
+    return view('inventaris.scan_result', compact('inventaris'));
+}
+
 public function cetakBarcode($id)
 {
     $inventaris = Inventaris::findOrFail($id);

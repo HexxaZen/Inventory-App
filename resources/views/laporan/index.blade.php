@@ -13,8 +13,6 @@
                                 ['route' => 'laporan.bahan', 'icon' => 'fas fa-file-alt', 'title' => 'Laporan Bahan'],
                                 ['route' => 'laporan.bahanmasuk', 'icon' => 'fas fa-file-import', 'title' => 'Laporan Bahan Masuk'],
                                 ['route' => 'laporan.bahankeluar', 'icon' => 'fas fa-file-export', 'title' => 'Laporan Bahan Keluar'],
-                                ['route' => 'laporan.bahanakhir', 'icon' => 'fas fa-poll-h', 'title' => 'Laporan Bahan Akhir'],
-                                ['route' => 'laporan.keseluruhanbahanbaku', 'icon' => 'fas fa-utensils', 'title' => 'Ringkasan Bahan Baku'],
                                 ['route' => 'laporan.bahan', 'icon' => 'fas fa-box-open', 'title' => 'Laporan Inventaris'],
                             ];
                         @endphp
