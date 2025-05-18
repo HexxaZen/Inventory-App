@@ -122,6 +122,7 @@
             @yield('detailInventaris')
             @yield('databahanakhir')
             @yield('bahanProcess')
+            @yield('stokProses')
 
         </div>
 

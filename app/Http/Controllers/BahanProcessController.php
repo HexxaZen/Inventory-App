@@ -169,8 +169,6 @@ class BahanProcessController extends Controller
 }
 
 
-
-
     public function destroy($id)
     {
         $bahanProses = BahanProcess::findOrFail($id);

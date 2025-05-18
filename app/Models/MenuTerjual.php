@@ -10,7 +10,10 @@ class MenuTerjual extends Model
     use HasFactory;
 
     protected $table = 'menu_terjual';
-    protected $fillable = ['menu_id', 'jumlah_terjual'];
+    protected $fillable = [
+        'menu_id',
+        'tanggal',
+        'jumlah_terjual'];
 
     /**
      * Relasi ke model Menu.

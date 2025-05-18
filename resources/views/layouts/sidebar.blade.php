@@ -50,6 +50,11 @@
                             <li><a href="{{ route('bahan.process') }}"
                                     class="{{ Request::routeIs('bahan.process') ? 'active' : '' }}"><span
                                         class="sub-item">Bahan Process</span></a></li>
+                            @if(auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headkitchen')||auth()->user()->hasRole('Kitchen'))
+                            <li><a href="{{ route('bahan.stokprocess') }}"
+                                    class="{{ Request::routeIs('bahan.stokprocess') ? 'active' : '' }}"><span
+                                        class="sub-item">Stok Process</span></a></li>
+                            @endif
                             <li><a href="{{ route('bahan.bahanmasuk') }}"
                                     class="{{ Request::routeIs('bahan.bahanmasuk') ? 'active' : '' }}"><span
                                         class="sub-item">Bahan Masuk</span></a></li>
@@ -133,15 +138,16 @@
                     </li>
                 @endif
                 <li class="nav-item {{ Request::routeIs('logout') ? 'active' : '' }}">
-                    <a href="#" class="nav-link" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <a href="#" class="nav-link"
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         <i class="fa-solid fa-right-from-bracket"></i>
                         <p>Log Out</p>
                     </a>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                         @csrf
                     </form>
-                </li>                
-                
+                </li>
+
             </ul>
         </div>
     </div>

@@ -8,20 +8,31 @@ use App\Models\Menu;
 
 class MenuTerjualController extends Controller
 {
-    public function index()
-    {
-        // Mengambil data MenuTerjual
-        $menuTerjual = MenuTerjual::with(['menu.bahans.bahanKeluar'])->get();
-        $menus = Menu::all();
+    public function index(Request $request)
+{
+    // Buat query builder terlebih dahulu
+    $query = MenuTerjual::with(['menu.bahans.bahanKeluar']);
 
-    
-        return view('menu_terjual.index', compact('menuTerjual', 'menus'));
+    // Filter berdasarkan tanggal jika ada
+    if ($request->filled('tanggal')) {
+        $query->whereDate('tanggal', $request->tanggal);
     }
+
+    // Urutkan dan ambil datanya
+    $menuTerjual = $query->orderBy('tanggal', 'desc')->get();
+
+    // Ambil semua menu untuk ditampilkan di modal tambah
+    $menus = Menu::all();
+
+    return view('menu_terjual.index', compact('menuTerjual', 'menus'));
+}
+
 
 
     public function store(Request $request)
 {
     $request->validate([
+        'tanggal' => 'required|date',
         'menu_id' => 'required|array',
         'menu_id.*' => 'exists:menu,id',
         'jumlah_terjual' => 'required|array',
@@ -33,11 +44,12 @@ class MenuTerjualController extends Controller
             MenuTerjual::create([
                 'menu_id' => $menu_id,
                 'jumlah_terjual' => $request->jumlah_terjual[$index],
+                'tanggal' => $request->tanggal,
             ]);
         }
     }
 
-    return redirect()->route('menu.terjual.index')->with('success');
+    return redirect()->route('menu.terjual.index')->with('success','data berhasil disimpan');
 }
 
     public function update(Request $request, $id)

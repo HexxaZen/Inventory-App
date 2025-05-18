@@ -51,12 +51,12 @@
                         <th>Kode Bahan</th>
                         <th>Nama Bahan</th>
                         <th>Jenis</th>
-                        <th>Kategori</th>
+                        <!--<th>Kategori</th>-->
                         <th>Sisa Stok</th>
                         <th>Batas Minimum</th>
                         <th>Satuan</th>
                         <th>Status</th>
-                        @if(auth()->user()->hasRole('Admin')||auth()->user()->hasRole('Headbar')||auth()->user()->hasRole('Headkitchen'))
+                        @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar')|| auth()->user()->hasRole('Headkitchen'))
                         <th>Aksi</th>
                         @endif
                     </tr>
@@ -95,7 +95,7 @@
                                 <td>{{ $item->kode_bahan }}</td>
                                 <td>{{ $item->nama_bahan }}</td>
                                 <td>{{ $item->jenis_bahan }}</td>
-                                <td>{{ $item->kategori_bahan }}</td>
+                                <!--<td>{{ $item->kategori_bahan }}</td>-->
                                 <td>{{ $item->sisa_stok }}</td>
                                 <td>{{ $item->batas_minimum }}</td>
                                 <td>{{ $item->satuan }}</td>
@@ -108,7 +108,7 @@
                                         <span class="badge bg-danger">HABIS</span>
                                     @endif
                                 </td>
-                                @if(auth()->user()->hasRole('Admin')||auth()->user()->hasRole('Headbar')||auth()->user()->hasRole('Headkitchen'))
+                                @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar')|| auth()->user()->hasRole('Headkitchen'))
                                 <td>
                                     <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
                                         data-bs-target="#editBahanModal{{ $item->id }}">Edit</button>
@@ -149,16 +149,21 @@
                                 <input type="text" class="form-control w-100" id="nama_bahan{{ $item->id }}"
                                     name="nama_bahan" value="{{ $item->nama_bahan }}" required>
                             </div>
+                            @if(auth()->user()->hasRole('Headkitchen'))
                             <div class="mb-3">
-                                <label for="tipe{{ $item->id }}" class="form-label">Tipe</label>
-                                <select name="tipe" class="form-select w-100" id="tipe{{ $item->id }}" required>
-                                    <option value="process" {{ $item->tipe == 'process' ? 'selected' : '' }}>Process
+                                <label for="jenis_bahan{{ $item->id }}" class="form-label">Jenis Bahan</label>
+                                <select name="jenis_bahan" class="form-select w-100" id="jenis_bahan{{ $item->id }}" required>
+                                    <option value="pasar" {{ $item->jenis_bahan == 'pasar' ? 'selected' : '' }}>Pasar
                                     </option>
-                                    <option value="non-process" {{ $item->tipe == 'non-process' ? 'selected' : '' }}>
-                                        Non-Process
+                                    <option value="luar" {{ $item->jenis_bahan == 'luar' ? 'selected' : '' }}>
+                                        Luar
+                                    </option>
+                                    <option value="frozen" {{ $item->jenis_bahan == 'frozen' ? 'selected' : '' }}>
+                                        Frozen
                                     </option>
                                 </select>
                             </div>
+                            @endif
                             <div class="mb-3">
                                 <label for="batas_minimum{{ $item->id }}" class="form-label">Batas
                                     Minimum</label>
@@ -177,6 +182,8 @@
                                         Gram/ml</option>
                                     <option value="buah" {{ $item->satuan == 'buah' ? 'selected' : '' }}>
                                         Buah</option>
+                                    <option value="kg" {{ $item->satuan == 'kg' ? 'selected' : '' }}>
+                                        Kg</option>
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-primary w-100">Simpan Perubahan</button>
@@ -330,11 +337,9 @@
                             <label for="jenis_bahan" class="form-label">Jenis Bahan</label>
                             <select class="form-control" id="jenis_bahan" name="jenis_bahan" required>
                                 <option value="" disabled selected hidden>Pilih Jenis Bahan</option>
-                                <option value="poultry">Poultry</option>
-                                <option value="herbpowder">Herb & Powder</option>
-                                <option value="grosary">Grosary</option>
-                                <option value="fnv">Fruit & Vegetables</option>
-                                <option value="extra">Extra</option>
+                                <option value="pasar">Pasar</option>
+                                <option value="luar">Luar</option>
+                                <option value="frozen">Frozen</option>
                             </select>
                         </div>
                         <div class="mb-3">
@@ -352,11 +357,12 @@
                         <div class="mb-3">
                             <label for="satuan" class="form-label">Satuan Bahan</label>
                             <select class="form-control" id="satuan" name="satuan" required>
+                                <option value="kg">Kg</option>
+                                <option value="gram">Gram</option>
+                                <option value="liter">Liter</option>
+                                <option value="ml">Ml</option>
                                 <option value="pack">Pack</option>
                                 <option value="pcs">Pcs</option>
-                                <option value="gram">Gram</option>
-                                <option value="kg">Kg</option>
-                                <option value="buah">Buah</option>
                             </select>
                         </div>
                         <button type="submit" class="btn btn-primary">Simpan</button>

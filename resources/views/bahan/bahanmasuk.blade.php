@@ -105,7 +105,6 @@
 
                         <div class="mb-3">
                             <label class="form-label">Nama Bahan dan Jumlah Masuk</label>
-
                             {{-- Non-Proses Section --}}
                             <div id="bahan-nonproses-bar" class="list-group bahan-list">
                                 @foreach ($bahans as $bahan)
@@ -171,7 +170,6 @@
 
                         <div class="mb-3">
                             <label class="form-label">Nama Bahan dan Jumlah Masuk</label>
-
                             {{-- Non-Proses Section --}}
                             <div id="bahan-nonproses-kitchen" class="list-group bahan-list">
                                 @foreach ($bahans as $bahan)
@@ -182,6 +180,7 @@
                                             <input type="hidden" name="tipe_bahan[]" value="non-proses">
                                             <input type="number" class="form-control w-25 ms-auto" name="jumlah_masuk[]"
                                                 min="0" placeholder="Jumlah Masuk">
+                                            <input type="hidden" class="form-control w-25 ms-auto" name="jumlah_hasil[]" placeholder="Jumlah hasilkan">
                                         </div>
                                     @endif
                                 @endforeach
@@ -195,8 +194,8 @@
                                             <span class="me-3">{{ $process->nama_bahan }}</span>
                                             <input type="hidden" name="bahan_id[]" value="{{ $process->id }}">
                                             <input type="hidden" name="tipe_bahan[]" value="proses">
-                                            <input type="number" class="form-control w-25 ms-auto" name="jumlah_masuk[]"
-                                                min="0" placeholder="Jumlah Masuk">
+                                            <input type="number" class="form-control w-25 ms-auto" name="jumlah_masuk[]" placeholder="Jumlah digunakan">
+                                            <input type="number" class="form-control w-25 ms-auto" name="jumlah_hasil[]" placeholder="Jumlah hasilkan">
                                         </div>
                                     @endif
                                 @endforeach
@@ -266,6 +265,7 @@
         @if (session('success'))
             swal("Berhasil!", "{{ session('success') }}", "success");
         @endif
+        
         document.addEventListener("DOMContentLoaded", function() {
             document.getElementById("sortBahan").addEventListener("change", function() {
                 let sortValue = this.value;

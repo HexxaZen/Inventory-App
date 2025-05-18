@@ -39,18 +39,19 @@
                                 @else
                                     <ul>
                                         @foreach ($item->bahans as $bahan)
-                                            <li>{{ $bahan->nama_bahan }} - {{ $bahan->pivot->gramasi }} gr</li>
+                                            <li>{{ $bahan->nama_bahan }} - {{ $bahan->pivot->gramasi }} </li>
                                         @endforeach
                                         @foreach ($item->bahanProcesses as $bahanProcess)
                                             <li>{{ $bahanProcess->nama_bahan }} (Proses) -
-                                                {{ $bahanProcess->pivot->gramasi }} gr</li>
+                                                {{ $bahanProcess->pivot->gramasi }} </li>
+                                        @endforeach
+                                        @foreach ($item->stokProses as $stokProses)
+                                            <li>{{ $stokProses->bahan_process_id }} (Stok Proses) -
+                                                {{ $stokProses->pivot->gramasi }}</li>
                                         @endforeach
                                     </ul>
                                 @endif
                             </td>
-
-
-
                             <td>
                                 @php
                                     $bahanHabis = $item->bahans->where('sisa_stok', '<=', 0);
@@ -64,7 +65,7 @@
                                     {{ $status }}
                                 </span>
                             </td>
-                            @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Admin'))
+                            @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar') || auth()->user()->hasRole('Headkitchen'))
                                 <td>
                                     <button class="btn btn-warning btn-sm mb-1" data-bs-toggle="modal"
                                         data-bs-target="#editmenuModal{{ $item->id }}">Edit</button>
@@ -201,6 +202,7 @@
                                 <input type="text" class="form-control" name="nama_menu" id="nama_menu"
                                     placeholder="Masukkan nama menu" required>
                             </div>
+                            {{-- komposisi bahan non proses --}}
                             <div class="mb-3">
                                 <label class="form-label" for="bahan_biasa">Komposisi Bahan Non-Proses</label>
                                 <select class="form-control bahan-biasa multi-select" name="bahan_biasa[]"
@@ -213,6 +215,28 @@
                                     @endforeach
                                 </select>
                             </div>
+                            {{-- komposisi bahan stok proses --}}
+                            @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headkitchen') || auth()->user()->hasRole('Kitchen'))
+                                <div class="mb-3">
+                                    <label class="form-label" for="bahan_stokproses">Komposisi Bahan Stok Proses</label>
+                                    <select class="form-control bahan-stokproses multi-select" name="bahan_stokproses[]"
+                                        id="bahan_stokproses" multiple disabled>
+                                        @foreach ($bahanStokproses as $bsp)
+                                            @php
+                                                $bahanProses = \App\Models\BahanProcess::find($bsp->bahan_process_id);
+                                                $namaBahan = $bahanProses
+                                                    ? $bahanProses->nama_bahan
+                                                    : 'Bahan tidak ditemukan';
+                                            @endphp
+                                            <option value="{{ $bsp->id }}" data-nama="{{ $namaBahan }}"
+                                                data-kode_bahan="{{ $bsp->kode_bahan }}">
+                                                {{ $namaBahan }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            @endif
+                            {{-- komposisi bahan proses --}}
                             <div class="mb-3">
                                 <label class="form-label" for="bahan_process">Komposisi Bahan Process</label>
                                 <select class="form-control bahan-process multi-select" name="bahan_process[]"
@@ -225,6 +249,7 @@
                                     @endforeach
                                 </select>
                             </div>
+
                             <div class="mb-3 gramasi-container"></div>
                             <button type="submit" class="btn btn-primary w-100">Tambah Menu</button>
                         </form>
@@ -246,12 +271,14 @@
                 $('.multi-select').dropdown();
 
                 // Event listener hanya untuk modal yang aktif
-                $('.bahan-biasa, .bahan-process').on('change', function() {
+                $('.bahan-biasa, .bahan-process, .bahan-stokproses').on('change', function() {
                     let $modal = $(this).closest('.modal');
                     let bahanBiasa = ($modal.find('.bahan-biasa').val() || []).filter(item =>
                         item !== "");
                     let bahanProcess = ($modal.find('.bahan-process').val() || []).filter(item =>
                         item !== "");
+                    let bahanStokproses = ($modal.find('.bahan-stokproses').val() || []).filter(
+                        item => item !== "");
                     let gramasiContainer = $modal.find('.gramasi-container');
 
                     gramasiContainer.html(
@@ -280,23 +307,36 @@
                             </div>
                         `);
                     });
+
+                    // Generate gramasi input untuk bahan stok process
+                    bahanStokproses.forEach(bahanId => {
+                        let bahanName = $modal.find('.bahan-stokproses option[value="' +
+                            bahanId + '"]').data('nama');
+                        gramasiContainer.append(`
+                            <div class="mb-3">
+                                <label class="form-label">Gramasi untuk ${bahanName} (Stok Proses)</label>
+                                <input type="number" class="form-control" name="gramasi_stokproses[${bahanId}]" required>
+                            </div>
+                        `);
+                    });
                 });
 
                 // Filtering berdasarkan kode kategori saat pilih kategori menu
                 $('select[name="kategori_id"]').on('change', function() {
                     const selectedKode = $(this).find(':selected').data(
-                    'kode'); // Ambil kode_kategori (ex: BBAR/BBKTC)
+                        'kode'); // Ambil kode_kategori (ex: BBAR/BBKTC)
 
                     // Jika tidak ada kategori yang dipilih, nonaktifkan bahan dan sembunyikan komposisi
                     if (!selectedKode) {
-                        $('#bahan_biasa, #bahan_process').prop('disabled',
-                        true); // Nonaktifkan dropdown bahan
-                        $('#bahan_biasa option, #bahan_process option')
-                    .hide(); // Sembunyikan semua opsi bahan
+                        $('#bahan_biasa, #bahan_process, #bahan_stokproses').prop('disabled',
+                            true); // Nonaktifkan dropdown bahan
+                        $('#bahan_biasa option, #bahan_process option, #bahan_stokproses option')
+                            .hide(); // Sembunyikan semua opsi bahan
                         $('.gramasi-container').html(''); // Kosongkan komposisi gramasi
                     } else {
                         // Reset dan sembunyikan semua opsi bahan terlebih dahulu
-                        $('#bahan_biasa option, #bahan_process option').show();
+                        $('#bahan_biasa option, #bahan_process option, #bahan_stokproses option')
+                            .show();
 
                         // Filter bahan biasa berdasarkan kategori
                         $('.bahan-biasa option').each(function() {
@@ -314,30 +354,40 @@
                             }
                         });
 
+                        // Filter bahan stok proses berdasarkan kategori
+                        // $('.bahan-stokproses option').each(function() {
+                        //     const kodeBahan = $(this).data('kode_bahan');
+                        //     if (!kodeBahan || !kodeBahan.startsWith(selectedKode)) {
+                        //         $(this).hide();
+                        //     }
+                        // });
+
                         // Aktifkan dropdown bahan setelah kategori dipilih
-                        $('#bahan_biasa, #bahan_process').prop('disabled', false);
+                        $('#bahan_biasa, #bahan_process, #bahan_stokproses').prop('disabled',
+                        false);
                     }
 
                     // Kosongkan nilai yang mungkin masih terisi setelah kategori dipilih
                     $('.bahan-biasa').val([]).trigger('change');
                     $('.bahan-process').val([]).trigger('change');
+                    $('.bahan-stokproses').val([]).trigger('change');
                 });
 
                 // Modal shown event
-                $('#modalTambah').on('shown.bs.modal', function() {
+                $('#addmenuModal').on('shown.bs.modal', function() {
                     // Sembunyikan semua option bahan saat modal dibuka
-                    $('#bahan_biasa option, #bahan_process option').hide();
+                    $('#bahan_biasa option, #bahan_process option, #bahan_stokproses option')
+                .hide();
 
                     // Nonaktifkan select-nya
-                    $('#bahan_biasa, #bahan_process').prop('disabled', true);
+                    $('#bahan_biasa, #bahan_process, #bahan_stokproses').prop('disabled', true);
 
                     // Kosongkan nilai yang mungkin masih terisi
-                    $('#bahan_biasa, #bahan_process').val(null).trigger('change');
+                    $('#bahan_biasa, #bahan_process, #bahan_stokproses').val(null).trigger(
+                    'change');
                     $('.gramasi-container').html(''); // Kosongkan komposisi gramasi
                 });
             });
         });
     </script>
-
-
 @endsection
