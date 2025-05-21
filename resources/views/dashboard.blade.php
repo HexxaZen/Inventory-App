@@ -247,7 +247,7 @@
                     <ul style="list-style-type: none; padding: 0;">
                         @foreach ($bahan_low_stock as $bahan)
                             <li style="text-align: left; margin-bottom: 8px;">
-                                <strong>{{ $bahan->nama_bahan }}</strong> 
+                                <strong>{{ $bahan->nama_bahan }} <span>({{$bahan->jenis_bahan}})</span> </strong> 
                                 (Stok: {{ $bahan->sisa_stok }} | Minimum: {{ $bahan->batas_minimum }})
                             </li>
                         @endforeach

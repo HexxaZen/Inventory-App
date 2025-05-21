@@ -50,11 +50,6 @@
                             <li><a href="{{ route('bahan.process') }}"
                                     class="{{ Request::routeIs('bahan.process') ? 'active' : '' }}"><span
                                         class="sub-item">Bahan Process</span></a></li>
-                            @if(auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headkitchen')||auth()->user()->hasRole('Kitchen'))
-                            <li><a href="{{ route('bahan.stokprocess') }}"
-                                    class="{{ Request::routeIs('bahan.stokprocess') ? 'active' : '' }}"><span
-                                        class="sub-item">Stok Process</span></a></li>
-                            @endif
                             <li><a href="{{ route('bahan.bahanmasuk') }}"
                                     class="{{ Request::routeIs('bahan.bahanmasuk') ? 'active' : '' }}"><span
                                         class="sub-item">Bahan Masuk</span></a></li>
@@ -68,19 +63,14 @@
                     </div>
                 </li>
 
-                @if (auth()->user()->hasRole('Admin') ||
-                        auth()->user()->hasRole('Headbar') ||
-                        auth()->user()->hasRole('Headkitchen') ||
-                        auth()->user()->hasRole('Bar') ||
-                        auth()->user()->hasRole('Kitchen'))
+                
                     <li class="nav-item {{ Request::routeIs('menu.index') ? 'active' : '' }}">
                         <a href="{{ route('menu.index') }}" class="nav-link">
                             <i class="fa-solid fa-receipt"></i>
                             <p>Menu</p>
                         </a>
                     </li>
-                @endif
-                @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar'))
+                @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar')|| auth()->user()->hasRole('Headkitchen'))
                     <li class="nav-item {{ Request::routeIs('menu.terjual.index') ? 'active' : '' }}">
                         <a href="{{ route('menu.terjual.index') }}" class="nav-link">
                             <i class="fa-solid fa-receipt"></i>

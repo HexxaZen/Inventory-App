@@ -125,12 +125,13 @@ class BahanController extends Controller
     {
         $request->validate([
             'nama_bahan' => 'required',
+            'jenis_bahan' => 'required',
             'satuan' => 'required',
             'batas_minimum' => 'required|integer|min:0'
         ]);
 
         $bahan = Bahan::findOrFail($id);
-        $bahan->update($request->only(['nama_bahan', 'satuan', 'batas_minimum']));
+        $bahan->update($request->only(['nama_bahan','jenis_bahan', 'satuan', 'batas_minimum']));
 
         return redirect()->back()->with('success');
     }

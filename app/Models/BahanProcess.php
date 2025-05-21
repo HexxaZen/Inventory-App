@@ -67,9 +67,6 @@ class BahanProcess extends Model
     {
         return $this->belongsTo(Kategori::class);
     }
-    public function stokProses()
-{
-    return $this->hasOne(StokProses::class, 'bahan_process_id');
-}
+    
 
 }

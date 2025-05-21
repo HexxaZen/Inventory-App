@@ -149,7 +149,7 @@
                                 <input type="text" class="form-control w-100" id="nama_bahan{{ $item->id }}"
                                     name="nama_bahan" value="{{ $item->nama_bahan }}" required>
                             </div>
-                            @if(auth()->user()->hasRole('Headkitchen'))
+                            @if(auth()->user()->hasRole('Headkitchen')|| auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Kitchen'))
                             <div class="mb-3">
                                 <label for="jenis_bahan{{ $item->id }}" class="form-label">Jenis Bahan</label>
                                 <select name="jenis_bahan" class="form-select w-100" id="jenis_bahan{{ $item->id }}" required>

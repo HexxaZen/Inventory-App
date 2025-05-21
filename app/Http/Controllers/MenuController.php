@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Menu;
 use App\Models\Bahan;
 use App\Models\BahanProcess;
-use App\Models\StokProses;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -19,10 +18,9 @@ class MenuController extends Controller
         $kategoris = Kategori::where('kode_kategori', 'LIKE', 'BB%')->get();
         $bahans = Bahan::all();
         $bahanProcesses = BahanProcess::all();
-        $bahanStokproses = StokProses::all();
 
 
-        return view('menu.index', compact('menu', 'kategoris', 'bahans', 'bahanProcesses', 'bahanStokproses'));
+        return view('menu.index', compact('menu', 'kategoris', 'bahans', 'bahanProcesses'));
     }
 
     public function store(Request $request)
@@ -37,10 +35,6 @@ class MenuController extends Controller
             'gramasi_biasa.*' => 'numeric|min:1',
             'bahan_process' => 'nullable|array',
             'bahan_process.*' => 'exists:bahan_processes,id',
-            'bahan_stokproses' => 'nullable|array',
-            'bahan_stokproses.*' => 'exists:stok_proses,id',
-            'gramasi_stokproses' => 'nullable|array',
-            'gramasi_stokproses.*' => 'numeric|min:1',
             'gramasi_process' => 'nullable|array',
             'gramasi_process.*' => 'numeric|min:1',
         ]);
@@ -82,18 +76,7 @@ class MenuController extends Controller
                 $menu->bahanProcesses()->sync($bahanProcessData);
             }
         }
-        // Menyimpan bahan stok proses jika ada
-        if ($request->bahan_stokproses) {
-            $bahanStokprosesData = [];
-            foreach ($request->bahan_stokproses as $bahanId) {
-                if (isset($request->gramasi_stokproses[$bahanId])) {
-                    $bahanStokprosesData[$bahanId] = ['gramasi' => $request->gramasi_stokproses[$bahanId]];
-                }
-            }            
-            if (!empty($bahanStokprosesData)) {
-                $menu->bahanProcesses()->sync($bahanStokprosesData);
-            }
-        }
+        
 
         // Redirect ke halaman index dengan pesan sukses
         return redirect()->route('menu.index')->with('success');

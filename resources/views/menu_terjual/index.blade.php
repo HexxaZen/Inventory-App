@@ -149,7 +149,7 @@
                             <div class="d-flex align-items-center mb-2">
                                 <span class="me-3">{{ $menu->nama_menu }}</span>
                                 <input type="hidden" name="menu_id[]" value="{{ $menu->id }}">
-                                <input type="number" class="form-control w-25 ms-auto" name="jumlah_terjual[]"
+                                <input type="number" class="form-control w-50 ms-auto" name="jumlah_terjual[]"
                                     placeholder="Jumlah Terjual" required>
                             </div>
                         @endforeach
@@ -162,7 +162,7 @@
                                     <div class="d-flex align-items-center mb-2">
                                         <span class="me-3">{{ $menu->nama_menu }}</span>
                                         <input type="hidden" name="menu_id[]" value="{{ $menu->id }}">
-                                        <input type="number" class="form-control w-25 ms-auto" name="jumlah_terjual[]"
+                                        <input type="number" class="form-control w-50 ms-auto" name="jumlah_terjual[]"
                                             placeholder="Jumlah Terjual" required>
                                     </div>
                                 @endforeach

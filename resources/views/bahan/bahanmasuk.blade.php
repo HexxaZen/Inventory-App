@@ -110,10 +110,10 @@
                                 @foreach ($bahans as $bahan)
                                     @if (strpos($bahan->kode_bahan, 'BBAR') === 0)
                                         <div class="d-flex align-items-center mb-2">
-                                            <span class="me-3">{{ $bahan->nama_bahan }}</span>
+                                            <span class="me-3">{{ $bahan->nama_bahan }} <span>({{$bahan->satuan}})</span></span>
                                             <input type="hidden" name="bahan_id[]" value="{{ $bahan->id }}">
                                             <input type="hidden" name="tipe_bahan[]" value="non-proses">
-                                            <input type="number" class="form-control w-25 ms-auto" name="jumlah_masuk[]"
+                                            <input type="number" class="form-control w-50 ms-auto" name="jumlah_masuk[]"
                                                 min="0" placeholder="Jumlah Masuk">
                                         </div>
                                     @endif
@@ -128,7 +128,7 @@
                                             <span class="me-3">{{ $process->nama_bahan }}</span>
                                             <input type="hidden" name="bahan_id[]" value="{{ $process->id }}">
                                             <input type="hidden" name="tipe_bahan[]" value="proses">
-                                            <input type="number" class="form-control w-25 ms-auto" name="jumlah_masuk[]"
+                                            <input type="number" class="form-control w-50 ms-auto" name="jumlah_masuk[]"
                                                 min="0" placeholder="Jumlah Masuk">
                                         </div>
                                     @endif
@@ -175,12 +175,12 @@
                                 @foreach ($bahans as $bahan)
                                     @if (strpos($bahan->kode_bahan, 'BBKTC') === 0)
                                         <div class="d-flex align-items-center mb-2">
-                                            <span class="me-3">{{ $bahan->nama_bahan }}</span>
+                                            <span class="me-3">{{ $bahan->nama_bahan }} <span>({{$bahan->satuan}})</span></span>
                                             <input type="hidden" name="bahan_id[]" value="{{ $bahan->id }}">
                                             <input type="hidden" name="tipe_bahan[]" value="non-proses">
-                                            <input type="number" class="form-control w-25 ms-auto" name="jumlah_masuk[]"
+                                            <input type="number" class="form-control w-50 ms-auto" name="jumlah_masuk[]"
                                                 min="0" placeholder="Jumlah Masuk">
-                                            <input type="hidden" class="form-control w-25 ms-auto" name="jumlah_hasil[]" placeholder="Jumlah hasilkan">
+                                            <input type="hidden" class="form-control w-50 ms-auto" name="jumlah_hasil[]" placeholder="Jumlah hasilkan">
                                         </div>
                                     @endif
                                 @endforeach
@@ -194,8 +194,7 @@
                                             <span class="me-3">{{ $process->nama_bahan }}</span>
                                             <input type="hidden" name="bahan_id[]" value="{{ $process->id }}">
                                             <input type="hidden" name="tipe_bahan[]" value="proses">
-                                            <input type="number" class="form-control w-25 ms-auto" name="jumlah_masuk[]" placeholder="Jumlah digunakan">
-                                            <input type="number" class="form-control w-25 ms-auto" name="jumlah_hasil[]" placeholder="Jumlah hasilkan">
+                                            <input type="number" class="form-control w-50 ms-auto" name="jumlah_masuk[]" placeholder="Jumlah Masuk">
                                         </div>
                                     @endif
                                 @endforeach

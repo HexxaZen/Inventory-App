@@ -55,9 +55,7 @@
                     <table class="table table-bordered table-striped text-center">
                         <thead class="thead-dark">
                             <tr>
-                                <th>Kode Bahan</th>
                                 <th>Nama Bahan</th>
-                                <th>Kategori Bahan</th>
                                 <th>Stok Terakhir</th>
                             </tr>
                         </thead>
@@ -65,11 +63,8 @@
                             @forelse ($dataNonProses as $item)
                                 <tr>
                                     <td><input type="text" class="form-control-plaintext text-center"
-                                            value="{{ $item->kode_bahan }}" readonly></td>
-                                    <td><input type="text" class="form-control-plaintext text-center"
                                             value="{{ $item->nama_bahan }}" readonly></td>
-                                    <td><input type="text" class="form-control-plaintext text-center"
-                                            value="{{ $item->kategori_bahan }}" readonly></td>
+                                    
                                     <td>
                                         <input type="number" class="form-control stok-input text-center"
                                             name="sisa_stok[{{ $item->id }}]"
@@ -103,7 +98,6 @@
                         </thead>
                         <tbody>
                             @forelse ($dataProses as $item)
-                                @php $inputName = 'p_' . $item->id; @endphp
                                 <tr>
                                     <td><input type="text" class="form-control-plaintext text-center"
                                             value="{{ $item->kode_bahan }}" readonly></td>
@@ -113,10 +107,10 @@
                                             value="{{ $item->kategori_bahan }}" readonly></td>
                                     <td>
                                         <input type="number" class="form-control stok-input text-center"
-                                            name="sisa_stok[{{ $inputName }}]"
-                                            value="{{ old('sisa_stok.' . $inputName, $item->sisa_stok) }}" min="0"
+                                            name="sisa_stok[p_{{ $item->id }}]"
+                                            value="{{ old('sisa_stok.p_' . $item->id, $item->sisa_stok) }}" min="0"
                                             required>
-                                        @error('sisa_stok.' . $inputName)
+                                        @error('sisa_stok.p_' . $item->id)
                                             <small class="text-danger d-block">{{ $message }}</small>
                                         @enderror
                                     </td>
@@ -129,7 +123,8 @@
                         </tbody>
                     </table>
                 </div>
-
+                
+                
                 <div class="text-center mt-3">
                     <button type="submit" class="btn btn-success">Simpan Perubahan</button>
                 </div>

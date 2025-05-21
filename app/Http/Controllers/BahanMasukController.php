@@ -10,7 +10,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use App\Models\BahanProcess;
 use App\Models\BahanKeluar;
-use App\Models\StokProses;
 
 class BahanMasukController extends Controller
 {
@@ -90,8 +89,6 @@ class BahanMasukController extends Controller
         'tipe_bahan' => 'required|array',
         'jumlah_masuk' => 'required|array',
         'jumlah_masuk.*' => 'nullable|integer|min:0',
-        'jumlah_hasil' => 'nullable|array',
-        'jumlah_hasil.*' => 'nullable|integer|min:0',
     ]);
 
     DB::transaction(function () use ($request) {
@@ -115,20 +112,6 @@ class BahanMasukController extends Controller
                     'satuan' => $bahanProses->satuan,
                     'tipe' => $tipe,
                 ]);
-
-                // Update atau tambah stok hasil di tabel stok_proses
-                if ($jumlahHasil > 0) {
-                    $stokProses = StokProses::where('bahan_process_id', $bahan_id)->first();
-
-                    if ($stokProses) {
-                        $stokProses->increment('stok_hasil', $jumlahHasil);
-                    } else {
-                        StokProses::create([
-                            'bahan_process_id' => $bahan_id,
-                            'stok_hasil' => $jumlahHasil,
-                        ]);
-                    }
-                }
 
                 // Update sisa stok dan batch di model BahanProcess
                 $totalGramasi = $bahanProses->komposisis->sum('gramasi');
@@ -232,14 +215,6 @@ public function update(Request $request, $id)
                 $totalGramasi = $bahanProses->komposisis->sum('gramasi');
                 $bahanProses->sisa_stok = $bahanProses->jumlah_batch * $totalGramasi;
                 $bahanProses->save();
-
-                // Update stok_proses jika ada
-                $stokProses = StokProses::where('bahan_process_id', $bahanProses->id)->first();
-                if ($stokProses) {
-                    $stokProses->stok_hasil += ($request->jumlah_hasil ?? 0); // optional
-                    $stokProses->save();
-                }
-
                 // Perbarui stok bahan komposisi (non-proses)
                 foreach ($bahanProses->komposisis as $komposisi) {
                     $bahanKomposisi = $komposisi->bahan;
@@ -319,12 +294,10 @@ public function update(Request $request, $id)
     $bahanMasuk = BahanMasuk::findOrFail($id);
     // Ambil bahan proses terkait jika ada, jika tidak null
     $bahanProses = BahanProcess::where('kode_bahan', $bahanMasuk->kode_bahan)->first();
-    $stokProses = $bahanProses ? StokProses::where('bahan_process_id', $bahanProses->id)->first() : null;
     $kodeBahan = $bahanMasuk->kode_bahan;
     $jumlahMasuk = $bahanMasuk->jumlah_masuk;
-    $jumlahHasil = $stokProses?->stok_hasil ?? 0;
 
-    DB::transaction(function () use ($bahanMasuk, $stokProses, $kodeBahan, $jumlahMasuk, $jumlahHasil) {
+    DB::transaction(function () use ($bahanMasuk, $kodeBahan, $jumlahMasuk) {
         $bahan = Bahan::where('kode_bahan', $kodeBahan)->first();
 
         if ($bahan) {
@@ -366,10 +339,6 @@ public function update(Request $request, $id)
                     }
                 }
 
-                // Hapus stok_proses jika ada
-                if ($stokProses) {
-                    $stokProses->delete();
-                }
 
                 // Hapus bahan keluar terkait
                 BahanKeluar::where('bahan_masuk_id', $bahanMasuk->id)->delete();

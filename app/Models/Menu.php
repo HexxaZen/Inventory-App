@@ -27,12 +27,6 @@ class Menu extends Model
                     ->withPivot('gramasi')
                     ->withTimestamps();
     }
-    public function stokProses()
-{
-    return $this->belongsToMany(StokProses::class, 'stok_process_menu', 'menu_id', 'bahan_id')
-                ->withPivot('gramasi')
-                ->withTimestamps();
-}
     public function getStatusMenuAttribute()
     {
         $bahanHabis = $this->bahans->whereNotNull('sisa_stok')->where('sisa_stok', '<=', 0);

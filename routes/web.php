@@ -18,7 +18,6 @@ use App\Http\Controllers\PemantauanController;
 use App\Http\Controllers\BahanProcessController;
 use App\Http\Controllers\StokController;
 use App\Http\Controllers\DataBahanakhirController;
-use App\Http\Controllers\StokProsesController;
 
 
 Route::get('/kirim-notifikasi-stok', [StokController::class, 'kirimNotifikasiStok']);
@@ -175,10 +174,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/bahan/process/{id}/edit', [BahanProcessController::class, 'edit'])->name('bahan.process.edit');
     Route::put('/bahan/process/{id}', [BahanProcessController::class, 'update'])->name('bahan.process.update');
     Route::delete('/bahan/process/{id}', [BahanProcessController::class, 'destroy'])->name('bahan.process.destroy');
-});
-// Route stok proses
-Route::middleware(['auth'])->group(function () {
-    Route::get('/bahan/stokprocess', [StokProsesController::class, 'index'])->name('bahan.stokprocess');
 });
 Route::get('/check-session', function () {
     return response()->json(['status' => auth()->check()]);
