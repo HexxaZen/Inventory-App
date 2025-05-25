@@ -4,29 +4,36 @@
     <div class="container">
         <h1 class="mb-4 mx-5 my-5">Data Bahan Baku</h1>
 
-        @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar'))
-            <button class="btn btn-primary mb-3 float-end me-3" data-bs-toggle="modal" data-bs-target="#addBahanBarModal">
-                <i class="fa fa-plus"></i> Tambah Bahan Baku Bar
-            </button>
-        @endif
+        {{-- Tombol Tambah Bahan Baku --}}
+        <div class="d-flex flex-wrap justify-content-end mb-3 gap-2">
+            @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar'))
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBahanBarModal">
+                    <i class="fa fa-plus"></i> Tambah Bahan Baku Bar
+                </button>
+            @endif
 
-        @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headkitchen'))
-            <button class="btn btn-primary mb-3 float-end me-3" data-bs-toggle="modal" data-bs-target="#addBahanKitchenModal">
-                <i class="fa fa-plus"></i> Tambah Bahan Baku Kitchen
-            </button>
-        @endif
+            @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headkitchen'))
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBahanKitchenModal">
+                    <i class="fa fa-plus"></i> Tambah Bahan Baku Kitchen
+                </button>
+            @endif
+        </div>
+
+        {{-- Notifikasi Sukses --}}
         @if (session('success'))
-            <div class="alert alert-success">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
                 {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
-        {{-- sort by --}}
-        <div class="mb-3 px-3">
-            <form method="GET" action="{{ route('bahan.index') }}" id="filterForm">
-                <div class="row">
-                    <div class="col-md-3">
-                        <label for="sortBahan" class="form-label">Sort By Kategori:</label>
-                        <select class="form-control" name="kategori_bahan" id="sortBahan"
+
+        {{-- Form Filter dan Pencarian --}}
+        <form method="GET" action="{{ route('bahan.index') }}" id="filterForm">
+            <div class="row g-3 align-items-end">
+                @if (auth()->user()->hasRole('Admin'))
+                    <div class="col-md-4 py-2">
+                        <label for="sortBahan" class="form-label mx-3">Sortir Kategori Bahan</label>
+                        <select class="form-select" name="kategori_bahan" id="sortBahan"
                             onchange="document.getElementById('filterForm').submit();">
                             <option value="">Semua</option>
                             <option value="BBAR" {{ request('kategori_bahan') == 'BBAR' ? 'selected' : '' }}>Bahan Baku
@@ -35,29 +42,39 @@
                                 Kitchen</option>
                         </select>
                     </div>
+                @endif
+
+                <div class="col-md-4">
+                    <label for="search" class="form-label mx-3">Cari Nama Bahan</label>
+                    <input type="text" class="form-control" id="search" name="search"
+                        placeholder="Masukkan nama bahan..." value="{{ request('search') }}">
                 </div>
-            </form>
-        </div>
-        {{-- sort by end --}}
+
+                <div class="col-md-4 align-content-center">
+                    <button type="submit" class="btn btn-secondary w-50">
+                        <i class="fa fa-search"></i> Cari
+                    </button>
+                </div>
+            </div>
+        </form>
         {{-- tabel --}}
         @php
             use Illuminate\Support\Str;
         @endphp
-
-        <div class="table-responsive px-3" style="overflow-x: auto;">
+        <div class="table-responsive px-3" style="overflow-x: auto;margin-top:20px;">
             <table class="table table-bordered table-striped text-center">
                 <thead style="align-content: center;">
                     <tr>
                         <th>Kode Bahan</th>
                         <th>Nama Bahan</th>
                         <th>Jenis</th>
-                        <!--<th>Kategori</th>-->
+                        {{-- <th>Kategori</th> --}}
                         <th>Sisa Stok</th>
                         <th>Batas Minimum</th>
                         <th>Satuan</th>
                         <th>Status</th>
-                        @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar')|| auth()->user()->hasRole('Headkitchen'))
-                        <th>Aksi</th>
+                        @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar') || auth()->user()->hasRole('Headkitchen'))
+                            <th>Aksi</th>
                         @endif
                     </tr>
                 </thead>
@@ -95,7 +112,7 @@
                                 <td>{{ $item->kode_bahan }}</td>
                                 <td>{{ $item->nama_bahan }}</td>
                                 <td>{{ $item->jenis_bahan }}</td>
-                                <!--<td>{{ $item->kategori_bahan }}</td>-->
+                                {{-- <td>{{ $item->kategori_bahan }}</td> --}}
                                 <td>{{ $item->sisa_stok }}</td>
                                 <td>{{ $item->batas_minimum }}</td>
                                 <td>{{ $item->satuan }}</td>
@@ -108,17 +125,18 @@
                                         <span class="badge bg-danger">HABIS</span>
                                     @endif
                                 </td>
-                                @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar')|| auth()->user()->hasRole('Headkitchen'))
-                                <td>
-                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                        data-bs-target="#editBahanModal{{ $item->id }}">Edit</button>
-                                    <form action="{{ route('bahan.destroy', $item->id) }}" method="POST" class="d-inline"
-                                        onsubmit="return confirm('Apakah Anda yakin ingin menghapus bahan ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-danger btn-sm btn-delete">Hapus</button>
-                                    </form>
-                                </td>
+                                @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar') || auth()->user()->hasRole('Headkitchen'))
+                                    <td>
+                                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                            data-bs-target="#editBahanModal{{ $item->id }}">Edit</button>
+                                        <form action="{{ route('bahan.destroy', $item->id) }}" method="POST"
+                                            class="d-inline"
+                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus bahan ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger btn-sm btn-delete">Hapus</button>
+                                        </form>
+                                    </td>
                                 @endif
                             </tr>
                         @endif
@@ -126,6 +144,10 @@
                 </tbody>
             </table>
         </div>
+    </div>
+
+
+
 
     </div>
     <!-- Modal Edit Bahan -->
@@ -149,20 +171,21 @@
                                 <input type="text" class="form-control w-100" id="nama_bahan{{ $item->id }}"
                                     name="nama_bahan" value="{{ $item->nama_bahan }}" required>
                             </div>
-                            @if(auth()->user()->hasRole('Headkitchen')|| auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Kitchen'))
-                            <div class="mb-3">
-                                <label for="jenis_bahan{{ $item->id }}" class="form-label">Jenis Bahan</label>
-                                <select name="jenis_bahan" class="form-select w-100" id="jenis_bahan{{ $item->id }}" required>
-                                    <option value="pasar" {{ $item->jenis_bahan == 'pasar' ? 'selected' : '' }}>Pasar
-                                    </option>
-                                    <option value="luar" {{ $item->jenis_bahan == 'luar' ? 'selected' : '' }}>
-                                        Luar
-                                    </option>
-                                    <option value="frozen" {{ $item->jenis_bahan == 'frozen' ? 'selected' : '' }}>
-                                        Frozen
-                                    </option>
-                                </select>
-                            </div>
+                            @if (auth()->user()->hasRole('Headkitchen'))
+                                <div class="mb-3">
+                                    <label for="jenis_bahan{{ $item->id }}" class="form-label">Jenis Bahan</label>
+                                    <select name="jenis_bahan" class="form-select w-100"
+                                        id="jenis_bahan{{ $item->id }}" required>
+                                        <option value="pasar" {{ $item->jenis_bahan == 'pasar' ? 'selected' : '' }}>Pasar
+                                        </option>
+                                        <option value="luar" {{ $item->jenis_bahan == 'luar' ? 'selected' : '' }}>
+                                            Luar
+                                        </option>
+                                        <option value="frozen" {{ $item->jenis_bahan == 'frozen' ? 'selected' : '' }}>
+                                            Frozen
+                                        </option>
+                                    </select>
+                                </div>
                             @endif
                             <div class="mb-3">
                                 <label for="batas_minimum{{ $item->id }}" class="form-label">Batas
@@ -173,7 +196,8 @@
                             <div class="mb-3">
                                 <label for="satuan{{ $item->id }}" class="form-label">Satuan
                                     Bahan</label>
-                                <select class="form-select w-100" id="satuan{{ $item->id }}" name="satuan" required>
+                                <select class="form-select w-100" id="satuan{{ $item->id }}" name="satuan"
+                                    required>
                                     <option value="pack" {{ $item->satuan == 'pack' ? 'selected' : '' }}>
                                         Pack</option>
                                     <option value="pcs" {{ $item->satuan == 'pcs' ? 'selected' : '' }}>
@@ -196,7 +220,8 @@
 
     {{-- end --}}
     <!-- Modal Tambah Bahan Bar -->
-    <div class="modal fade" id="addBahanBarModal" tabindex="-1" aria-labelledby="addBahanBarModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addBahanBarModal" tabindex="-1" aria-labelledby="addBahanBarModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
