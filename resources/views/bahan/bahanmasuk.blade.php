@@ -19,13 +19,13 @@
                 {{ session('success') }}
             </div>
         @endif
-        {{-- sort by --}}
-        <div class="mb-3 px-3">
-            <form method="GET" action="{{ route('bahan.bahanmasuk') }}" id="filterForm">
-                <div class="row">
-                    <div class="col-md-3">
-                        <label for="sortBahan" class="form-label">Sort By Kategori:</label>
-                        <select class="form-control" name="kategori_bahan" id="sortBahan"
+        {{-- Form Filter dan Pencarian --}}
+        <form method="GET" action="{{ route('bahan.bahanmasuk') }}" id="filterForm">
+            <div class="row g-3 align-items-end mb-3">
+                @if (auth()->user()->hasRole('Admin'))
+                    <div class="col-md-4 py-2">
+                        <label for="sortBahan" class="form-label mx-3">Sortir Kategori Bahan</label>
+                        <select class="form-select" name="kategori_bahan" id="sortBahan"
                             onchange="document.getElementById('filterForm').submit();">
                             <option value="">Semua</option>
                             <option value="BBAR" {{ request('kategori_bahan') == 'BBAR' ? 'selected' : '' }}>Bahan Baku
@@ -34,9 +34,21 @@
                                 Kitchen</option>
                         </select>
                     </div>
+                @endif
+
+                <div class="col-md-4">
+                    <label for="search" class="form-label mx-3">Cari Nama Bahan</label>
+                    <input type="text" class="form-control" id="search" name="search"
+                        placeholder="Masukkan nama bahan..." value="{{ request('search') }}">
                 </div>
-            </form>
-        </div>
+
+                <div class="col-md-4 align-content-center">
+                    <button type="submit" class="btn btn-secondary w-50">
+                        <i class="fa fa-search"></i> Cari
+                    </button>
+                </div>
+            </div>
+        </form>
         {{-- sort by end --}}
         <div class="table-responsive px-3">
             <table class="table table-bordered table-striped text-center" id="table_bahan_masuk">

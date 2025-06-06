@@ -15,39 +15,53 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class BahanKeluarController extends Controller
 {
     // Menampilkan data bahan keluar
-    public function index()
+    public function index(Request $request)
     {
         $dataKeluar = BahanKeluar::all();
         $query = Bahan::query();
         $user = Auth::user();
-        if ($user->hasRole([ 'Admin','Headbar','Bar'])) {
-            $query->orWhere('kode_bahan', 'LIKE', 'BBAR%');
+        // Ambil data bahan sesuai role
+        $query = Bahan::query();
+
+        if ($user->hasRole(['Admin', 'Headbar', 'Bar'])) {
+            $query->where('kode_bahan', 'LIKE', 'BBAR%');
         }
 
-        if ($user->hasRole([ 'Admin','Headkitchen', 'Kitchen'])) {
+        if ($user->hasRole(['Admin', 'Headkitchen', 'Kitchen'])) {
             $query->orWhere('kode_bahan', 'LIKE', 'BBKTC%');
         }
 
         $bahan = $query->get();
-        return view('bahan.bahankeluar', compact('dataKeluar'));
+
+        // Ambil data bahan keluar dengan pencarian jika ada
+        $queryBahanKeluar = BahanKeluar::query();
+
+        if ($request->filled('search')) {
+            $queryBahanKeluar->where('nama_bahan', 'like', '%' . $request->search . '%');
+        }
+
+        $dataKeluar = $queryBahanKeluar->get();
+
+        return view('bahan.bahankeluar', compact('dataKeluar', 'bahan'));
+
     }
     public function laporankeluar(Request $request)
     {
-    $dataKeluar = collect(); // Default kosong jika belum ada input tanggal
-    $message = null;
-    
-    if ($request->has(['dari_tanggal', 'sampai_tanggal'])) {
-        $dari_tanggal = $request->dari_tanggal . ' 00:00:00';
-        $sampai_tanggal = $request->sampai_tanggal . ' 23:59:59';
+        $dataKeluar = collect(); // Default kosong jika belum ada input tanggal
+        $message = null;
 
-        $dataKeluar = BahanKeluar::whereBetween('created_at', [$dari_tanggal, $sampai_tanggal])->get();
-        
-        if ($dataKeluar->isEmpty()) {
-            $message = "Maaf, tidak ada data di tanggal ini";
+        if ($request->has(['dari_tanggal', 'sampai_tanggal'])) {
+            $dari_tanggal = $request->dari_tanggal . ' 00:00:00';
+            $sampai_tanggal = $request->sampai_tanggal . ' 23:59:59';
+
+            $dataKeluar = BahanKeluar::whereBetween('created_at', [$dari_tanggal, $sampai_tanggal])->get();
+
+            if ($dataKeluar->isEmpty()) {
+                $message = "Maaf, tidak ada data di tanggal ini";
+            }
         }
-    }
-    
-    return view('laporan.bahankeluar', compact('dataKeluar', 'message'));
+
+        return view('laporan.bahankeluar', compact('dataKeluar', 'message'));
     }
 
     public function downloadPdfkeluar()

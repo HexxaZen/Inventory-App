@@ -193,6 +193,13 @@
                                 <input type="number" class="form-control w-100" id="batas_minimum{{ $item->id }}"
                                     name="batas_minimum" value="{{ $item->batas_minimum }}">
                             </div>
+                            @if (auth()->user()->hasRole('Headkitchen') || auth()->user()->hasRole('Headbar'))
+                            <div class="mb-3">
+                                <label for="sisa_stok{{ $item->id }}" class="form-label">Sisa Stok</label>
+                                <input type="number" class="form-control w-100" id="sisa_stok{{ $item->id }}"
+                                    name="sisa_stok" value="{{ $item->sisa_stok }}">
+                            </div>
+                            @endif
                             <div class="mb-3">
                                 <label for="satuan{{ $item->id }}" class="form-label">Satuan
                                     Bahan</label>

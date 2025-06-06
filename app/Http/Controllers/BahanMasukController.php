@@ -16,15 +16,17 @@ class BahanMasukController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $filterKategori = $request->input('kategori_bahan'); // Ambil filter dari form GET
+        $filterKategori = $request->input('kategori_bahan');
+        $searchTerm = $request->input('search'); // Ambil search term dari form GET
 
+        // Inisialisasi query untuk BahanMasuk, Bahan, dan BahanProcess
         $bahanMasukQuery = BahanMasuk::with('bahan', 'bahanProcess');
         $bahanQuery = Bahan::query();
         $prosesQuery = BahanProcess::query();
 
-        // Role-based filter
+        // Terapkan filter berdasarkan peran pengguna
         if ($user->hasRole('Admin')) {
-            // Admin bisa melihat semua, tapi tetap cek filter kategori jika ada
+            // Jika Admin, terapkan filter kategori jika ada
             if ($filterKategori) {
                 $bahanMasukQuery->where('kode_bahan', 'LIKE', $filterKategori . '%');
                 $bahanQuery->where('kode_bahan', 'LIKE', $filterKategori . '%');
@@ -39,12 +41,21 @@ class BahanMasukController extends Controller
             $bahanQuery->where('kode_bahan', 'LIKE', 'BBKTC%');
             $prosesQuery->where('kode_bahan', 'LIKE', 'BBKTC%');
         } else {
+            // Jika peran tidak sesuai, kembalikan koleksi kosong
             $bahanMasuk = collect();
             $bahans = collect();
             $bahan_processes = collect();
             return view('bahan.bahanmasuk', compact('bahanMasuk', 'bahans', 'bahan_processes'));
         }
 
+        // Terapkan pencarian nama bahan jika ada
+        if ($searchTerm) {
+            $bahanMasukQuery->where('nama_bahan', 'like', '%' . $searchTerm . '%');
+            $bahanQuery->where('nama_bahan', 'like', '%' . $searchTerm . '%');
+            $prosesQuery->where('nama_bahan', 'like', '%' . $searchTerm . '%');
+        }
+
+        // Ambil data setelah semua filter diterapkan
         $bahanMasuk = $bahanMasukQuery->get();
         $bahans = $bahanQuery->get();
         $bahan_processes = $prosesQuery->get();

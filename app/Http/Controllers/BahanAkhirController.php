@@ -29,7 +29,7 @@ class BahanAkhirController extends Controller
         return $this->index();
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $tanggal = session('tanggal_input');
         if (!$tanggal) {
@@ -37,7 +37,7 @@ class BahanAkhirController extends Controller
         }
 
         $user = Auth::user();
-
+        
         // Query bahan non-proses
         $queryNonProses = Bahan::select('id', 'kode_bahan', 'nama_bahan', 'kategori_bahan', 'sisa_stok');
         if ($user->hasRole(['Admin', 'Headbar', 'Bar'])) {
@@ -65,6 +65,7 @@ class BahanAkhirController extends Controller
     {
         $tanggal = $request->input('tanggal', now()->format('Y-m-d'));
         $data = BahanAkhir::whereDate('tanggal_input', $tanggal)->get();
+        
         return view('bahan.databahanakhir', compact('data', 'tanggal'));
     }
 

@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\BahanAkhir;
 use App\Models\Bahan;
 use App\Models\BahanKeluar;
+use App\Models\BahanProcess;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DatabahanAkhirController extends Controller
 {
@@ -98,68 +100,102 @@ class DatabahanAkhirController extends Controller
     return redirect()->route('bahan.akhir.index')->with('success', 'Data bahan akhir berhasil disimpan.');
 }
 public function updateSingle(Request $request, $id)
-{
-    $request->validate([
-        'tanggal_input' => 'required|date',
-        'kode_bahan' => 'required|string|max:50',
-        'nama_bahan' => 'required|string|max:100',
-        'stok_terakhir' => 'required|numeric|min:0',
-    ]);
-
-    $bahanAkhir = BahanAkhir::findOrFail($id);
-
-    $tanggal = $request->tanggal_input;
-    $kodeBahan = $request->kode_bahan;
-    $stokBaru = $request->stok_terakhir;
-
-    // Ambil stok sebelumnya (sebelum diubah)
-    $stokLama = $bahanAkhir->stok_terakhir;
-
-    // Hitung selisih untuk jumlah_keluar
-    $jumlahKeluar = $stokLama - $stokBaru;
-
-    // Update data bahan akhir
-    $bahanAkhir->update([
-        'tanggal_input' => $tanggal,
-        'kode_bahan' => $kodeBahan,
-        'nama_bahan' => $request->nama_bahan,
-        'stok_terakhir' => $stokBaru,
-    ]);
-
-    // Update stok di tabel Bahan
-    $bahan = \App\Models\Bahan::where('kode_bahan', $kodeBahan)->first();
-    if ($bahan) {
-        $bahan->update([
-            'sisa_stok' => $stokBaru,
+    {
+        // 1. Validasi Input: Pastikan semua data yang dibutuhkan ada dan valid.
+        $request->validate([
+            'tanggal_input' => 'required|date',
+            'kode_bahan' => 'required|string|max:50',
+            'nama_bahan' => 'required|string|max:100',
+            'stok_terakhir' => 'required|numeric|min:0',
         ]);
-    }
 
-    // Catat jumlah keluar jika ada pengurangan
-    if ($jumlahKeluar > 0) {
-        $bahanKeluar = \App\Models\BahanKeluar::where('kode_bahan', $kodeBahan)
-            ->whereDate('tanggal_keluar', $tanggal)
-            ->first();
+        // 2. Menggunakan Transaksi Database: Ini sangat penting untuk menjaga integritas data.
+        //    Semua operasi database di dalam blok ini akan berhasil semua atau gagal semua.
+        DB::transaction(function () use ($request, $id) {
+            $bahanAkhir = BahanAkhir::findOrFail($id);
 
-        if ($bahanKeluar) {
-            // Update jumlah_keluar jika data sebelumnya sudah ada
-            $bahanKeluar->update([
-                'jumlah_keluar' => $bahanKeluar->jumlah_keluar + $jumlahKeluar,
-            ]);
-        } else {
-            // Atau buat data baru jika belum ada
-            \App\Models\BahanKeluar::create([
+            $tanggalInputBaru = $request->tanggal_input;
+            $kodeBahan = $request->kode_bahan;
+            $namaBahan = $request->nama_bahan;
+            $stokTerakhirBaru = $request->stok_terakhir;
+
+            // Ambil stok sebelumnya dari BahanAkhir yang sedang diupdate
+            $stokTerakhirLama = $bahanAkhir->stok_terakhir;
+
+            // 3. Update Data Bahan Akhir: Perbarui entri BahanAkhir itu sendiri.
+            $bahanAkhir->update([
+                'tanggal_input' => $tanggalInputBaru,
                 'kode_bahan' => $kodeBahan,
-                'nama_bahan' => $request->nama_bahan,
-                'jumlah_keluar' => $jumlahKeluar,
-                'tanggal_keluar' => $tanggal,
-                'satuan' => $bahan?->satuan,
-                'bahan_masuk_id' => null,
+                'nama_bahan' => $namaBahan,
+                'stok_terakhir' => $stokTerakhirBaru,
             ]);
-        }
-    }
 
-    return redirect()->back()->with('success', 'Data bahan akhir berhasil diperbarui.');
-}
+            // 4. Update Stok di Tabel 'Bahans':
+            //    Langsung set 'sisa_stok' ke nilai 'stok_terakhir' yang baru.
+            //    Ini memastikan 'sisa_stok' selalu mencerminkan data terakhir dari BahanAkhir.
+            $bahan = Bahan::where('kode_bahan', $kodeBahan)->first();
+            if ($bahan) {
+                $bahan->update([
+                    'sisa_stok' => $stokTerakhirBaru,
+                ]);
+
+                // 5. Logika Penyesuaian Bahan Keluar:
+                //    Kita perlu menyesuaikan catatan BahanKeluar berdasarkan perubahan stok.
+                $selisihStok = $stokTerakhirBaru - $stokTerakhirLama;
+
+                // Jika stok berkurang (selisih negatif, berarti ada 'keluar' bahan lebih banyak dari sebelumnya)
+                if ($selisihStok < 0) {
+                    $jumlahKeluarDispensasi = abs($selisihStok); // Ambil nilai absolut (positif)
+
+                    // Cari entri BahanKeluar untuk tanggal dan kode bahan ini
+                    $bahanKeluar = BahanKeluar::where('tanggal_keluar', $tanggalInputBaru)
+                                                ->where('kode_bahan', $kodeBahan)
+                                                ->first();
+
+                    if ($bahanKeluar) {
+                        // Jika sudah ada, tambahkan selisih jumlah keluar
+                        $bahanKeluar->increment('jumlah_keluar', $jumlahKeluarDispensasi);
+                    } else {
+                        // Jika belum ada, buat entri BahanKeluar baru
+                        BahanKeluar::create([
+                            'tanggal_keluar' => $tanggalInputBaru,
+                            'kode_bahan' => $kodeBahan,
+                            'nama_bahan' => $namaBahan,
+                            'jumlah_keluar' => $jumlahKeluarDispensasi,
+                            'satuan' => $bahan->satuan, // Ambil satuan dari model Bahan
+                            'bahan_masuk_id' => null, // Set null jika tidak terkait dengan BahanMasuk tertentu
+                        ]);
+                    }
+                }
+                // Jika stok bertambah (selisih positif, berarti ada 'pengembalian' atau koreksi stok)
+                else if ($selisihStok > 0) {
+                    $jumlahKembaliDispensasi = abs($selisihStok); // Ambil nilai absolut (positif)
+
+                    // Cari entri BahanKeluar yang sudah ada untuk tanggal dan kode bahan ini
+                    $bahanKeluar = BahanKeluar::where('tanggal_keluar', $tanggalInputBaru)
+                                                ->where('kode_bahan', $kodeBahan)
+                                                ->first();
+
+                    if ($bahanKeluar) {
+                        // Jika ada, kurangi jumlah_keluar (pastikan tidak menjadi negatif)
+                        $newJumlahKeluar = $bahanKeluar->jumlah_keluar - $jumlahKembaliDispensasi;
+                        $bahanKeluar->update([
+                            'jumlah_keluar' => max(0, $newJumlahKeluar) // Pastikan jumlah keluar tidak di bawah 0
+                        ]);
+                    }
+                    // Jika tidak ada BahanKeluar untuk dikurangi, kita tidak perlu membuat entri baru
+                    // karena penambahan stok biasanya dicatat di BahanMasuk, bukan sebagai pengurangan BahanKeluar.
+                }
+            } else {
+                // Opsional: Handle kasus jika bahan tidak ditemukan (misalnya log error atau throw exception)
+                // Ini bisa terjadi jika 'kode_bahan' di BahanAkhir tidak ada di tabel 'bahans'.
+                // Untuk saat ini, kita biarkan saja dan hanya memproses jika bahan ditemukan.
+            }
+        });
+
+        // 6. Redirect dengan Pesan Sukses:
+        return redirect()->back()->with('success', 'Data bahan akhir berhasil diperbarui dan stok disesuaikan.');
+    }
 
 
 }

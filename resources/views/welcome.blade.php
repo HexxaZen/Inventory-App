@@ -30,6 +30,22 @@
     <link rel="stylesheet" href="{{ asset('landingpage/css/flaticon.css') }}">
     <link rel="stylesheet" href="{{ asset('landingpage/css/icomoon.css') }}">
     <link rel="stylesheet" href="{{ asset('landingpage/css/style.css') }}">
+    <style>
+        .btn-gray-terra {
+            background-color: #3b643c; /* abu-abu muda */
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            font-weight: 600;
+            transition: background-color 0.3s ease;
+            border-radius: 4px;
+        }
+        
+        .btn-gray-terra:hover {
+            background-color: #e87761; /* terracotta */
+            color: #242424;
+        }
+        </style>
 </head>
 
 <body>
@@ -40,26 +56,6 @@
             <li>
                 <a data-scroll="home" href="#home" class="dot active">
                     <span>Home</span>
-                </a>
-            </li>
-            <li>
-                <a data-scroll="about" href="#about" class="dot">
-                    <span>About</span>
-                </a>
-            </li>
-            <li>
-                <a data-scroll="services" href="#services" class="dot">
-                    <span>Services</span>
-                </a>
-            </li>
-            <li>
-                <a data-scroll="work" href="#work" class="dot">
-                    <span>Gallery</span>
-                </a>
-            </li>
-            <li>
-                <a data-scroll="contact" href="#contact" class="dot">
-                    <span>Contact</span>
                 </a>
             </li>
         </ul>
@@ -81,16 +77,13 @@
                              class="img-fluid mb-5" 
                              style="max-width: 80%; height: auto;">
                     </a>
-                    <h1 class="mb-4">We Make <br>Something Great for You</h1>
+                    <h1 class="mb-4">INVENTORY SYSTEM</h1>
                     <p class="mt-5">
-                        <a href="{{ route('login') }}">
-                            Staff's Login 
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                            <span></span>
+                        <a href="{{ route('login') }}" class="btn btn-gray-terra">
+                          Staff's Login
                         </a>
-                    </p>                    
+                      </p>
+                                        
                 </div>
             </div>
         </div>
@@ -108,7 +101,7 @@
                         Copyright &copy;
                         <script>
                             document.write(new Date().getFullYear());
-                        </script> by: WBXZN
+                        </script> by: Merracota
                         <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
                     </p>
 
@@ -122,8 +115,6 @@
         </div>
     </footer>
     <!-- End Footer Section -->
-
-
     <!-- loader -->
     <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px">
             <circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4"
@@ -131,8 +122,6 @@
             <circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4"
                 stroke-miterlimit="10" stroke="#F96D00" />
         </svg></div>
-
-
     <script src="{{ asset('landingpage/js/jquery.min.js') }}"></script>
     <script src="{{ asset('landingpage/js/jquery-migrate-3.0.1.min.js') }}"></script>
     <script src="{{ asset('landingpage/js/popper.min.js') }}"></script>
