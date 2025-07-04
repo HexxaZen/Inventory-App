@@ -3,22 +3,6 @@
 @section('daftarbahan')
     <div class="container">
         <h1 class="mb-4 mx-5 my-5">Data Bahan Baku</h1>
-
-        {{-- Tombol Tambah Bahan Baku --}}
-        <div class="d-flex flex-wrap justify-content-end mb-3 gap-2">
-            @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar'))
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBahanBarModal">
-                    <i class="fa fa-plus"></i> Tambah Bahan Baku Bar
-                </button>
-            @endif
-
-            @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headkitchen'))
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBahanKitchenModal">
-                    <i class="fa fa-plus"></i> Tambah Bahan Baku Kitchen
-                </button>
-            @endif
-        </div>
-
         {{-- Notifikasi Sukses --}}
         @if (session('success'))
             <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -27,37 +11,51 @@
             </div>
         @endif
 
+        {{-- Tombol Tambah Bahan Baku --}}
+        <div class="row mb-3 gx-2 justify-content-end">
+            @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headbar'))
+                <div class="col-auto mb-2"> {{-- Added mb-2 for spacing if buttons wrap --}}
+                    <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#addBahanBarModal">
+                        <i class="fa fa-plus"></i> Tambah Bahan Baku Bar
+                    </button>
+                </div>
+            @endif
+        
+            @if (auth()->user()->hasRole('Admin') || auth()->user()->hasRole('Headkitchen'))
+                <div class="col-auto mb-2"> {{-- Added mb-2 for spacing if buttons wrap --}}
+                    <button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#addBahanKitchenModal">
+                        <i class="fa fa-plus"></i> Tambah Bahan Baku Kitchen
+                    </button>
+                </div>
+            @endif
+        </div>        
         {{-- Form Filter dan Pencarian --}}
         <form method="GET" action="{{ route('bahan.index') }}" id="filterForm">
-            <div class="row g-3 align-items-end">
+            <div class="row g-3 align-items-end mb-4 m-2"> {{-- Added mb-4 for spacing below the form --}}
                 @if (auth()->user()->hasRole('Admin'))
-                    <div class="col-md-4 py-2">
-                        <label for="sortBahan" class="form-label mx-3">Sortir Kategori Bahan</label>
-                        <select class="form-select" name="kategori_bahan" id="sortBahan"
-                            onchange="document.getElementById('filterForm').submit();">
+                    <div class="col-md-4 col-lg-3"> {{-- Adjusted column sizing for better responsiveness --}}
+                        <label for="sortBahan" class="form-label">Sortir Kategori Bahan</label> {{-- Removed mx-3 --}}
+                        <select class="form-select" name="kategori_bahan" id="sortBahan" onchange="document.getElementById('filterForm').submit();">
                             <option value="">Semua</option>
-                            <option value="BBAR" {{ request('kategori_bahan') == 'BBAR' ? 'selected' : '' }}>Bahan Baku
-                                Bar</option>
-                            <option value="BBKTC" {{ request('kategori_bahan') == 'BBKTC' ? 'selected' : '' }}>Bahan Baku
-                                Kitchen</option>
+                            <option value="BBAR" {{ request('kategori_bahan') == 'BBAR' ? 'selected' : '' }}>Bahan Baku Bar</option>
+                            <option value="BBKTC" {{ request('kategori_bahan') == 'BBKTC' ? 'selected' : '' }}>Bahan Baku Kitchen</option>
                         </select>
                     </div>
                 @endif
-
-                <div class="col-md-4">
-                    <label for="search" class="form-label mx-3">Cari Nama Bahan</label>
-                    <input type="text" class="form-control" id="search" name="search"
-                        placeholder="Masukkan nama bahan..." value="{{ request('search') }}">
+        
+                <div class="col-md-5 col-lg-4"> {{-- Adjusted column sizing for better responsiveness --}}
+                    <label for="search" class="form-label">Cari Nama Bahan</label> {{-- Removed mx-3 --}}
+                    <input type="text" class="form-control" id="search" name="search" placeholder="Masukkan nama bahan..." value="{{ request('search') }}">
                 </div>
-
-                <div class="col-md-4 align-content-center">
-                    <button type="submit" class="btn btn-secondary w-50">
+        
+                <div class="col-md-3 col-lg-2 d-grid"> {{-- Used d-grid for full width button on small screens and adjusted column sizing --}}
+                    <button type="submit" class="btn btn-secondary">
                         <i class="fa fa-search"></i> Cari
                     </button>
                 </div>
             </div>
         </form>
-        {{-- tabel --}}
+                {{-- tabel --}}
         @php
             use Illuminate\Support\Str;
         @endphp
