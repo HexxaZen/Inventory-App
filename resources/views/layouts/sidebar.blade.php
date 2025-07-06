@@ -109,9 +109,6 @@
                                 <li><a
                                         href="{{ route('laporan.bahankeluar') }}"class="{{ Request::routeIs('laporan.bahankeluar') ? 'active' : '' }}"><span
                                             class="sub-item">Bahan Keluar</span></a></li>
-                                <li><a
-                                        href="{{ route('laporan.keseluruhanbahanbaku') }}"class="{{ Request::routeIs('laporan.keseluruhanbahanbaku') ? 'active' : '' }}"><span
-                                            class="sub-item">Semua Bahan Baku</span></a></li>
                             </ul>
                         </div>
                     </li>

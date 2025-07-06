@@ -109,7 +109,6 @@
                 <th>Kategori Bahan</th>
                 <th>Sisa Stok</th>
                 <th>Satuan</th>
-                <th>Status</th>
             </tr>
         </thead>
         <tbody>
@@ -121,7 +120,6 @@
                     <td>{{ $bahan->kategori_bahan }}</td>
                     <td style="text-align: right;">{{ $bahan->sisa_stok }}</td>
                     <td>{{ $bahan->satuan }}</td>
-                    <td style="text-align: center;">{{ $bahan->status }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -133,7 +131,7 @@
         <div class="right">
             <p>Penanggung Jawab</p>
             <br><br><br>
-            <p><strong>Owner</strong></p>
+            <p><strong>Head</strong></p>
         </div>
         <div class="clear"></div>
     </div>

@@ -58,7 +58,7 @@ public function cetakBarcode($id)
     $request->validate([
         'kode_inventaris' => 'required|unique:inventaris,kode_inventaris',
         'nama_inventaris' => 'required',
-        'jumlah_inventaris' => 'required|integer',
+        'jumlah_inventaris' => 'nullable|integer',
         'satuan' => 'required',
         'kondisi' => 'required',
     ]);

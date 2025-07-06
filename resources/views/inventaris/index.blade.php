@@ -1,35 +1,46 @@
 @extends('layouts.master')
 @section('title', 'Daftar Inventaris')
 @section('inventaris')
-    <div class="container">
-        <h1 class="mb-4 mx-5 my-5">Daftar Inventaris</h1>
-        <button class="btn btn-primary mb-3 float-end me-3" data-bs-toggle="modal" data-bs-target="#addInventarisModal">
-            <i class="fa fa-plus"></i> Tambah Inventaris
-        </button>
+    <div class="container py-4"> {{-- Added py-4 for vertical padding --}}
+        <h1 class="mb-4 text-center">Daftar Inventaris</h1> {{-- Centered title --}}
+
+        <div class="d-flex justify-content-end mb-3"> {{-- Flexbox for button alignment --}}
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addInventarisModal">
+                <i class="fa fa-plus"></i> Tambah Inventaris
+            </button>
+        </div>
 
         @if (session('success'))
-            <div class="alert alert-success">
+            <div class="alert alert-success alert-dismissible fade show" role="alert"> {{-- Added dismissible alert --}}
                 {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         @endif
-        {{-- sort by --}}
-        <div class="mb-3 px-3">
-            <label for="sortInventaris" class="form-label">Sort By:</label>
-            <select class="form-control w-25" id="sortInventaris">
-                <option value="all">Semua</option>
-                <option value="INVB">Inventaris Bar</option>
-                <option value="INVK">Inventaris Kitchen</option>
-                <option value="INVO">Inventaris Operasional</option>
-            </select>
+
+        {{-- Filter and Search Section --}}
+        <div class="row mb-3 g-3"> {{-- Bootstrap row with gutter --}}
+            <div class="col-md-6 col-lg-4"> {{-- Column for Sort By --}}
+                <label for="sortInventaris" class="form-label">Urutkan Berdasarkan:</label>
+                <select class="form-select" id="sortInventaris"> {{-- Used form-select for better styling --}}
+                    <option value="all">Semua</option>
+                    <option value="INVB">Inventaris Bar</option>
+                    <option value="INVK">Inventaris Kitchen</option>
+                    <option value="INVO">Inventaris Operasional</option>
+                </select>
+            </div>
+            <div class="col-md-6 col-lg-4"> {{-- Column for Search --}}
+                <label for="searchInventaris" class="form-label">Cari Nama Inventaris:</label>
+                <input type="text" class="form-control" id="searchInventaris" placeholder="Cari berdasarkan nama...">
+            </div>
         </div>
-        {{-- sort by end --}}
-        <div class="table-responsive px-3">
-            <table class="table table-bordered table-striped text-center">
-                <thead style="align-content: center;">
+        {{-- End Filter and Search Section --}}
+
+        <div class="table-responsive"> {{-- Ensures table is scrollable on small screens --}}
+            <table class="table table-bordered table-striped text-center align-middle"> {{-- Added align-middle for vertical alignment --}}
+                <thead class="table-dark"> {{-- Darker header for better contrast --}}
                     <tr>
                         <th>Kode Inventaris</th>
                         <th>Nama Inventaris</th>
-                        <th>Jumlah</th>
                         <th>Satuan</th>
                         <th>Kondisi</th>
                         <th>Aksi</th>
@@ -49,24 +60,17 @@
                                     class="btn btn-success btn-sm mt-2">Cetak QR Code</a>
                             </td>
                             <td>{{ $item->nama_inventaris }}</td>
-                            <td>{{ $item->jumlah_inventaris }}</td>
                             <td>{{ $item->satuan }}</td>
                             <td>
                                 @php
                                     $warna = match ($item->kondisi) {
-                                        'Baik' => 'green',
-                                        'Rusak Ringan' => 'yellow',
-                                        'Rusak Berat' => 'red',
-                                        default => 'gray',
+                                        'Baik' => 'bg-success',
+                                        'Rusak Ringan' => 'bg-warning text-dark',
+                                        'Rusak Berat' => 'bg-danger',
+                                        default => 'bg-secondary',
                                     };
                                 @endphp
-                                <span
-                                    style="
-                                background-color: {{ $warna }};
-                                font-weight: bold;
-                                color: white;
-                                padding: 7px 15px;
-                                border-radius: 10px">
+                                <span class="badge {{ $warna }} p-2"> {{-- Using Bootstrap badge class --}}
                                     {{ $item->kondisi }}
                                 </span>
                             </td>
@@ -77,12 +81,11 @@
                                     onsubmit="return confirm('Apakah Anda yakin ingin menghapus inventaris ini?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm btn-delete">Hapus</button>
+                                    <button type="submit" class="btn btn-danger btn-sm">Hapus</button>
                                 </form>
                             </td>
                         </tr>
 
-                        <!-- Modal Edit Inventaris -->
                         <div class="modal fade" id="editInventarisModal{{ $item->id }}" tabindex="-1"
                             aria-labelledby="editInventarisModalLabel{{ $item->id }}" aria-hidden="true">
                             <div class="modal-dialog">
@@ -120,7 +123,7 @@
                                             <div class="mb-3">
                                                 <label for="kondisi{{ $item->id }}" class="form-label">Kondisi
                                                     Inventaris</label>
-                                                <select class="form-control" id="kondisi{{ $item->id }}" name="kondisi"
+                                                <select class="form-select" id="kondisi{{ $item->id }}" name="kondisi"
                                                     required>
                                                     <option value="Baik"
                                                         {{ $item->kondisi == 'Baik' ? 'selected' : '' }}>Baik</option>
@@ -144,7 +147,6 @@
         </div>
     </div>
 
-    <!-- Modal Tambah Inventaris -->
     <div class="modal fade" id="addInventarisModal" tabindex="-1" aria-labelledby="addInventarisModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
@@ -158,7 +160,7 @@
                         @csrf
                         <div class="mb-3">
                             <label for="kode_inventaris" class="form-label">Kode Inventaris</label>
-                            <select class="form-control" id="kode_inventaris" name="kode_inventaris" required>
+                            <select class="form-select" id="kode_inventaris" name="kode_inventaris" required>
                                 @foreach ($kategoris as $kategori)
                                     @if (str_starts_with($kategori->kode_kategori, 'INV'))
                                         @php
@@ -187,20 +189,15 @@
                                 required>
                         </div>
                         <div class="mb-3">
-                            <label for="jumlah_inventaris" class="form-label">Jumlah</label>
-                            <input type="number" class="form-control" id="jumlah_inventaris" name="jumlah_inventaris"
-                                required>
-                        </div>
-                        <div class="mb-3">
                             <label for="satuan" class="form-label">Satuan</label>
-                            <select class="form-control" id="satuan" name="satuan" required>
+                            <select class="form-select" id="satuan" name="satuan" required>
                                 <option value="pcs">Pcs</option>
                                 <option value="pack">Pack</option>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label for="kondisi" class="form-label">Kondisi</label>
-                            <select class="form-control" id="kondisi" name="kondisi" required>
+                            <select class="form-select" id="kondisi" name="kondisi" required>
                                 <option value="Baik">Baik</option>
                                 <option value="Rusak Ringan">Rusak Ringan</option>
                                 <option value="Rusak Berat">Rusak Berat</option>
@@ -215,6 +212,7 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // Sort by functionality
             document.getElementById("sortInventaris").addEventListener("change", function() {
                 let sortValue = this.value;
                 let url = "{{ route('inventaris.index') }}?sort=" + sortValue;
@@ -222,14 +220,32 @@
                 fetch(url)
                     .then(response => response.text())
                     .then(data => {
+                        // Replace the table body with the sorted data
                         document.querySelector("tbody").innerHTML =
                             new DOMParser().parseFromString(data, "text/html")
                             .querySelector("tbody").innerHTML;
                     })
                     .catch(error => console.error("Error fetching sorted data:", error));
             });
+
+            // Search functionality
+            document.getElementById("searchInventaris").addEventListener("keyup", function() {
+                let searchValue = this.value.toLowerCase();
+                let tableRows = document.querySelectorAll("tbody tr");
+
+                tableRows.forEach(function(row) {
+                    // Assuming the 'Nama Inventaris' is in the second <td> (index 1)
+                    let inventoryName = row.children[1].textContent.toLowerCase();
+                    if (inventoryName.includes(searchValue)) {
+                        row.style.display = ""; // Show the row
+                    } else {
+                        row.style.display = "none"; // Hide the row
+                    }
+                });
+            });
         });
-        // alert
+
+        // SweetAlert for success messages
         document.addEventListener('DOMContentLoaded', function() {
             @if (session('success'))
                 swal("Berhasil!", "{{ session('success') }}", "success");
